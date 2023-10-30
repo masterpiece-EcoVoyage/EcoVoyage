@@ -1,7 +1,7 @@
 # EcoVoyage
 
-## Books Website
-This repository contains the source code for a website dedicated to books. It is designed and developed by our team to provide an interactive platform for book enthusiasts to discover, discuss, and share their favorite books.
+## Eco-Friendly travelling website
+This repository contains the source code for a website dedicated to travels. It is designed and developed by our team to provide an interactive platform for trips booking that encourage travellers to participate in an eco-friendly trips.
 
 ## Our Team
 * Rawand Al-Hawwari.
