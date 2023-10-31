@@ -71,6 +71,14 @@ const Login = () => {
                     <span class="underline cursor-pointer"> Sign Up</span>
                 </Link>
               </p>
+              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                <Link
+                  to="/"
+                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                >
+                  Go back
+                </Link>
+              </p>
             </div>
           </div>
         </div>
