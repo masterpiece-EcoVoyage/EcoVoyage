@@ -12,9 +12,9 @@ const Footer = () => {
   return (
     <div class="flex align-bottom flex-col max-h-screen">
       <footer class="py-4 px-3">
-        <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-6" />
+        <hr class="my-6 border-gray-200 sm:mx-auto lg:my-6" />
         <div class="sm:flex sm:items-center sm:justify-between mb-3">
-          <span class="text-sm text-cyan-700 sm:text-center dark:text-gray-400">
+          <span class="text-sm text-cyan-700 sm:text-center">
             © 2023{" "}
             <a href="https://flowbite.com/" class="hover:underline">
               Flowbite™
@@ -24,7 +24,7 @@ const Footer = () => {
           <div class="flex mt-4 me-3 space-x-5 sm:justify-center sm:mt-0">
             <a
               href="#"
-              class="text-cyan-700 hover:text-gray-900 dark:hover:text-white"
+              class="text-cyan-700 hover:text-gray-900"
             >
               <svg
                 class="w-4 h-4"
@@ -43,7 +43,7 @@ const Footer = () => {
             </a>
             <a
               href="#"
-              class="text-cyan-700 hover:text-gray-900 dark:hover:text-white"
+              class="text-cyan-700 hover:text-gray-900"
             >
               <svg
                 class="w-4 h-4"
@@ -58,7 +58,7 @@ const Footer = () => {
             </a>
             <a
               href="#"
-              class="text-cyan-700 hover:text-gray-900 dark:hover:text-white"
+              class="text-cyan-700 hover:text-gray-900"
             >
               <svg
                 class="w-4 h-4"
@@ -77,7 +77,7 @@ const Footer = () => {
             </a>
             <a
               href="#"
-              class="text-cyan-700 hover:text-gray-900 dark:hover:text-white"
+              class="text-cyan-700 hover:text-gray-900"
             >
               <svg
                 class="w-4 h-4"
