@@ -160,7 +160,7 @@ const Destinations = () => {
                   </div>
                   <div className="px-2">
                     <div className="sm:flex sm:justify-end">
-                      <Link to="/">
+                      <Link to={`/destination/${destination.destinations_id}`}>
                         <button className="sm:mt-3 my-2 py-2 px-5 bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 md:text-lg rounded-lg shadow-md">
                           Read more
                         </button>

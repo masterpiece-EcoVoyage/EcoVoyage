@@ -4,9 +4,6 @@ import axios from "axios";
 const Testimonials = () => {
   const [activeItem, setActiveItem] = useState(0);
   const [testimonials, setTestimonials] = useState([]);
-  const destinations = [
-    /* your destination data */
-  ];
 
   useEffect(() => {
     axios
@@ -39,36 +36,36 @@ const Testimonials = () => {
 
   return (
     <div>
-      <div class="container my-24 mx-auto md:px-6">
+      <div className="container my-24 mx-auto md:px-6">
         {/* <!-- Section: Design Block --> */}
-        <section class="mb-32 text-center">
+        <section className="mb-32 text-center">
           <h1 className="text-sky-700 text-4xl md:text-start md:mx-32 font-bold py-10">
             Testimonials
           </h1>
           <div
             id="carouselExampleCaptions"
-            class="relative"
+            className="relative"
             data-te-carousel-init
             data-te-carousel-slide
           >
-            <div class="relative w-full overflow-hidden after:clear-both after:block after:content-['']">
+            <div className="relative w-full overflow-hidden after:clear-both after:block after:content-['']">
               {testimonials.map((testimonial, id) => (
                 <div
                   key={id}
                   className={`relative float-left -mr-[100%] w-full transition-transform duration-[600ms] ease-in-out motion-reduce:transition-none ${
-                    activeItem == id ? "block" : "hidden"
+                    activeItem === id ? "block" : "hidden"
                   }`}
                   data-te-carousel-item
                 >
-                  <div class="flex flex-wrap justify-center">
-                    <div class="w-full text-start shrink-0 grow-0 basis-auto px-10 lg:w-8/12 py-4 rounded-xl bg-[#0c4a6e69]">
-                      <h5 class="mb-2 text-lg text-sky-900 font-bold">
+                  <div className="flex flex-wrap justify-center">
+                    <div className="w-full text-start shrink-0 grow-0 basis-auto px-10 lg:w-8/12 py-4 rounded-xl bg-[#0c4a6e69]">
+                      <h5 className="mb-2 text-lg text-sky-900 font-bold">
                         {testimonial.name}
                       </h5>
 
-                      <div class="flex items-center">
+                      <div className="flex items-center">
                         <svg
-                          class="w-4 h-4 text-yellow-300 me-1"
+                          className="w-4 h-4 text-yellow-300 me-1"
                           aria-hidden="true"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="currentColor"
@@ -76,19 +73,19 @@ const Testimonials = () => {
                         >
                           <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                         </svg>
-                        <p class="ms-2 text-sm text-sky-900 dark:text-white">
+                        <p className="ms-2 text-sm text-sky-900 dark:text-white">
                           {testimonial.rating}
                         </p>
                       </div>
-                      <p class="mb-4 font-medium text-neutral-700 dark:text-neutral-400">
+                      <p className="mb-4 font-medium text-neutral-700 dark:text-neutral-400">
                         {testimonial.location}
                       </p>
-                      <p class="mb-6 text-gray-700 dark:text-neutral-300">
+                      <p className="mb-6 text-gray-700 dark:text-neutral-300">
                         {testimonial.text}
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 96 960 960"
-                          class="inline-block w-6"
+                          className="inline-block w-6"
                         >
                           <path
                             fill="currentColor"
@@ -103,17 +100,17 @@ const Testimonials = () => {
             </div>
             <button
               onClick={handlePrevious}
-              class="absolute top-0 bottom-0 left-0 z-[1] flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center text-white opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:text-white hover:no-underline hover:opacity-90 hover:outline-none focus:text-white focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none"
+              className="absolute top-0 bottom-0 left-0 z-[1] flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center text-white opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:text-white hover:no-underline hover:opacity-90 hover:outline-none focus:text-white focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none"
               type="button"
               data-te-target="#carouselExampleCaptions"
               data-te-slide="prev"
             >
-              <span class="inline-block h-8 w-8">
+              <span className="inline-block h-8 w-8">
                 <svg
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 16 16"
-                  class="text-neutral-600 dark:text-neutral-300"
+                  className="text-neutral-600 dark:text-neutral-300"
                 >
                   <path
                     fill="currentColor"
@@ -121,23 +118,23 @@ const Testimonials = () => {
                   />
                 </svg>
               </span>
-              <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+              <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
                 Previous
               </span>
             </button>
             <button
               onClick={handleNext}
-              class="absolute top-0 bottom-0 right-0 z-[1] flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center text-white opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:text-white hover:no-underline hover:opacity-90 hover:outline-none focus:text-white focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none"
+              className="absolute top-0 bottom-0 right-0 z-[1] flex w-[15%] items-center justify-center border-0 bg-none p-0 text-center text-white opacity-50 transition-opacity duration-150 ease-[cubic-bezier(0.25,0.1,0.25,1.0)] hover:text-white hover:no-underline hover:opacity-90 hover:outline-none focus:text-white focus:no-underline focus:opacity-90 focus:outline-none motion-reduce:transition-none"
               type="button"
               data-te-target="#carouselExampleCaptions"
               data-te-slide="next"
             >
-              <span class="inline-block h-8 w-8">
+              <span className="inline-block h-8 w-8">
                 <svg
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 16 16"
-                  class="text-neutral-600 dark:text-neutral-300"
+                  className="text-neutral-600 dark:text-neutral-300"
                 >
                   <path
                     fill="currentColor"
@@ -145,7 +142,7 @@ const Testimonials = () => {
                   />
                 </svg>
               </span>
-              <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+              <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
                 Next
               </span>
             </button>

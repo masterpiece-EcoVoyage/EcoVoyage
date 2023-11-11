@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../Images/logo.png"
 
@@ -6,7 +6,7 @@ const Header = () => {
   const [isMenuOpened, setIsMenuOpened] = useState(false);
 
   const location = useLocation();
-  if (location.pathname == "/login" || location.pathname == "/signup") {
+  if (location.pathname === "/login" || location.pathname === "/signup") {
     return null;
   }
   // const [isHidden, setIsHidden] = useState(false);
