@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logo from '../../Images/logo.png'
+
 
 const Signup = () => {
   const history = useNavigate();
@@ -46,7 +48,8 @@ const Signup = () => {
       <form action="" onSubmit={handleSubmit}>
         <div className="min-h-screen flex justify-center items-center">
           <div className="py-12 px-12 bg-white rounded-2xl shadow-xl z-20">
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center items-center">
+            <img className=" w-16" src={logo} alt="EcoVoyage logo" />
               <h1 className="text-3xl text-sky-900 font-bold text-center mb-4 cursor-pointer">
                 Create An Account
               </h1>

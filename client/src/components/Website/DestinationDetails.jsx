@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import Iframe from "react-iframe";
 
 const DestinationDetails = () => {
-  const { id } = useParams();
+  const { type } = useParams();
   const [destination, setDestination] = useState(null);
-  const locationLink = `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1dLATITUDE!2dLONGITUDE!3dZOOM_LEVEL!4m5!3m4!1s0x0:0x0!8m2!3dLATITUDE!4dLONGITUDE`;
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/destinations?destinations_id=${id}`)
+      .get(`http://localhost:5000/destinations?destinations_type=${type}`)
       .then((response) => {
         // Handle the response data here
         setDestination(response.data[0]);

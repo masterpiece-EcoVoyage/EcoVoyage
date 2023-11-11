@@ -71,6 +71,13 @@ const Contact = () => {
                   onChange={handleChange}
                   className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                 />
+                <input
+                    type="text"
+                    name="subject"
+                    placeholder="Subject"
+                    onChange={handleChange}
+                    className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
+                  />
                 <textarea
                   id="message"
                   rows="4"

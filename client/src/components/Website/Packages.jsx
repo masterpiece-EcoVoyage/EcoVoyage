@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const Accommodations = () => {
+const Packages = () => {
   const [destinations, setDestinations] = useState([]);
   const [types, setTypes] = useState(null);
   const [selectedType, setSelectedType] = useState("Select type");
@@ -58,36 +58,6 @@ const Accommodations = () => {
 
   return (
     <>
-      <div class="flex flex-col h-full items-center justify-center">
-        <div class="px-6 text-sky-700 text-left md:px-12 ">
-          <h1 class="mt-6 my-8 text-3xl font-bold tracking-tight md:text-4xl xl:text-5xl">
-            Plan Your Eco-Friendly Adventure <br />
-          </h1>
-        </div>
-        <div className="flex flex-col gap-8 md:flex-row items-center justify-center p-12 container mx-auto rounded-lg md:h-24 bg-[#7dafbfb3]">
-          <input
-            class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
-            type="text"
-            placeholder="Where are you going?"
-          />
-          <input
-            class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
-            type="date"
-          />
-          <input
-            class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
-            type="date"
-          />
-          <input
-            class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
-            type="number"
-            placeholder="Guests"
-          />
-          <button class="border-sky-900 border-2 hover:bg-white bg-sky-900 hover:text-sky-900 text-white font-bold py-2 px-4 rounded w-full md:w-1/4">
-            Search
-          </button>
-        </div>
-      </div>
       <div className="flex flex-col md:flex-row justify-center">
         <div className="">
           <div className={`${filterOpen?'h-auto': 'h-16'} md:h-auto overflow-hidden my-16 mx-3 border gap-4 flex-wrap p-3 flex justify-center md:flex-col`}>
@@ -419,7 +389,7 @@ const Accommodations = () => {
                     <div className="px-2">
                       <div className="sm:flex sm:justify-end">
                         <Link
-                          to={`/accommodation/${destination.destinations_type}`}
+                          to={`/package/${destination.destinations_id}`}
                         >
                           <button className="sm:mt-3 my-2 py-2 px-5 bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 md:text-lg rounded-lg shadow-md">
                             Read more
@@ -438,5 +408,5 @@ const Accommodations = () => {
   );
 };
 
-export default Accommodations;
+export default Packages;
 // needs pagination and get all the data not just 3
