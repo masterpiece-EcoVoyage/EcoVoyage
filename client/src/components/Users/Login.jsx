@@ -39,7 +39,7 @@ const Login = () => {
     <div className="bg-[url('https://images.unsplash.com/photo-1529718836725-f449d3a52881?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')]">
       <form action="" onSubmit={handleSubmit}>
         <div className="min-h-screen flex justify-center items-center">
-          <div className="py-12 px-12 bg-white rounded-2xl shadow-xl z-20">
+          <div className="py-8 px-12 bg-white rounded-2xl shadow-xl z-20">
             <div className="flex flex-col justify-center items-center">
               <img className=" w-16" src={logo} alt="EcoVoyage logo" />
               <h1 className="text-3xl text-sky-900 font-bold text-center mb-4 cursor-pointer">

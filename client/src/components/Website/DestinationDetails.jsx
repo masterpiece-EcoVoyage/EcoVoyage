@@ -3,12 +3,12 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
 const DestinationDetails = () => {
-  const { type } = useParams();
+  const { id } = useParams();
   const [destination, setDestination] = useState(null);
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/destinations?destinations_type=${type}`)
+      .get(`http://localhost:5000/destinations?destinations_id=${id}`)
       .then((response) => {
         // Handle the response data here
         setDestination(response.data[0]);
