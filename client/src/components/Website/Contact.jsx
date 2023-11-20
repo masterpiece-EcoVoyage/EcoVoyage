@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 const Contact = () => {
   const [firstName, setFirstName] = useState("");
@@ -45,11 +46,18 @@ const Contact = () => {
       });
       setFirstName('');
       setlastName('');
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Your message has been successfully sent.',
+        confirmButtonText: 'OK',
+        customClass: {
+          confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
+        }
+      });
     } catch (error) {
       console.error("Error:", error);
     }
-    console.log(formData);
-    console.log(contactData);
   };
   return (
     <div className="grid md:grid-cols-2">
@@ -80,6 +88,7 @@ const Contact = () => {
                     placeholder="First Name"
                     value={firstName}
                     onChange={handleChange}
+                    required
                     className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                   />
                   <input
@@ -88,6 +97,7 @@ const Contact = () => {
                     placeholder="Last Name"
                     value={lastName}
                     onChange={handleChange}
+                    required
                     className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                   />
                 </div>
@@ -96,6 +106,7 @@ const Contact = () => {
                   name="email"
                   placeholder="Email Address"
                   value={formData.email}
+                  required
                   onChange={handleChange}
                   className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                 />
@@ -104,6 +115,7 @@ const Contact = () => {
                   name="subject"
                   placeholder="Subject"
                   value={formData.subject}
+                  required
                   onChange={handleChange}
                   className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                 />
@@ -114,6 +126,7 @@ const Contact = () => {
                   class="block p-2.5 w-full text-sm rounded-lg border border-[#0c4a6e69] outline-none"
                   value={formData.message}
                   placeholder="Write your message..."
+                  required
                   onChange={handleChange}
                 ></textarea>
               </div>
