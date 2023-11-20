@@ -7,7 +7,7 @@ const Testimonials = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/testimonials")
+      .get("http://localhost:3999/getContact")
       .then((response) => {
         // Handle the response data here
         setTestimonials(response.data);
@@ -59,29 +59,17 @@ const Testimonials = () => {
                 >
                   <div className="flex flex-wrap justify-center">
                     <div className="w-full text-start shrink-0 grow-0 basis-auto px-10 lg:w-8/12 py-4 rounded-xl bg-[#0c4a6e69]">
-                      <h5 className="mb-2 text-lg text-sky-900 font-bold">
-                        {testimonial.name}
+                      <h5 className=" text-lg text-sky-900 font-bold">
+                        {testimonial.username}
                       </h5>
 
                       <div className="flex items-center">
-                        <svg
-                          className="w-4 h-4 text-yellow-300 me-1"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="currentColor"
-                          viewBox="0 0 22 20"
-                        >
-                          <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                        </svg>
-                        <p className="ms-2 text-sm text-sky-900 dark:text-white">
-                          {testimonial.rating}
+                        <p className="=text-sm mb-3 text-sky-900 dark:text-white">
+                          {testimonial.email}
                         </p>
                       </div>
-                      <p className="mb-4 font-medium text-neutral-700 dark:text-neutral-400">
-                        {testimonial.location}
-                      </p>
                       <p className="mb-6 text-gray-700 dark:text-neutral-300">
-                        {testimonial.text}
+                        {testimonial.message}
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 96 960 960"

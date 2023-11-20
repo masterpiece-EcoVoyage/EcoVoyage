@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 const Packages = () => {
-  const [destinations, setDestinations] = useState([]);
+  const [packages, setPackages] = useState([]);
   const [types, setTypes] = useState(null);
   const [selectedType, setSelectedType] = useState("Select type");
   const [selected, setSelected] = useState("Select");
@@ -23,17 +23,16 @@ const Packages = () => {
   // end of dropdown
 
   const [filterOpen, setFilterOpen] = useState(false);
-  const openFilter=()=>{
+  const openFilter = () => {
     setFilterOpen(!filterOpen);
-  }
-
+  };
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/destinations?_limit=3")
+      .get("http://localhost:3999/getPackages")
       .then((response) => {
         // Handle the response data here
-        setDestinations(response.data);
+        setPackages(response.data);
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -43,31 +42,36 @@ const Packages = () => {
   }, []);
 
   useEffect(() => {
-    if (destinations.length !== 0) {
-      const newTypes = destinations.map(
-        (destination) => destination.destinations_type
-      );
-      setTypes(newTypes);
-    }
-
-    if (types !== null) {
-      const uniqueArray = [...new Set(types)];
-      setTypes(uniqueArray);
-    }
-  }, [destinations]);
+    // if (packages.length !== 0) {
+    //   const newTypes = packages.map(
+    //     (package) => package.destinations_type
+    //   );
+    //   setTypes(newTypes);
+    // }
+    // if (types !== null) {
+    //   const uniqueArray = [...new Set(types)];
+    //   setTypes(uniqueArray);
+    // }
+  }, [packages]);
 
   return (
     <>
       <div className="flex flex-col md:flex-row justify-center">
         <div className="">
-          <div className={`${filterOpen?'h-auto': 'h-16'} md:h-auto overflow-hidden my-16 mx-3 border gap-4 flex-wrap p-3 flex justify-center md:flex-col`}>
+          <div
+            className={`${
+              filterOpen ? "h-auto" : "h-16"
+            } md:h-auto overflow-hidden my-16 mx-3 border gap-4 flex-wrap p-3 flex justify-center md:flex-col`}
+          >
             <div className="w-full flex justify-between">
               <h2 className="mb-3 text-start text-sky-700 text-xl font-bold">
                 Filter
               </h2>
               <svg
-              onClick={openFilter}
-                class={`w-4 h-auto ${filterOpen?'hidden': 'block'} md:hidden`}
+                onClick={openFilter}
+                class={`w-4 h-auto ${
+                  filterOpen ? "hidden" : "block"
+                } md:hidden`}
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -90,8 +94,10 @@ const Packages = () => {
                 <line x1="4" y1="4" x2="10" y2="10" />
               </svg>
               <svg
-              onClick={openFilter}
-                class={`w-4 h-auto ${filterOpen?'block': 'hidden'} md:hidden`}
+                onClick={openFilter}
+                class={`w-4 h-auto ${
+                  filterOpen ? "block" : "hidden"
+                } md:hidden`}
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -369,33 +375,37 @@ const Packages = () => {
         </div>
         <div className="my-16 mx-8">
           <div className="flex flex-col gap-8">
-            {destinations.map((destination, id) => (
+            {packages.map((data, id) => (
               <div key={id}>
-                <article className=" flex flex-wrap sm:flex-nowrap shadow-lg border border-sky-200 mx-auto max-w-3xl group transform duration-500 hover:-translate-y-1 mb-2">
+                <article className=" flex flex-wrap sm:flex-nowrap shadow-lg border border-sky-200 mx-auto max-w-3xl md:w-[600px] group transform duration-500 hover:-translate-y-1 mb-2">
                   <img
                     className="w-full sm:w-52 h-auto"
                     src="https://i.ibb.co/Kr4b0zJ/152013403-10158311889099633-8423107287930246533-o.jpg"
                     alt=""
                   />
-                  <div className="h-auto w-full">
+                  <div className="h-auto w-full flex flex-col justify-between">
                     <div className="p-5 text-start">
-                      <h1 className="text-xl font-semibold text-gray-800 mt-4">
-                        {destination.title}
+                      <h1 className="text-2xl font-semibold text-sky-900">
+                        {data.title}
                       </h1>
-                      <p className="text-md overflow-hidden h-28 text-gray-400 mt-2 leading-relaxed">
-                        {destination.destinations_details}
+                      <p className="text-md overflow-hidden max-h-28 text-gray-400 mt-2 leading-relaxed">
+                        {data.overview}
+                      </p>
+                      <p className="text-md overflow-hidden max-h-28 text-gray-400 mt-2 leading-relaxed">
+                        Destination: {data.destination}
                       </p>
                     </div>
-                    <div className="px-2">
-                      <div className="sm:flex sm:justify-end">
-                        <Link
-                          to={`/package/${destination.destinations_id}`}
-                        >
-                          <button className="sm:mt-3 my-2 py-2 px-5 bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 md:text-lg rounded-lg shadow-md">
-                            Read more
-                          </button>
-                        </Link>
+                    <div className="flex justify-between items-center p-5 bg-gray-100">
+                      <div>
+                          <p className="text-lg text-gray-700 font-bold">
+                            {data.cost} JOD
+                          </p>
                       </div>
+                      <Link to={`/package/${data.packages_id}`}>
+                        <button className="py-2 px-5 bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 md:text-lg rounded-lg shadow-md">
+                          Read more
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 </article>

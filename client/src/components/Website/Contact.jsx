@@ -1,8 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
 
 const Contact = () => {
-  const handleChange = () => {};
-  const handleSubmit = () => {};
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setlastName] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "first_name" || name === "last_name") {
+      if (name === "first_name") {
+        setFirstName(value);
+      } else {
+        setlastName(value);
+      }
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+  };
+  async function handleSubmit(e){
+    e.preventDefault();
+    let contactData= {
+      username: `${firstName} ${lastName}`,
+      email: formData.email,
+      subject:formData.subject,
+      message: formData.message,
+    }
+    try {
+      const response = await axios.post(
+        `http://localhost:3999/addContact`,
+        contactData
+      );
+      setFormData({
+        email: "",
+        subject: "",
+        message: "",
+      });
+      setFirstName('');
+      setlastName('');
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    console.log(formData);
+    console.log(contactData);
+  };
   return (
     <div className="grid md:grid-cols-2">
       <div className="mb-4 md:mb-0">
@@ -10,32 +58,9 @@ const Contact = () => {
           className="brightness-150 w-full object-cover md:object-contain h-96 md:h-screen"
           src="https://images.unsplash.com/photo-1507812984078-917a274065be?q=80&w=1528&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="background"
-          //   style="filter: brightness(0.3)"
         />
       </div>
       <div className="container md:flex md:flex-col md:justify-center">
-        {/* <form className="flex flex-col w-full px-8">
-          <label className="mb-2 text-gray-700 text-sm" for="email">
-            Email address
-          </label>
-          <input
-            className="
-              border border-gray-200
-              mb-8
-              p-4
-              text-sm
-              rounded-md
-              block
-              w-full
-            "
-            type="text"
-            name="email"
-            id="email"
-          />
-          <button className="mx-auto bg-gray-100 text-gray-600 font-semibold py-3 w-32">
-            Continuar
-          </button>
-        </form> */}
         <form action="" onSubmit={handleSubmit}>
           <div className="min-h-screen flex justify-center items-start md:items-center">
             <div className="py-12 px-12 w-full">
@@ -53,6 +78,7 @@ const Contact = () => {
                     type="text"
                     name="first_name"
                     placeholder="First Name"
+                    value={firstName}
                     onChange={handleChange}
                     className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                   />
@@ -60,6 +86,7 @@ const Contact = () => {
                     type="text"
                     name="last_name"
                     placeholder="Last Name"
+                    value={lastName}
                     onChange={handleChange}
                     className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                   />
@@ -68,21 +95,26 @@ const Contact = () => {
                   type="email"
                   name="email"
                   placeholder="Email Address"
+                  value={formData.email}
                   onChange={handleChange}
                   className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                 />
                 <input
-                    type="text"
-                    name="subject"
-                    placeholder="Subject"
-                    onChange={handleChange}
-                    className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
-                  />
+                  type="text"
+                  name="subject"
+                  placeholder="Subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
+                />
                 <textarea
                   id="message"
+                  name="message"
                   rows="4"
                   class="block p-2.5 w-full text-sm rounded-lg border border-[#0c4a6e69] outline-none"
+                  value={formData.message}
                   placeholder="Write your message..."
+                  onChange={handleChange}
                 ></textarea>
               </div>
               <div className="text-center mt-6">

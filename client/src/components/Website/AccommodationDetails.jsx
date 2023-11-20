@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
+import Comments from "./Comments";
 
 const AccommodationDetails = () => {
-  const { type } = useParams();
-  const [destination, setDestination] = useState(null);
+  const { id } = useParams();
+  const [room, setRoom] = useState("Standard");
+  const [booking, setBooking] = useState({
+    first_name: "",
+    last_name: "",
+    address: "",
+    phone: "",
+    room_preference: "Standard",
+    adults: 0,
+    children: 0,
+  });
+  const [accommodation, setAccommodation] = useState(null);
 
   //   carousel images
   const images = [
@@ -24,15 +35,19 @@ const AccommodationDetails = () => {
     setCurrentImage((currentImage - 1 + images.length) % images.length);
   };
   //   end carousel images
-  const handleChange = () => {};
-  const handleSubmit = () => {};
-
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setBooking({
+      ...booking,
+      [name]: value,
+    });
+  }
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/destinations?destinations_type=${type}`)
+      .get(`http://localhost:3999/getAccommodationsByID/${id}`)
       .then((response) => {
         // Handle the response data here
-        setDestination(response.data[0]);
+        setAccommodation(response.data[0]);
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -40,6 +55,27 @@ const AccommodationDetails = () => {
         console.error("Error:", error);
       });
   }, []);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `http://localhost:3999/BookAccommodation/${accommodation.accommodation_id}`,
+        booking
+      );
+      setBooking({
+        first_name: "",
+        last_name: "",
+        address: "",
+        phone: "",
+        room_preference: "Standard",
+        adults: 0,
+        children: 0,
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
   return (
     <div>
       {/* <div className="w-full h-96 bg-cover bg-[50%] bg-[url('https://cdn.pixabay.com/photo/2017/06/04/16/32/new-york-2371488_960_720.jpg')]"></div> */}
@@ -111,14 +147,14 @@ const AccommodationDetails = () => {
 
       <div className="flex flex-col justify-center items-center my-10">
         <div className="w-2/3">
-          {destination && (
+          {accommodation && (
             <div className="flex flex-col gap-10">
               {/* title */}
               <h1 className="text-sky-700 text-start text-3xl font-bold">
-                {destination.title}
+                {accommodation.title}
               </h1>
               <h5 className="text-start text-xl">
-                {destination.destinations_details}
+                {accommodation.accommodations_details}
               </h5>
               <div className="flex justify-between">
                 {/* amenities */}
@@ -133,7 +169,9 @@ const AccommodationDetails = () => {
                   <h1 className="text-sky-700 text-start text-3xl font-bold">
                     Price
                   </h1>
-                  <h5 className="text-start text-xl">30.5 JOD</h5>
+                  <h5 className="text-start text-xl">
+                    {accommodation.pricing} JOD
+                  </h5>
                 </div>
                 {/* location */}
                 <div className="w-1/2">
@@ -159,141 +197,175 @@ const AccommodationDetails = () => {
                   {/* {destinations.map((destination, id)=>( */}
                   {/* <Link key={id} to="/"> */}
                   <Link to="/">
-                    <article className="max-w-[20rem] shadow-xl bg-cover bg-center overflow-hidden h-[410px] transform duration-500 hover:-translate-y-2 cursor-pointer group bg-[url('https://afhomeph.com/cdn/shop/files/Website_Banner_Direct_from_the_Factory_1.png?v=1685417210&width=2800')]">
+                    <article className="w-[20rem] shadow-xl bg-cover bg-center overflow-hidden h-[410px] transform duration-500 hover:-translate-y-2 cursor-pointer group bg-[url('https://afhomeph.com/cdn/shop/files/Website_Banner_Direct_from_the_Factory_1.png?v=1685417210&width=2800')]">
                       <div className="text-start hover:bg-[#12243a8f] bg-opacity-20 h-full px-5 flex flex-wrap flex-col pt-44 hover:bg-opacity-75 transform duration-300">
                         <h1 className="text-white text-2xl mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
-                          {destination.title}
+                          {accommodation.title}
                         </h1>
                         <div className="w-16 h-2 bg-sky-700 rounded-full mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300"></div>
                         <p className="my-3 py-3 opacity-0 max-h-[100px] overflow-hidden text-white text-xl group-hover:opacity-80 transform duration-500">
-                          {destination.destinations_details}
+                          {accommodation.accommodations_details}
                         </p>
                       </div>
                     </article>
                   </Link>
                   {/* ))} */}
                 </div>
-                <form action="" onSubmit={handleSubmit}>
-                  <div className="min-h-screen flex justify-center items-start md:items-center">
-                    <div className="py-12 px-12 w-full">
-                      <div className="flex flex-col justify-center">
-                        <h1 className="text-3xl text-sky-900 font-bold text-start mb-4 cursor-pointer">
-                          Hotel booking
-                        </h1>
-                      </div>
-                      <div className="space-y-4 flex flex-col justify-center items-center">
-                        <label className="px-3 self-start">Name</label>
-                        <div className="flex w-full gap-5">
-                          <input
-                            type="text"
-                            name="first_name"
-                            placeholder="First Name"
-                            onChange={handleChange}
-                            className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
-                          />
-                          <input
-                            type="text"
-                            name="last_name"
-                            placeholder="Last Name"
-                            onChange={handleChange}
-                            className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
-                          />
-                        </div>
-                        <label className="px-3 self-start">Address</label>
+              </div>
+              <div className="py-12">
+                <Comments id= {id} type="Accommodations"></Comments>
+              </div>
+              <div className="p-3 border border-sky-700 rounded-xl bg-gray-100">
+              <form action="" onSubmit={handleSubmit}>
+                <div className="min-h-screen flex justify-center items-start md:items-center">
+                  <div className="py-12 px-12 w-full">
+                    <div className="flex flex-col justify-center">
+                      <h1 className="text-3xl text-sky-900 font-bold text-start mb-4 cursor-pointer">
+                        Hotel booking
+                      </h1>
+                    </div>
+                    <div className="space-y-4 flex flex-col justify-center items-center">
+                      <label className="px-3 self-start">Name</label>
+                      <div className="flex w-full gap-5">
                         <input
                           type="text"
-                          name="address"
-                          placeholder="Address"
+                          name="first_name"
+                          placeholder="First Name"
+                          value={booking.first_name}
                           onChange={handleChange}
+                          className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
+                        />
+                        <input
+                          type="text"
+                          name="last_name"
+                          placeholder="Last Name"
+                          value={booking.last_name}
+                          onChange={handleChange}
+                          className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
+                        />
+                      </div>
+                      <label className="px-3 self-start">Address</label>
+                      <input
+                        type="text"
+                        name="address"
+                        placeholder="Address"
+                        value={booking.address}
+                        onChange={handleChange}
+                        className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
+                      />
+                      <label className="px-3 self-start">Phone</label>
+                      <input
+                        type="number"
+                        name="phone"
+                        placeholder="Phone"
+                        value={booking.phone}
+                        onChange={handleChange}
+                        className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
+                      />
+                      <label className="px-3 self-start">Room preference</label>
+                      <div className="flex flex-wrap gap-6 self-start px-3">
+                        <div class="flex items-center">
+                          <input
+                            checked={room === "Standard"}
+                            id="default-radio-1"
+                            type="radio"
+                            value=""
+                            name="default-radio"
+                            class="w-4 h-4 text-sky-900 bg-gray-100 border-gray-300"
+                            onChange={() => {
+                              setBooking({
+                                ...booking,
+                                room_preference: "Standard",
+                              });
+                              setRoom("Standard");
+                            }}
+                          />
+                          <label
+                            for="default-radio-1"
+                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                          >
+                            Standard
+                          </label>
+                        </div>
+                        <div class="flex items-center">
+                          <input
+                            checked={room === "Delux"}
+                            id="default-radio-2"
+                            type="radio"
+                            value=""
+                            name="default-radio"
+                            class="w-4 h-4 text-sky-900 bg-gray-100 border-gray-300"
+                            onChange={() => {
+                              setBooking({
+                                ...booking,
+                                room_preference: "Delux",
+                              });
+                              setRoom("Delux");
+                            }}
+                          />
+                          <label
+                            for="default-radio-2"
+                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                          >
+                            Delux
+                          </label>
+                        </div>
+                        <div class="flex items-center">
+                          <input
+                            checked={room === "Suite"}
+                            id="default-radio-2"
+                            type="radio"
+                            value=""
+                            name="default-radio"
+                            class="w-4 h-4 text-sky-900 bg-gray-100 border-gray-300"
+                            onChange={() => {
+                              setBooking({
+                                ...booking,
+                                room_preference: "Suite",
+                              });
+                              setRoom("Suite");
+                            }}
+                          />
+                          <label
+                            for="default-radio-2"
+                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                          >
+                            Suite
+                          </label>
+                        </div>
+                      </div>
+                      <label className="px-3 self-start">Guests</label>
+                      <div className="flex self-start w-1/2 gap-5">
+                        <input
+                          type="number"
+                          name="adults"
+                          placeholder="Adults"
+                          value={booking.adults}
+                          onChange={handleChange}
+                          required
                           className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                         />
                         <input
                           type="number"
-                          name="phone"
-                          placeholder="Phone"
+                          name="children"
+                          placeholder="Children"
+                          value={booking.children}
                           onChange={handleChange}
                           className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                         />
-                        <label className="px-3 self-start">
-                          Room preference
-                        </label>
-                        <div className="flex flex-wrap gap-6 self-start px-3">
-                          <div class="flex items-center">
-                            <input
-                              checked
-                              id="default-radio-1"
-                              type="radio"
-                              value=""
-                              name="default-radio"
-                              class="w-4 h-4 text-sky-900 bg-gray-100 border-gray-300"
-                            />
-                            <label
-                              for="default-radio-1"
-                              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                            >
-                              Standard
-                            </label>
-                          </div>
-                          <div class="flex items-center">
-                            <input
-                              id="default-radio-2"
-                              type="radio"
-                              value=""
-                              name="default-radio"
-                              class="w-4 h-4 text-sky-900 bg-gray-100 border-gray-300"
-                            />
-                            <label
-                              for="default-radio-2"
-                              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                            >
-                              Delux
-                            </label>
-                          </div>
-                          <div class="flex items-center">
-                            <input
-                              id="default-radio-2"
-                              type="radio"
-                              value=""
-                              name="default-radio"
-                              class="w-4 h-4 text-sky-900 bg-gray-100 border-gray-300"
-                            />
-                            <label
-                              for="default-radio-2"
-                              class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                            >
-                              Suite
-                            </label>
-                          </div>
-                        </div>
-                        <label className="px-3 self-start">Guests</label>
-                        <div className="flex self-start w-1/2 gap-5">
-                          <input
-                            type="number"
-                            name="adults"
-                            placeholder="Adults"
-                            onChange={handleChange}
-                            className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
-                          />
-                          <input
-                            type="number"
-                            name="children"
-                            placeholder="Children"
-                            onChange={handleChange}
-                            className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
-                          />
-                        </div>
-                      </div>
-                      <div className="text-center mt-6">
-                        <button
-                          type="submit"
-                          className="py-3 w-64 text-xl text-white hover:text-sky-900 bg-sky-900 border-2 hover:bg-white border-sky-900 rounded-2xl"
-                        >
-                          Book
-                        </button>
                       </div>
                     </div>
+                    <div className="text-center mt-6">
+                      <button
+                        type="submit"
+                        className="py-3 w-64 text-xl text-white hover:text-sky-900 bg-sky-900 border-2 hover:bg-white border-sky-900 rounded-2xl"
+                      >
+                        Book
+                      </button>
+                    </div>
                   </div>
-                </form>
+                </div>
+              </form>
               </div>
             </div>
           )}

@@ -1,38 +1,103 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import Testimonials from "./Home Page/Testimonials";
+import Comments from "./Comments";
 
 const PackageDetails = () => {
   const { id } = useParams();
-  const [destination, setDestination] = useState(null);
+  const [packageData, setPackageData] = useState([]);
+  const [itinerary, setItinerary] = useState([]);
+  const [inclusions, setInclusions] = useState([]);
+  const [exclusions, setExclusions] = useState([]);
+  const [highlights, setHighlights] = useState([]);
 
-  const handleChange = () => {};
-  const handleSubmit = () => {};
+  const [booking, setBooking] = useState({
+    first_name: "",
+    last_name: "",
+    address: "",
+    phone: "",
+    adults: 0,
+    children: 0,
+  });
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setBooking({
+      ...booking,
+      [name]: value,
+    });
+  }
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `http://localhost:3999/BookPackage/${packageData.packages_id}`,
+        booking
+      );
+      setBooking({
+        first_name: "",
+        last_name: "",
+        address: "",
+        phone: "",
+        adults: 0,
+        children: 0,
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/destinations?destinations_id=${id}`)
+      .get(`http://localhost:3999/getPackagesById/${id}`)
       .then((response) => {
         // Handle the response data here
-        setDestination(response.data[0]);
-        // setTypes(response.data.destinations_type);
+        setPackageData(response.data[0]);
       })
       .catch((error) => {
         // Handle errors here
         console.error("Error:", error);
       });
   }, []);
+  useEffect(() => {
+    setItinerary(packageData.itinerary);
+    setInclusions(packageData.inclusions);
+    setExclusions(packageData.exclusions);
+    setHighlights(packageData.highlights);
+  }, [packageData]);
+
+  function renderAttributes(obj) {
+    return (
+      <>
+        {Object.keys(obj).map((key, id) =>
+          obj === itinerary ? (
+            <li key={id} className="pb-3">
+              <strong>{key}:</strong> {obj[key]}
+            </li>
+          ) : (
+            <li key={id} className="pb-3">
+              {obj[key]}
+            </li>
+          )
+        )}
+      </>
+    );
+  }
+  console.log(itinerary);
+
   return (
     <div>
       <div className="w-full h-96 bg-cover bg-[50%] bg-[url('https://cdn.pixabay.com/photo/2017/06/04/16/32/new-york-2371488_960_720.jpg')]"></div>
       <div className="flex flex-col justify-center items-center my-10">
         <div className="w-2/3">
-          {destination && (
+          {packageData && (
             <div className="flex flex-col gap-10">
               {/* title */}
               <h1 className="text-sky-900 text-start text-3xl font-bold">
-                {destination.title} <span className="text-gray-500 text-xl font-normal">7 Days</span>
+                {packageData.title}{" "}
+                <span className="text-gray-500 text-xl font-normal">
+                  {itinerary? Object.keys(itinerary).length===1? "Day":`${Object.keys(itinerary).length} Days`:<></>}
+                </span>
               </h1>
               {/* overview */}
               <h5 className="text-start text-xl">
@@ -40,7 +105,7 @@ const PackageDetails = () => {
                   Overview
                 </span>{" "}
                 <br />
-                {destination.destinations_details}
+                {packageData.overview}
               </h5>
               {/* Itinerary */}
               <h5 className="text-start text-xl">
@@ -49,16 +114,13 @@ const PackageDetails = () => {
                 </span>{" "}
                 <br />
               </h5>
+
               <ol className="text-start text-xl px-5">
-                <li className="pb-3">Day 1: Brescia.</li>
-                <li className="pb-3">Day 2: Brescia → Franciacorta.</li>
-                <li className="pb-3">Day 3: Franciacorta → Lake Iseo. </li>
-                <li className="pb-3">Day 4: Monte Isola.</li>
-                <li className="pb-3">
-                  Day 5: Natural Reserve & S. Pietro in Lamosa.
-                </li>
-                <li className="pb-3">Day 6: Among Franciacorta vineyards.</li>
-                <li>Day 7: Arrivederci!.</li>
+                {itinerary && Object.keys(itinerary).length > 0 ? (
+                  renderAttributes(itinerary)
+                ) : (
+                  <li className="pb-3">No itinerary data available.</li>
+                )}
               </ol>
               {/* highlights */}
               <h5 className="text-start text-xl">
@@ -68,17 +130,11 @@ const PackageDetails = () => {
                 <br />
               </h5>
               <ol className="text-start text-xl px-5 list-disc list-inside">
-                <li className="pb-3">
-                  The magic of climbing Monte Isola to enjoy panoramic view of
-                  the Lake.
-                </li>
-                <li className="pb-3">
-                  The excellence of the best Franciacorta D.O.C.G.
-                </li>
-                <li className="pb-3">The beauty of Franciacorta vineyards.</li>
-                <li className="pb-3">
-                  Walking tours with environmental hiking guide.
-                </li>
+              {highlights && Object.keys(highlights).length > 0 ? (
+                  renderAttributes(highlights)
+                ) : (
+                  <li>No itinerary data available.</li>
+                )}
               </ol>
               {/* details */}
               <h1 className="text-sky-900 text-start text-3xl font-bold">
@@ -88,33 +144,18 @@ const PackageDetails = () => {
               <h5 className="text-2xl text-start text-sky-700 font-bold">
                 Cost
               </h5>
-              <h5 className="text-start text-xl px-3">209.99 JOD per person</h5>
+              <h5 className="text-start text-xl px-3">{packageData.cost} JOD per person</h5>
 
               {/* inclusion */}
               <h5 className="text-2xl text-start text-sky-700 font-bold">
                 Inclusions
               </h5>
               <ol className="text-start text-xl px-5 list-disc list-inside">
-                <li className="pb-3">
-                  Transfer from and to Milan by private minivan with driver.
-                </li>
-                <li className="pb-3">
-                  6 overnights with breakfast (4-star hotels and agriturismo).
-                </li>
-                <li className="pb-3">
-                  2 dinners at agriturismo restaurant, 1 glass of Franciacorta
-                  included.
-                </li>
-                <li className="pb-3">
-                  Environmental Hiking Guide for the entire tour.
-                </li>
-                <li className="pb-3">Daily luggage transfer.</li>
-                <li className="pb-3">
-                  Medical Insurance (only for non-Italian citizens).
-                </li>
-                <li className="pb-3">
-                  Italy Destination by Paltours assistance.
-                </li>
+              {inclusions && Object.keys(inclusions).length > 0 ? (
+                  renderAttributes(inclusions)
+                ) : (
+                  <li>No itinerary data available.</li>
+                )}
               </ol>
 
               {/* exclusions */}
@@ -122,9 +163,11 @@ const PackageDetails = () => {
                 Exclusions
               </h5>
               <ol className="text-start text-xl px-5 list-disc list-inside">
-                <li className="pb-3">Airfare.</li>
-                <li className="pb-3">Visa fees.</li>
-                <li className="pb-3">Personal expenses.</li>
+              {exclusions && Object.keys(exclusions).length > 0 ? (
+                  renderAttributes(exclusions)
+                ) : (
+                  <li>No itinerary data available.</li>
+                )}
               </ol>
               {/* location */}
               <h5 className="text-start text-sky-700 text-2xl font-bold">
@@ -140,15 +183,17 @@ const PackageDetails = () => {
                 allowFullScreen
               />
               {/* reviews */}
-        <Testimonials />
+              <div className="py-12">
+                <Comments id= {id} type="Packages"></Comments>
+              </div>
 
-            <div>
-            <h5 className="text-2xl text-start text-sky-700 font-bold">
-                Book your trip
-              </h5>
-              <form action="" onSubmit={handleSubmit}>
+              <div>
+                <h5 className="text-2xl text-start text-sky-700 font-bold mb-5">
+                  Book your trip
+                </h5>
+                <form action="" onSubmit={handleSubmit} className="bg-gray-100 border border-sky-700 rounded-xl">
                   <div className="min-h-screen flex justify-center items-start md:items-center">
-                    <div className="py-12 px-12 w-full">
+                    <div className="p-8 w-full">
                       <div className="space-y-4 flex flex-col justify-center items-center">
                         <label className="px-3 self-start">Name</label>
                         <div className="flex w-full gap-5">
@@ -156,6 +201,7 @@ const PackageDetails = () => {
                             type="text"
                             name="first_name"
                             placeholder="First Name"
+                            value={booking.first_name}
                             onChange={handleChange}
                             className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                           />
@@ -163,6 +209,7 @@ const PackageDetails = () => {
                             type="text"
                             name="last_name"
                             placeholder="Last Name"
+                            value={booking.last_name}
                             onChange={handleChange}
                             className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                           />
@@ -172,6 +219,7 @@ const PackageDetails = () => {
                           type="text"
                           name="address"
                           placeholder="Address"
+                          value={booking.address}
                           onChange={handleChange}
                           className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                         />
@@ -180,6 +228,7 @@ const PackageDetails = () => {
                           type="number"
                           name="phone"
                           placeholder="Phone"
+                          value={booking.phone}
                           onChange={handleChange}
                           className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                         />
@@ -189,6 +238,7 @@ const PackageDetails = () => {
                             type="number"
                             name="adults"
                             placeholder="Adults"
+                            value={booking.adults}
                             onChange={handleChange}
                             className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                           />
@@ -196,6 +246,7 @@ const PackageDetails = () => {
                             type="number"
                             name="children"
                             placeholder="Children"
+                            value={booking.children}
                             onChange={handleChange}
                             className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                           />
@@ -212,7 +263,7 @@ const PackageDetails = () => {
                     </div>
                   </div>
                 </form>
-            </div>
+              </div>
             </div>
           )}
         </div>
