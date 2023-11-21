@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../Images/logo.png";
+import { useCookies } from 'react-cookie';
+import axios from "axios";
 
 const Signup = () => {
   const history = useNavigate();
+  const [cookies, setCookie] = useCookies(['token']);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     first_name: "",
@@ -16,14 +19,14 @@ const Signup = () => {
 
   function handleChange(e) {
     const { name, value } = e.target;
-    if (e.target.name === "confirm_password") {
-      setConfirm(e.target.value);
-    } else {
+    // if (e.target.name === "confirm_password") {
+    //   setConfirm(e.target.value);
+    // } else {
       setFormData({
         ...formData,
         [name]: value,
       });
-    }
+    // }
   }
   async function handleSubmit(e) {
     e.preventDefault();
@@ -70,13 +73,14 @@ const Signup = () => {
         "http://localhost:3999/Signup",
         formData
       );
+      const token = response.data.token;
+      setCookie('token', token, { path: '/' });
       history("/");}
     } catch (error) {
       console.error("Error:", error);
     }
     // }
   }
-  console.log(error)
 
   const validateEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.(com|net)$/.test(email);
