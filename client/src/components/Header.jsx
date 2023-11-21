@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../Images/logo.png"
+import logo from "../Images/logo.png";
+import { useAuth } from "./Context/AuthContext";
 
 const Header = () => {
   const [isMenuOpened, setIsMenuOpened] = useState(false);
+  const { isLoggedIn, login, logout } = useAuth();
 
   const location = useLocation();
   if (location.pathname === "/login" || location.pathname === "/signup") {
@@ -166,20 +168,35 @@ const Header = () => {
                 />
               </svg>
             </button>
-
             {/* logo */}
             <Link to="/" className="flex items-center">
-              <img
-                src={logo}
-                className="h-8 mr-3"
-                alt="EcoVoyage Logo"
-              />
+              <img src={logo} className="h-8 mr-3" alt="EcoVoyage Logo" />
               <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
                 EcoVoyage
               </span>
             </Link>
           </div>
-          <div className="my-1 flex items-center lg:my-0 lg:ml-auto">
+          <div
+            className={`${
+              isLoggedIn ? "flex" : "hidden"
+            } my-1 items-center lg:my-0 lg:ml-auto`}
+          >
+            <Link to="/dashboard">
+              <button
+                type="button"
+                className="mr-2 inline-block rounded px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white hover:text-sky-900 transition duration-150 ease-in-out hover:bg-white hover:text-primary-600 focus:text-primary-600 focus:outline-none focus:ring-0 active:text-primary-700 dark:text-primary-400 dark:hover:bg-neutral-700 dark:hover:bg-opacity-60 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
+                data-te-ripple-init
+                data-te-ripple-color="light"
+              >
+                Profile
+              </button>
+            </Link>
+          </div>
+          <div
+            className={`${
+              isLoggedIn ? "hidden" : "flex"
+            } my-1 items-center lg:my-0 lg:ml-auto`}
+          >
             <Link to="/login">
               <button
                 type="button"
