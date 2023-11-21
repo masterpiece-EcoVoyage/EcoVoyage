@@ -2,9 +2,14 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import logo from '../../Images/logo.png'
+import Swal from 'sweetalert2';
+import { useCookies } from 'react-cookie';
 // import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [cookies, setCookie] = useCookies(['token']);
+  const [error, setError] = useState("");
+
   // const [email, setEmail] = useState("");
   // const [password, setPassword] = useState("");
   const history = useNavigate();
@@ -21,18 +26,69 @@ const Login = () => {
       [name]: value,
     });
   }
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/Login",
-        formData
-      );
-      history("/");
-    } catch (error) {
-      console.error("Error:", error);
+
+    if (!formData.email || !formData.password) {
+      setError("Email and password are required.");
+      return;
     }
-  }
+
+    try {
+      const response = await axios.post("http://localhost:3999/Login", {
+        email:formData.email,
+        password:formData.password
+      });
+
+      // Assuming the API returns a token
+      const token = response.data.token;
+
+      // Set the token in a cookie
+      setCookie('token', token, { path: '/' });
+      setError("Sign-in successful");
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'You have Signed in successfully.',
+        confirmButtonText: 'OK',
+        customClass: {
+          confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
+        }
+      });
+      history("/");
+
+      // Handle successful sign-in, e.g., redirect or show a success message
+      // alert("Sign-in successful:", response.data);
+      console.log("Sign-in successful:", response.data);
+    } catch (error) {
+      // Delay the error message and handle it
+      setTimeout(() => {
+        console.error("Sign-in error:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Sign-in failed. Email or password is invalid.',
+          confirmButtonText: 'OK',
+          customClass: {
+            confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
+          }
+        });
+        setError("Sign-in failed. Email or password is invalid");
+      }, 100);
+    }
+  };
+  // async function handleSubmit(e) {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:5000/Login",
+  //       formData
+  //     );
+  //     history("/");
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // }
 
   return (
     <div className="bg-[url('https://images.unsplash.com/photo-1529718836725-f449d3a52881?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')]">

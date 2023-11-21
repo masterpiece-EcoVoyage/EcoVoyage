@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from '../../Images/logo.png'
-
+import logo from "../../Images/logo.png";
 
 const Signup = () => {
   const history = useNavigate();
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -12,44 +12,94 @@ const Signup = () => {
     country: "",
     password: "",
   });
-  const [confirm, setConfirm] = useState('');
+  const [confirm, setConfirm] = useState("");
 
   function handleChange(e) {
     const { name, value } = e.target;
-    if(e.target.name === "confirm_password"){
-        setConfirm(e.target.value);
-    }else{
-        setFormData({
+    if (e.target.name === "confirm_password") {
+      setConfirm(e.target.value);
+    } else {
+      setFormData({
         ...formData,
         [name]: value,
-        });
+      });
     }
   }
   async function handleSubmit(e) {
     e.preventDefault();
     console.log(formData);
+
+    
     // validateForm();
     // if (!errors) {
-      // console
-      try {
-        const response = await axios.post(
-          "http://localhost:5000/Signup",
-          formData
-        );
-        history("/");
-      } catch (error) {
-        console.error("Error:", error);
-      }
+    try {
+      if (!validateEmail(formData.email)) {
+      setError("Please enter a valid email.");
+      return;
+    } else{
+        setError("");
+    }
+
+    if (!validatePassword(formData.password)) {
+      setError(`Password must contain at least one lowercase letter, one uppercase letter, \n
+      one digit,\n one special character (@#$%^&!), and be between 6 and 30 characters in length.`);
+      return;
+    }   else {
+        setError("");
+    }
+    if(!validateFirstName(formData.first_name))
+    {
+    setError("First Nmae must be between 3 and 20 characters in length.");
+      return;
+    }else {
+       setError("");
+    }
+
+    if(!validateLastName(formData.last_name))
+    {
+    setError("Last Name must be between 3 and 20 characters in length.");
+      return;
+    }else {
+       setError("");
+    }
+      if (formData.password !== formData.confirm_password) {
+        setError("Password doesn't match");
+      }else{
+      setError("");
+      const response = await axios.post(
+        "http://localhost:3999/Signup",
+        formData
+      );
+      history("/");}
+    } catch (error) {
+      console.error("Error:", error);
+    }
     // }
   }
+  console.log(error)
 
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.(com|net)$/.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&!])[A-Za-z\d@#$%^&!]{6,30}$/;
+    return passwordPattern.test(password);
+  };
+  const validateFirstName = (first_name) => {
+    return /^[A-Za-z\s]{3,20}$/.test(first_name);
+  };
+  
+  const validateLastName = (last_name) => {
+    return /^[A-Za-z\s]{3,20}$/.test(last_name);
+  };
   return (
     <div className="bg-[url('https://images.unsplash.com/photo-1529718836725-f449d3a52881?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] py-10">
       <form action="" onSubmit={handleSubmit}>
         <div className="min-h-screen flex justify-center items-center">
           <div className="py-12 px-12 bg-white rounded-2xl shadow-xl z-20">
             <div className="flex flex-col justify-center items-center">
-            <img className=" w-16" src={logo} alt="EcoVoyage logo" />
+              <img className=" w-16" src={logo} alt="EcoVoyage logo" />
               <h1 className="text-3xl text-sky-900 font-bold text-center mb-4 cursor-pointer">
                 Create An Account
               </h1>
