@@ -50,8 +50,8 @@ const Dashboard = () => {
     setIsSideOpen(!isSideOpen);
   }
   return (
-    <div className="">
-      <div className="relative w-[260px] h-screen overflow-auto">
+    <div className="min-h-screen">
+      <div className="relative w-[260px] ">
         <div
           className={`peer absolute top-0 border ${position} lg:left-0 h-full w-full object-cover transition-all delay-100 duration-1000`}
         >
@@ -266,7 +266,7 @@ const Dashboard = () => {
           </aside>
         </div>
       </div>
-      <div className="min-h-screen"></div>
+      <div className=""></div>
     </div>
   );
 };
