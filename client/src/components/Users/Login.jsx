@@ -106,7 +106,7 @@ const Login = () => {
             </div>
             <div className="space-y-4">
               <input
-                type="text"
+                type="email"
                 name="email"
                 placeholder="Email Addres"
                 onChange={handleChange}
@@ -123,6 +123,7 @@ const Login = () => {
                 <p className="mt-4 text-sm text-sky-900 cursor-pointer text-start"> Forgot yo password?</p>
               </Link>
             </div>
+            <p className="text-sm text-start text-red-500">{error}</p>
             <div className="text-center mt-6">
               <button
                 type="submit"

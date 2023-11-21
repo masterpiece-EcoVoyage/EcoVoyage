@@ -117,6 +117,7 @@ const Signup = () => {
                   type="text"
                   name="first_name"
                   placeholder="First Name"
+                  required
                   onChange={handleChange}
                   className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                 />
@@ -124,6 +125,7 @@ const Signup = () => {
                   type="text"
                   name="last_name"
                   placeholder="Last Name"
+                  required
                   onChange={handleChange}
                   className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                 />
@@ -132,6 +134,7 @@ const Signup = () => {
                 type="email"
                 name="email"
                 placeholder="Email Address"
+                required
                 onChange={handleChange}
                 className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
               />
@@ -139,6 +142,7 @@ const Signup = () => {
                 type="password"
                 name="password"
                 placeholder="Password"
+                required
                 onChange={handleChange}
                 className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
               />
@@ -146,6 +150,7 @@ const Signup = () => {
                 type="password"
                 name="confirm_password"
                 placeholder="Confirm Password"
+                required
                 onChange={handleChange}
                 className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
               />
@@ -157,6 +162,7 @@ const Signup = () => {
                 className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
               />
             </div>
+            <p className="text-sm text-start text-red-500 w-96">{error}</p>
             <div className="text-center mt-6">
               <button
                 type="submit"

@@ -7,6 +7,7 @@ import Packages from '../Website/Home Page/Packages'
 import Testimonials from '../Website/Home Page/Testimonials'
 
 const Home = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   return (
     <div id='Home'>
         <Hero />

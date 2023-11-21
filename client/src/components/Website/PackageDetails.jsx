@@ -48,6 +48,7 @@ const PackageDetails = () => {
   }
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     axios
       .get(`http://localhost:3999/getPackagesById/${id}`)
       .then((response) => {
