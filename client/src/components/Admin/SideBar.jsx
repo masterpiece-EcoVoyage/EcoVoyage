@@ -1,59 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useCookies } from "react-cookie";
-import axios from "axios";
+import React, { useState } from 'react'
 
-const Dashboard = () => {
-  const [user, setUser] = useState([]);
-  const [page, setPage] = useState("dashboard");
-  const [photoPreview, setPhotoPreview] = useState(null);
-  const [cookies, setCookie, removeCookie] = useCookies(["token"]);
-  const history = useNavigate();
-
-  // fetch products
-  //   useEffect(() => {
-  //     axios
-  //       .get("http://localhost:5000/users/1")
-  //       .then((response) => {
-  //         setUser(response.data);
-  //         setPhotoPreview(user.profile_image_name);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error:", error);
-  //       });
-  //   }, []);
-
-  // useEffect(() => {
-  //   if (user.profile_image_name) {
-  //         const reader = new FileReader();
-
-  //         reader.onload = (e) => {
-  //           setPhotoPreview(e.target.result);
-  //         };
-  //         reader.readAsDataURL(user.profile_image_name);}
-  // }, [user.profile_image_name]);
-
-  function logout() {
-    removeCookie("token");
-    history("/");
-  }
-
-  // to open and close sidebar
-  const [isSideOpen, setIsSideOpen] = useState(true);
-  const [position, setPosition] = useState("left-0");
-  function openSideBar() {
-    if (isSideOpen) {
-      setPosition("-left-64");
-    } else {
-      setPosition("left-0");
-    }
-    setIsSideOpen(!isSideOpen);
-  }
-  const onSelectPage=(selectedPage)=>{
-    setPage(selectedPage);
-  }
+const SideBar = () => {
+    const [page, setPage] = useState("dashboard");
   return (
-    <div className="min-h-screen">
+    <div>
       <div className="relative w-[260px] ">
         <div
           className={`peer absolute top-0 border ${position} lg:left-0 h-full w-full object-cover transition-all delay-100 duration-1000`}
@@ -155,13 +105,13 @@ const Dashboard = () => {
                   </label>
 
                   <button
-                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    className={`w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 ${page==="dashboard"?"bg-gray-100":""}`}
                     onClick={() => setPage("dashboard")}
                   >
                     <span className="mx-2 text-sm font-medium">Dashboard</span>
                   </button>
                   <button
-                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
                     onClick={() => setPage("profile")}
                   >
                     <span className="mx-2 text-sm font-medium">Profile</span>
@@ -175,13 +125,13 @@ const Dashboard = () => {
 
                   <button
                     onClick={() => setPage("users")}
-                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
                   >
                     <span className="mx-2 text-sm font-medium">Users</span>
                   </button>
                   <button
                     onClick={() => setPage("bookings")}
-                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
                   >
                     <span className="mx-2 text-sm font-medium">Bookings</span>
                   </button>
@@ -194,13 +144,13 @@ const Dashboard = () => {
 
                   <button
                     onClick={() => setPage("flights")}
-                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
                   >
                     <span className="mx-2 text-sm font-medium">Flights</span>
                   </button>
                   <button
                     onClick={() => setPage("destinations")}
-                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
                   >
                     <span className="mx-2 text-sm font-medium">
                       Destinations
@@ -208,7 +158,7 @@ const Dashboard = () => {
                   </button>
                   <button
                     onClick={() => setPage("packages")}
-                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
                   >
                     <span className="mx-2 text-sm font-medium">Packages</span>
                   </button>
@@ -221,7 +171,7 @@ const Dashboard = () => {
 
                   <button
                     onClick={() => setPage("accommodations")}
-                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
                   >
                     <span className="mx-2 text-sm font-medium">
                       Accommodations
@@ -229,7 +179,7 @@ const Dashboard = () => {
                   </button>
                   <button
                     onClick={() => setPage("transportations")}
-                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
                   >
                     <span className="mx-2 text-sm font-medium">
                       Transportations
@@ -237,7 +187,7 @@ const Dashboard = () => {
                   </button>
                   <button
                     onClick={() => setPage("activities")}
-                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
                   >
                     <span className="mx-2 text-sm font-medium">Activities</span>
                   </button>
@@ -245,7 +195,7 @@ const Dashboard = () => {
 
                 <div className="space-y-3 ">
                   <button
-                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+                    className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
                     onClick={logout}
                   >
                     <svg
@@ -269,10 +219,8 @@ const Dashboard = () => {
           </aside>
         </div>
       </div>
-      {/* <SideBar onSelectPage={onSelectPage}></SideBar> */}
-      <div className=""></div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default SideBar
