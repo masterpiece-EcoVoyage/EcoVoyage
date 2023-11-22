@@ -26,6 +26,7 @@ const Contact = () => {
       });
     }
   };
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   async function handleSubmit(e){
     e.preventDefault();
     let contactData= {

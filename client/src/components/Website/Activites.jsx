@@ -29,6 +29,7 @@ const Activites = () => {
 
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     axios
       .get("http://localhost:5000/destinations?_limit=3")
       .then((response) => {

@@ -15,7 +15,7 @@ import Activites from './components/Website/Activites';
 import Packages from './components/Website/Packages';
 import PackageDetails from './components/Website/PackageDetails';
 import NotFound from './components/NotFound';
-import Dashboard from './components/Admin/Dashboard';
+import AdminAccount from './components/Admin/AdminAccount';
 
 function App() {
   return (
@@ -37,7 +37,7 @@ function App() {
             <Route path='/signup' element={<Signup />} />
             <Route path='/about' element={<AboutUs />} />
             <Route path='/contact' element={<Contact />} />
-            <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/dashboard' element={<AdminAccount />} />
             <Route path='*' element={<NotFound />} />
           </Routes>
         </div>

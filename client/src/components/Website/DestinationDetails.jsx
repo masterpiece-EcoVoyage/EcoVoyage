@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
 const DestinationDetails = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   const { id } = useParams();
   const [destination, setDestination] = useState(null);
 

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "axios";import { useCookies } from 'react-cookie';
+import Swal from 'sweetalert2';
 
 const Comments = (id) => {
   // console.log(id)
   const [comments, setComments] = useState([]);
   const [endpoint, setEndpoint] = useState(``);
-  const [addEndpoint, setAddEndpoint] = useState(``);
+    const [cookies, setCookie, removeCookie] = useCookies(['token']);
+    const [addEndpoint, setAddEndpoint] = useState(``);
   const [formattedComments, setFormattedComments] = useState({
     formattedDate: "",
     formattedTime: "",
@@ -29,32 +31,77 @@ const Comments = (id) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const token = cookies['token'];
 
     if (id.type === "Accommodations") {
         setFormData({
           ...formData,
           accommodation_id: id.id,
         })
-        axios.post(`http://localhost:3999/addComment`, formData)
+        try{
+        axios.post(`http://localhost:3999/addComment/${id.id}`,formData,{
+          headers: {
+            'authorization': `${token}`,
+            // Add other headers if needed
+          },
+        }
+        )
       .then((response)=>{
         setFormData({
           comment_text:"",
         })
+        fetchComments();
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'You comment was added successfully.',
+          confirmButtonText: 'OK',
+          customClass: {
+            confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
+          }
+        });
       })
+    }catch(error){
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error,
+        confirmButtonText: 'OK',
+        customClass: {
+          confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
+        }
+      });
+    }
 
       } else if (id.type === "Packages") {
         setFormData({
           ...formData,
           packages_id: id.id,
         })
-        axios.post(`http://localhost:3999/addCommentPac`, formData)
+        axios.post(`http://localhost:3999/addCommentPac/${id.id}`, formData,{
+          headers: {
+            'authorization': `${token}`,
+          },
+        })
       .then((response)=>{
         setFormData({
           comment_text:"",
         })
+        fetchComments();
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'You comment was added successfully.',
+          confirmButtonText: 'OK',
+          customClass: {
+            confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
+          }
+        });
       })
       } else if (id.type === "Activities") {
-        axios.post(`http://localhost:3999/addCommentPac`, formData)
+        axios.post(`http://localhost:3999/addCommentPac/${id.id}`, 
+        formData
+        )
       .then((response)=>{
         setFormData({
           comment_text:"",
@@ -63,13 +110,14 @@ const Comments = (id) => {
       }
   };
 
-  useEffect(() => {
+  const fetchComments=()=>{
+    let endpoint ="";
     if (id.type === "Accommodations") {
-      setEndpoint("getAccommodationsWithComments");
+      endpoint="getAccommodationsWithComments";
     } else if (id.type === "Packages") {
-      setEndpoint("getPackagesWithComments");
+      endpoint="getPackagesWithComments";
     } else if (id.type === "Activities") {
-      setEndpoint("getActivitiesWithComments");
+      endpoint="getActivitiesWithComments";
     }
     axios
       .get(`http://localhost:3999/${endpoint}/${id.id}`)
@@ -85,6 +133,9 @@ const Comments = (id) => {
         // Handle errors here
         console.error("Error:", error);
       });
+  }
+  useEffect(() => {
+    fetchComments();
   }, [id]);
   //   console.log(comments);
 

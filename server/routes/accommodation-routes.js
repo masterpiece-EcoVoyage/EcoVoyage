@@ -10,17 +10,17 @@ router.get('/getAccommodationsPaginated', accommodationController.getAccommodati
 
 router.post('/addAccommodation', accommodationController.addAccommodation);
 
-router.put(`/updateAccommodation/:id`, accommodationController.updateAccommodation);
+router.put('/updateAccommodation/:id', accommodationController.updateAccommodation);
 
-router.put('/deleteAccommodation', accommodationController.deleteAccommodation);
+router.put('/deleteAccommodation/:id', accommodationController.markAccommodationAsDeleted);
 
 router.get('/getAccommodationsByID/:id', accommodationController.getAccommodationsByID);
 
-router.post('/addComment', verifyJWT.authorize([1]),accommodationController.addCommentAccomm);
+router.post('/addComment/:id', verifyJWT.authorize([1]), accommodationController.addCommentAccomm);
 
 router.get('/getAccommodationsWithComments/:id', accommodationController.getAccommodationsWithComments);
 
-router.post('/BookAccommodation/:id',verifyJWT.authorize([1]), accommodationController.BookAccommodation);
+router.post('/BookAccommodation/:id', verifyJWT.authorize([1]), accommodationController.bookAccommodation);
 
 router.get('/getBookAccommodations/:id', accommodationController.getBookAccommodations);
 

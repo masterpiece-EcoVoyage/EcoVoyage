@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 const Destinations = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   const [destinations, setDestinations] = useState([]);
   const [types, setTypes] = useState(null);
   const [selectedType, setSelectedType] = useState("Select type");

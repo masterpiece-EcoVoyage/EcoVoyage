@@ -13,7 +13,7 @@ router.put('/deletePackages', packagesController.deletePackages);
 
 router.get('/getPackagesById/:id', packagesController.getPackagesById);
 
-router.post('/addCommentPac',verifyJWT.authorize([1]),packagesController.addCommentPac);
+router.post('/addCommentPac/:id',verifyJWT.authorize([1]),packagesController.addCommentPac);
 
 router.get('/getPackagesWithComments/:id', packagesController.getPackagesWithComments);
 

@@ -81,7 +81,8 @@ const deletePackages = async (req, res) => {
 }
 
 const addCommentPac = async (req, res) => {
-    const { packages_id, comment_text } = req.body;
+    const packages_id = req.params.id;
+    const  comment_text  = req.body.comment_text;
     const user_id = req.user.user_id;
     try {
         const packagesResult = await db.query(packageQueries.addCommentQuery, [packages_id, user_id, comment_text]);
@@ -104,9 +105,9 @@ const addCommentPac = async (req, res) => {
             VALUES ($1, $2, $3)
             RETURNING *`;
         const insertCommentValues = [packages_id, user_id, comment_text];
-        const commentResult = await db.query(insertCommentQuery, insertCommentValues);
+        // const commentResult = await db.query(insertCommentQuery, insertCommentValues);
 
-        res.json({ message: 'Comment added successfully', comment: commentResult.rows[0] });
+        res.json({ message: 'Comment added successfully', comment: packagesResult.rows[0] });
     } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');

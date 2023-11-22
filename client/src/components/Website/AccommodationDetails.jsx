@@ -43,6 +43,7 @@ const AccommodationDetails = () => {
     });
   }
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     axios
       .get(`http://localhost:3999/getAccommodationsByID/${id}`)
       .then((response) => {

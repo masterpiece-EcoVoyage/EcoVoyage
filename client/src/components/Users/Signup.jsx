@@ -5,6 +5,7 @@ import { useCookies } from 'react-cookie';
 import axios from "axios";
 
 const Signup = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   const history = useNavigate();
   const [cookies, setCookie] = useCookies(['token']);
   const [error, setError] = useState('');

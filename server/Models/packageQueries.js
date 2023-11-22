@@ -65,7 +65,10 @@ const getPackageWithCommentsQuery = `
     WHERE
         packages.is_deleted = false
     AND
-        packages.packages_id = $1`;
+        packages.packages_id = $1
+    ORDER BY timestamp desc
+    LIMIT 5
+        `;
 
 
 

@@ -7,6 +7,7 @@ import { useCookies } from 'react-cookie';
 // import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   const [cookies, setCookie] = useCookies(['token']);
   const [error, setError] = useState("");
 

@@ -28,6 +28,7 @@ const Accommodations = () => {
   };
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     axios
       .get("http://localhost:3999/getAccommodations")
       .then((response) => {
@@ -48,8 +49,6 @@ const Accommodations = () => {
       );
       setTypes(newTypes);
     }
-
-    console.log(types);
 
     if (types !== null) {
       const uniqueArray = [...new Set(types)];
