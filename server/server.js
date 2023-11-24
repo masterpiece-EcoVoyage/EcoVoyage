@@ -5,6 +5,8 @@ const passport = require("passport");
 app.use(express.json());
 var cors = require('cors');
 app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000' }));
+
 
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());

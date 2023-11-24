@@ -6,8 +6,6 @@ import {
   Typography,
   Button,
   CardBody,
-  Chip,
-  CardFooter,
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
@@ -15,16 +13,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
 
-export const AllDestinations = () => {
+export const AllPackages = () => {
   const [destinations, setDestinations] = useState([]);
   const [currentPlaces, setCurrentPlaces] = useState([]);
   const [filteredPlaces, setFilteredPlaces] = useState(destinations);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const TABLE_HEAD = ["Destinations", "Type", "Country", "Action"];
+  const TABLE_HEAD = ["Number","Title", "Cost", "Destination", "Days", ""];
   useEffect(() => {
     axios
-      .get(`http://localhost:3999/destinations`)
+      .get(`http://localhost:3999/getPackages`)
       .then((response) => {
         // Handle the response data here
         setDestinations(response.data);
@@ -58,7 +56,7 @@ export const AllDestinations = () => {
             destination.title
               .toLowerCase()
               .includes(searchQuery.toLowerCase()) ||
-            destination.location
+            destination.destination
               .toLowerCase()
               .includes(searchQuery.toLowerCase())
         )
@@ -68,7 +66,7 @@ export const AllDestinations = () => {
   return (
     <Card className="lg:ml-80 p-2 w-screen lg:w-full h-full border border-sky-700">
       <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
-        Destinations
+        Packages
       </h1>
       <hr className="text-sky-700 mb-5" />
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -132,7 +130,7 @@ export const AllDestinations = () => {
                   d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              Add new place
+              Add new package
             </Button>
           </div>
         </div>
@@ -177,7 +175,7 @@ export const AllDestinations = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {place.title}
+                          {place.packages_id}
                         </Typography>
                       </div>
                     </div>
@@ -189,7 +187,7 @@ export const AllDestinations = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {place.destinations_type}
+                        {place.title}
                       </Typography>
                     </div>
                   </td>
@@ -200,11 +198,33 @@ export const AllDestinations = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {place.location}
+                        {place.cost}
                       </Typography>
                     </div>
                   </td>
                   <td className={classes}>
+                    <div className="w-max">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {place.destination}
+                      </Typography>
+                    </div>
+                  </td>
+                  <td className={classes}>
+                    <div className="w-max">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {place.itinerary? Object.keys(place.itinerary).length===1? `${Object.keys(place.itinerary).length} Day`:`${Object.keys(place.itinerary).length} Days`:<><p>help</p></>}
+                      </Typography>
+                    </div>
+                  </td>
+                  <td className={`${classes} text-end`}>
                     <Tooltip content="Edit Place">
                       <IconButton variant="text">
                         <PencilIcon className="h-4 w-4 text-sky-900" />

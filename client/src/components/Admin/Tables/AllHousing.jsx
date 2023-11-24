@@ -6,29 +6,25 @@ import {
   Typography,
   Button,
   CardBody,
-  Chip,
-  CardFooter,
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { usePage } from "../../Context/SelectedPageContext";
 
-export const AllDestinations = () => {
+export const AllHousing = () => {
   const [destinations, setDestinations] = useState([]);
   const [currentPlaces, setCurrentPlaces] = useState([]);
   const [filteredPlaces, setFilteredPlaces] = useState(destinations);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const TABLE_HEAD = ["Destinations", "Type", "Country", "Action"];
+  const TABLE_HEAD = ["Number", "Title", "Cost", "City", "Type", "Rating", ""];
   useEffect(() => {
     axios
-      .get(`http://localhost:3999/destinations`)
+      .get(`http://localhost:3999/getAccommodations`)
       .then((response) => {
         // Handle the response data here
         setDestinations(response.data);
-        // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
         // Handle errors here
@@ -36,8 +32,8 @@ export const AllDestinations = () => {
       });
   }, []);
 
-  const indexOfLastPlace = currentPlaces.length-1;
-  const indexOfFirstPlace =0;
+  const indexOfLastPlace = currentPlaces.length - 1;
+  const indexOfFirstPlace = 0;
 
   useEffect(() => {
     if (filteredPlaces.length === 0) {
@@ -66,9 +62,12 @@ export const AllDestinations = () => {
     }
   };
   return (
-    <Card className="lg:ml-80 p-2 w-screen lg:w-full h-full border border-sky-700">
+    <div className="w-full flex flex-col justify-start">
+        <div className="flex justify-center items-center m-5 gap-5 flex-col lg:flex-row">
+        
+    <Card className="lg:ml-80 p-2 w-full h-full border border-sky-700">
       <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
-        Destinations
+        Packages
       </h1>
       <hr className="text-sky-700 mb-5" />
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -132,7 +131,7 @@ export const AllDestinations = () => {
                   d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              Add new place
+              Add new Accommodation
             </Button>
           </div>
         </div>
@@ -161,7 +160,7 @@ export const AllDestinations = () => {
             {currentPlaces.map((place, index) => {
               const isLast =
                 (index === filteredPlaces.length) === 0
-                  ? destinations.length-1
+                  ? destinations.length - 1
                   : filteredPlaces.length - 1;
               const classes = isLast
                 ? "p-4"
@@ -177,7 +176,7 @@ export const AllDestinations = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {place.title}
+                          {place.accommodation_id}
                         </Typography>
                       </div>
                     </div>
@@ -189,7 +188,18 @@ export const AllDestinations = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {place.destinations_type}
+                        {place.title}
+                      </Typography>
+                    </div>
+                  </td>
+                  <td className={classes}>
+                    <div className="w-max">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {place.pricing} JOD
                       </Typography>
                     </div>
                   </td>
@@ -205,6 +215,40 @@ export const AllDestinations = () => {
                     </div>
                   </td>
                   <td className={classes}>
+                    <div className="w-max">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {place.type}
+                      </Typography>
+                    </div>
+                  </td>
+                  <td className={classes}>
+                    <div className="w-max">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal flex gap-2 items-center"
+                      >
+                        {place.rating}{" "}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          class="w-4 h-4 text-yellow-400"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </Typography>
+                    </div>
+                  </td>
+                  <td className={`${classes} text-end`}>
                     <Tooltip content="Edit Place">
                       <IconButton variant="text">
                         <PencilIcon className="h-4 w-4 text-sky-900" />
@@ -236,5 +280,7 @@ export const AllDestinations = () => {
         </table>
       </CardBody>
     </Card>
+    </div>
+      </div>
   );
 };

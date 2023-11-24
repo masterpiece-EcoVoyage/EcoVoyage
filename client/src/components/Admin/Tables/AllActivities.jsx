@@ -6,8 +6,6 @@ import {
   Typography,
   Button,
   CardBody,
-  Chip,
-  CardFooter,
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
@@ -15,11 +13,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
 
-export const AllDestinations = () => {
+export const AllActivities = () => {
   const [destinations, setDestinations] = useState([]);
-  const [currentPlaces, setCurrentPlaces] = useState([]);
   const [filteredPlaces, setFilteredPlaces] = useState(destinations);
   const [searchQuery, setSearchQuery] = useState("");
+  const { page, onSelectedPage, selectedId, onSelectedId } = usePage();
 
   const TABLE_HEAD = ["Destinations", "Type", "Country", "Action"];
   useEffect(() => {
@@ -28,6 +26,7 @@ export const AllDestinations = () => {
       .then((response) => {
         // Handle the response data here
         setDestinations(response.data);
+        setFilteredPlaces(response.data);
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -35,17 +34,10 @@ export const AllDestinations = () => {
         console.error("Error:", error);
       });
   }, []);
+  const [currentPlaces, setCurrentPlaces] = useState([]);
 
-  const indexOfLastPlace = currentPlaces.length-1;
-  const indexOfFirstPlace =0;
-
-  useEffect(() => {
-    if (filteredPlaces.length === 0) {
-      setCurrentPlaces(destinations);
-    } else {
-      setCurrentPlaces(filteredPlaces);
-    }
-  }, [filteredPlaces, destinations]);
+  const indexOfLastPlace = currentPlaces.length - 1;
+  const indexOfFirstPlace = 0;
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -64,6 +56,10 @@ export const AllDestinations = () => {
         )
       );
     }
+};
+  const handleEdit = (id) => {
+    onSelectedId(id);
+    onSelectedPage("updateActivity");
   };
   return (
     <Card className="lg:ml-80 p-2 w-screen lg:w-full h-full border border-sky-700">
@@ -117,6 +113,7 @@ export const AllDestinations = () => {
             <Button
               className="flex items-center gap-3 border border-sky-900 bg-sky-900 hover:bg-white hover:text-sky-900"
               size="sm"
+              onClick={()=>{onSelectedPage('addActivity')}}
             >
               <svg
                 class="w-4 h-4"
@@ -132,7 +129,7 @@ export const AllDestinations = () => {
                   d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              Add new place
+              Add new Activity
             </Button>
           </div>
         </div>
@@ -161,7 +158,7 @@ export const AllDestinations = () => {
             {currentPlaces.map((place, index) => {
               const isLast =
                 (index === filteredPlaces.length) === 0
-                  ? destinations.length-1
+                  ? destinations.length - 1
                   : filteredPlaces.length - 1;
               const classes = isLast
                 ? "p-4"
@@ -206,7 +203,12 @@ export const AllDestinations = () => {
                   </td>
                   <td className={classes}>
                     <Tooltip content="Edit Place">
-                      <IconButton variant="text">
+                      <IconButton
+                        onClick={() => {
+                            handleEdit(place.activities_id);
+                          }}
+                        variant="text"
+                      >
                         <PencilIcon className="h-4 w-4 text-sky-900" />
                       </IconButton>
                     </Tooltip>

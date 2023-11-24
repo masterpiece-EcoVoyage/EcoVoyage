@@ -1,5 +1,5 @@
-import React from "react";
-import { PencilIcon } from "@heroicons/react/24/solid";
+import React from 'react'
+import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -15,19 +15,22 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
 
-export const AllDestinations = () => {
-  const [destinations, setDestinations] = useState([]);
-  const [currentPlaces, setCurrentPlaces] = useState([]);
-  const [filteredPlaces, setFilteredPlaces] = useState(destinations);
+export const PackagesTable = () => {
+  const [users, setUsers] = useState([]);
+  const [currentUsers, setCurrentUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState(users);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 3;
+  const {page, onSelectedPage} = usePage();
 
-  const TABLE_HEAD = ["Destinations", "Type", "Country", "Action"];
+  const TABLE_HEAD = ["Number","Title", "Cost", "Destination", ""];
   useEffect(() => {
     axios
-      .get(`http://localhost:3999/destinations`)
+      .get(`http://localhost:3999/getPackages`)
       .then((response) => {
         // Handle the response data here
-        setDestinations(response.data);
+        setUsers(response.data);
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -36,42 +39,41 @@ export const AllDestinations = () => {
       });
   }, []);
 
-  const indexOfLastPlace = currentPlaces.length-1;
-  const indexOfFirstPlace =0;
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
 
   useEffect(() => {
-    if (filteredPlaces.length === 0) {
-      setCurrentPlaces(destinations);
+    if (filteredUsers.length === 0) {
+      setCurrentUsers(users.slice(indexOfFirstUser, indexOfLastUser));
     } else {
-      setCurrentPlaces(filteredPlaces);
+      setCurrentUsers(filteredUsers.slice(indexOfFirstUser, indexOfLastUser));
     }
-  }, [filteredPlaces, destinations]);
+  }, [filteredUsers, users]);
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery === "") {
-      setFilteredPlaces(destinations);
+      setFilteredUsers(users);
     } else {
-      setFilteredPlaces(
-        destinations.filter(
-          (destination) =>
-            destination.title
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            destination.location
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
+      setFilteredUsers(
+        users.filter(
+          (user) =>
+            user.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            user.destination.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
     }
   };
   return (
-    <Card className="lg:ml-80 p-2 w-screen lg:w-full h-full border border-sky-700">
-      <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
-        Destinations
-      </h1>
-      <hr className="text-sky-700 mb-5" />
-      <CardHeader floated={false} shadow={false} className="rounded-none">
+    <Card className="p-2 lg:m-10 m-5 w-auto h-full border border-sky-700">
+        <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
+          Packages
+        </h1>
+        <hr className="text-sky-700"/>
+      <CardHeader floated={false} shadow={false} className="rounded-none mt-0">
         <div className="flex items-center justify-between gap-8 m-4">
           <form className="w-full lg:w-1/3" onSubmit={handleSearch}>
             <label
@@ -102,7 +104,7 @@ export const AllDestinations = () => {
                 type="search"
                 id="default-search"
                 class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Search Place"
+                placeholder="Search user"
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <button
@@ -115,29 +117,22 @@ export const AllDestinations = () => {
           </form>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
             <Button
+              variant="outlined"
+              size="sm"
+              onClick={() => onSelectedPage("packages")}
+            >
+              view all
+            </Button>
+            <Button
               className="flex items-center gap-3 border border-sky-900 bg-sky-900 hover:bg-white hover:text-sky-900"
               size="sm"
             >
-              <svg
-                class="w-4 h-4"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              Add new place
+              <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add new package
             </Button>
           </div>
         </div>
       </CardHeader>
-      <CardBody className="px-0 overflow-auto">
+      <CardBody className="px-3 pt-0 overflow-auto">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
@@ -158,17 +153,17 @@ export const AllDestinations = () => {
             </tr>
           </thead>
           <tbody>
-            {currentPlaces.map((place, index) => {
+            {currentUsers.map((user, index) => {
               const isLast =
-                (index === filteredPlaces.length) === 0
-                  ? destinations.length-1
-                  : filteredPlaces.length - 1;
+                (index === filteredUsers.length) === 0
+                  ? users.length-1
+                  : filteredUsers.length - 1;
               const classes = isLast
                 ? "p-4"
                 : "p-4 border-b border-blue-gray-50";
 
               return (
-                <tr key={index}>
+                <tr key={user.packages_id}>
                   <td className={classes}>
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col">
@@ -177,7 +172,20 @@ export const AllDestinations = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {place.title}
+                          {user.packages_id}
+                        </Typography>
+                      </div>
+                    </div>
+                  </td>
+                  <td className={classes}>
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-col">
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {user.title}
                         </Typography>
                       </div>
                     </div>
@@ -189,28 +197,28 @@ export const AllDestinations = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {place.destinations_type}
+                        {user.cost}
                       </Typography>
                     </div>
                   </td>
                   <td className={classes}>
                     <div className="w-max">
-                      <Typography
+                    <Typography
                         variant="small"
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {place.location}
+                        {user.destination}
                       </Typography>
                     </div>
                   </td>
-                  <td className={classes}>
-                    <Tooltip content="Edit Place">
+                  <td className={`${classes} text-end`}>
+                    <Tooltip content="Edit User">
                       <IconButton variant="text">
                         <PencilIcon className="h-4 w-4 text-sky-900" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip content="Delete Place">
+                    <Tooltip content="Delete User">
                       <IconButton variant="text">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -235,6 +243,72 @@ export const AllDestinations = () => {
           </tbody>
         </table>
       </CardBody>
+      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+        <Typography variant="small" color="blue-gray" className="font-normal">
+          Page {currentPage} of{" "}
+          {Math.ceil(
+            filteredUsers.length === 0
+              ? users.length / usersPerPage
+              : filteredUsers.length / usersPerPage
+          )}
+        </Typography>
+        <div className="flex gap-2">
+          {Array.from(
+            {
+              length: Math.ceil(
+                filteredUsers.length === 0
+                  ? users.length / usersPerPage
+                  : filteredUsers.length / usersPerPage
+              ),
+            },
+            (_, index) => (
+              <Button
+                key={index}
+                variant="outlined"
+                size="sm"
+                className={currentPage === index + 1 && "bg-sky-900 text-white"}
+                onClick={() => paginate(index + 1)}
+              >
+                {index + 1}
+              </Button>
+            )
+          )}
+        </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => currentPage !== 1 && paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="text-sky-900"
+            variant="outlined"
+            size="sm"
+          >
+            Previous
+          </Button>
+          <Button
+            onClick={() =>
+              currentPage !==
+                Math.ceil(
+                  filteredUsers.length === 0
+                    ? users.length / usersPerPage
+                    : filteredUsers.length / usersPerPage
+                ) && paginate(currentPage + 1)
+            }
+            disabled={
+              currentPage ===
+              Math.ceil(
+                filteredUsers.length === 0
+                  ? users.length / usersPerPage
+                  : filteredUsers.length / usersPerPage
+              )
+            }
+            className="text-sky-900"
+            variant="outlined"
+            size="sm"
+          >
+            Next
+          </Button>
+        </div>
+      </CardFooter>
     </Card>
   );
 };

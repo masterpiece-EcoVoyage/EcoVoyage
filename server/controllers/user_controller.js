@@ -305,6 +305,8 @@ const updateUserData = async (req, res) => {
 
     const deleteUser = async (req, res) => {
         const user_id = req.query.user_id
+        // const { user_id } = req.params;
+        // console.log(user_id);
         try {
             const result = await db.query(userQueries.deleteUserQuery, [user_id]);
             if (!result.rowCount) {

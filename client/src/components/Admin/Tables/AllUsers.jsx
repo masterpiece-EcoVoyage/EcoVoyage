@@ -105,14 +105,6 @@ const AllUsers = () => {
               </button>
             </div>
           </form>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-          <Button
-              className="flex items-center gap-3 border border-sky-900 bg-sky-900 hover:bg-white hover:text-sky-900"
-              size="sm"
-            >
-              <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add member
-            </Button>
-          </div>
         </div>
       </CardHeader>
       <CardBody className="px-0 overflow-auto">
@@ -139,7 +131,7 @@ const AllUsers = () => {
             {currentUsers.map((user, index) => {
               const isLast =
                 (index === filteredUsers.length) === 0
-                  ? users.length
+                  ? users.length-1
                   : filteredUsers.length - 1;
               const classes = isLast
                 ? "p-4"
@@ -190,7 +182,7 @@ const AllUsers = () => {
                       />
                     </div>
                   </td>
-                  <td className={classes}>
+                  <td className={`${classes} text-end`}>
                     <Tooltip content="Edit User">
                       <IconButton variant="text">
                         <PencilIcon className="h-4 w-4 text-sky-900" />

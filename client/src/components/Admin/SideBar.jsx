@@ -28,10 +28,10 @@ const SideBar = () => {
     setIsSideOpen(!isSideOpen);
   }
   return (
-    <div className=" z-40">
+    <div className="">
       <div className="relative w-[260px] ">
         <div
-          className={`peer absolute top-0 border ${position} lg:left-0 h-full w-full object-cover transition-all delay-100 duration-1000`}
+          className={`peer absolute z-50 top-0 border ${position} lg:left-0 h-full w-full object-cover transition-all delay-100 duration-1000`}
         >
           <button
             aria-label="toggle sidebar"
@@ -218,7 +218,7 @@ const SideBar = () => {
                       Accommodations
                     </span>
                   </button>
-                  <button
+                  {/* <button
                     onClick={() => onSelectedPage("transportations")}
                     className={`w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 ${
                         page === "transportaions" ? "bg-gray-200" : ""
@@ -227,7 +227,7 @@ const SideBar = () => {
                     <span className="mx-2 text-sm font-medium">
                       Transportations
                     </span>
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => onSelectedPage("activities")}
                     className={`w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 ${
@@ -237,7 +237,7 @@ const SideBar = () => {
                     <span className="mx-2 text-sm font-medium">Activities</span>
                   </button>
                 </div>
-
+<hr />
                 <div className="space-y-3 ">
                   <button
                     className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"

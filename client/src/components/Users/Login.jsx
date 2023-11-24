@@ -78,6 +78,46 @@ const Login = () => {
       }, 100);
     }
   };
+  const handleGoogle = ()=>{
+    // history('/');
+    window.location.href = 'http://localhost:3999/auth/google';
+    axios.get("http://localhost:3999/auth/google")
+    .then((response) => {
+      console.log(response.data);
+      const token = response.data.token;
+console.log("token:" + token);
+      // Set the token in a cookie
+      setCookie('token', token, { path: '/' });
+      setError("Sign-in successful");
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'You have Signed in successfully.',
+        confirmButtonText: 'OK',
+        customClass: {
+          confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
+        }
+      });
+      // history("/");
+    })
+    .catch((error) => {
+      setTimeout(() => {
+        console.error("Sign-in error:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Sign-in failed. Something went wrong.',
+          confirmButtonText: 'OK',
+          customClass: {
+            confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
+          }
+        });
+        setError("Sign-in failed. Email or password is invalid");
+      }, 100);
+      // Handle errors here
+      console.error("Error:", error);
+    });
+  }
   // async function handleSubmit(e) {
   //   e.preventDefault();
   //   try {
@@ -93,7 +133,7 @@ const Login = () => {
 
   return (
     <div className="bg-[url('https://images.unsplash.com/photo-1529718836725-f449d3a52881?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')]">
-      <form action="" onSubmit={handleSubmit}>
+      <form action="" onSubmit={()=>handleSubmit()}>
         <div className="min-h-screen flex justify-center items-center">
           <div className="py-8 px-12 bg-white rounded-2xl shadow-xl z-20">
             <div className="flex flex-col justify-center items-center">
@@ -134,13 +174,12 @@ const Login = () => {
               </button>
               <p className="mt-4 text-sm text-sky-900">
                 Or login with:{" "}<br/>
-                <Link to={"/"}>
                 <button
+                onClick={()=>handleGoogle()}
                 className="p-3 mt-2 text-xl text-white hover:text-sky-900 border-2 hover:bg-white bg-gray-200 rounded-2xl"
               >
                 <svg className="text-sky-700 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"> <path stroke="none" d="M0 0h24v24H0z"/> <path d="M17.788 5.108A9 9 0 1021 12h-8" /></svg>
               </button>
-                </Link>
               </p>
               <p className="mt-4 text-sm text-sky-900">
                 Don't Have An Account?{" "}

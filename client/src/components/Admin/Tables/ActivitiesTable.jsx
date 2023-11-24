@@ -16,21 +16,21 @@ import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
 
 export const ActivitiesTable = () => {
-  const [destinations, setDestinations] = useState([]);
-  const [currentPlaces, setCurrentPlaces] = useState([]);
-  const [filteredPlaces, setFilteredPlaces] = useState(destinations);
+  const [activities, setActivities] = useState([]);
+  const [filteredActivities, setFilteredActivities] = useState(activities);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const destinationPerPage = 5;
-  const { page, onSelectedPage } = usePage();
+  const activityPerPage = 3;
+  const { page, onSelectedPage, selectedId, onSelectedId } = usePage();
 
-  const TABLE_HEAD = ["Activities", "Type", "Country", "Action"];
+  const TABLE_HEAD = ["Activities", "Type", "Availability", "Action"];
   useEffect(() => {
     axios
-      .get(`http://localhost:3999/destinations`)
+      .get(`http://localhost:3999/getActivities`)
       .then((response) => {
         // Handle the response data here
-        setDestinations(response.data);
+        setActivities(response.data);
+        setFilteredActivities(response.data)
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -39,16 +39,9 @@ export const ActivitiesTable = () => {
       });
   }, []);
 
-  const indexOfLastPlace = currentPage * destinationPerPage;
-  const indexOfFirstPlace = indexOfLastPlace - destinationPerPage;
-
-  useEffect(() => {
-    if (filteredPlaces.length === 0) {
-      setCurrentPlaces(destinations.slice(indexOfFirstPlace, indexOfLastPlace));
-    } else {
-      setCurrentPlaces(filteredPlaces.slice(indexOfFirstPlace, indexOfLastPlace));
-    }
-  }, [filteredPlaces, destinations]);
+  const indexOfLastActivity = currentPage * activityPerPage;
+  const indexOfFirstActivity = indexOfLastActivity - activityPerPage;
+  const currentActivities = filteredActivities.slice(indexOfFirstActivity, indexOfLastActivity);
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -56,25 +49,26 @@ export const ActivitiesTable = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery === "") {
-      setFilteredPlaces(destinations);
+      setFilteredActivities(activities);
     } else {
-      setFilteredPlaces(
-        destinations.filter(
-          (destination) =>
-            destination.title
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            destination.location
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
+      setFilteredActivities(
+        activities.filter(
+          (activitie) =>
+            activitie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            activitie.type.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
     }
+    setCurrentPage(1);
+  };
+  const handleEdit = (id) => {
+    onSelectedId(id);
+    onSelectedPage("updateActivity");
   };
   return (
     <Card className="p-2 w-full h-full border border-sky-700">
       <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
-        Destinations
+        Activities
       </h1>
       <hr className="text-sky-700 mb-5" />
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -108,7 +102,7 @@ export const ActivitiesTable = () => {
                 type="search"
                 id="default-search"
                 class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Search Place"
+                placeholder="Search Activity"
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <button
@@ -123,13 +117,14 @@ export const ActivitiesTable = () => {
             <Button
               variant="outlined"
               size="sm"
-              onClick={() => onSelectedPage("destinations")}
+              onClick={() => onSelectedPage("activities")}
             >
               view all
             </Button>
             <Button
               className="flex items-center gap-3 border border-sky-900 bg-sky-900 hover:bg-white hover:text-sky-900"
               size="sm"
+              onClick={()=>{onSelectedPage('addActivity')}}
             >
               <svg
                 class="w-4 h-4"
@@ -145,12 +140,12 @@ export const ActivitiesTable = () => {
                   d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              Add new place
+              Add new activity
             </Button>
           </div>
         </div>
       </CardHeader>
-      <CardBody className="px-0 overflow-auto">
+      <CardBody className="px-0 overflow-auto h-[312px] mb-auto">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
@@ -171,11 +166,11 @@ export const ActivitiesTable = () => {
             </tr>
           </thead>
           <tbody>
-            {currentPlaces.map((place, index) => {
+            {currentActivities.map((activity, index) => {
               const isLast =
-                (index === filteredPlaces.length) === 0
-                  ? destinations.length
-                  : filteredPlaces.length - 1;
+                (index === filteredActivities.length) === 0
+                  ? activities.length - 1
+                  : filteredActivities.length - 1;
               const classes = isLast
                 ? "p-4"
                 : "p-4 border-b border-blue-gray-50";
@@ -190,7 +185,7 @@ export const ActivitiesTable = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {place.title}
+                          {activity.title}
                         </Typography>
                       </div>
                     </div>
@@ -202,7 +197,7 @@ export const ActivitiesTable = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {place.destinations_type}
+                        {activity.type}
                       </Typography>
                     </div>
                   </td>
@@ -213,17 +208,22 @@ export const ActivitiesTable = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {place.location}
+                        {activity.availability}
                       </Typography>
                     </div>
                   </td>
                   <td className={classes}>
-                    <Tooltip content="Edit Place">
-                      <IconButton variant="text">
+                    <Tooltip content="Edit Activity">
+                      <IconButton
+                        onClick={() => {
+                          handleEdit(activity.activities_id);
+                        }}
+                        variant="text"
+                      >
                         <PencilIcon className="h-4 w-4 text-sky-900" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip content="Delete Place">
+                    <Tooltip content="Delete Activity">
                       <IconButton variant="text">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -252,18 +252,18 @@ export const ActivitiesTable = () => {
         <Typography variant="small" color="blue-gray" className="font-normal">
           Page {currentPage} of{" "}
           {Math.ceil(
-            filteredPlaces.length === 0
-              ? destinations.length / destinationPerPage
-              : filteredPlaces.length / destinationPerPage
+            filteredActivities.length === 0
+              ? activities.length / activityPerPage
+              : filteredActivities.length / activityPerPage
           )}
         </Typography>
         <div className="flex gap-2">
           {Array.from(
             {
               length: Math.ceil(
-                filteredPlaces.length === 0
-                  ? destinations.length / destinationPerPage
-                  : filteredPlaces.length / destinationPerPage
+                filteredActivities.length === 0
+                  ? activities.length / activityPerPage
+                  : filteredActivities.length / activityPerPage
               ),
             },
             (_, index) => (
@@ -293,17 +293,17 @@ export const ActivitiesTable = () => {
             onClick={() =>
               currentPage !==
                 Math.ceil(
-                  filteredPlaces.length === 0
-                    ? destinations.length / destinationPerPage
-                    : filteredPlaces.length / destinationPerPage
+                  filteredActivities.length === 0
+                    ? activities.length / activityPerPage
+                    : filteredActivities.length / activityPerPage
                 ) && paginate(currentPage + 1)
             }
             disabled={
               currentPage ===
               Math.ceil(
-                filteredPlaces.length === 0
-                  ? destinations.length / destinationPerPage
-                  : filteredPlaces.length / destinationPerPage
+                filteredActivities.length === 0
+                  ? activities.length / activityPerPage
+                  : filteredActivities.length / activityPerPage
               )
             }
             className="text-sky-900"

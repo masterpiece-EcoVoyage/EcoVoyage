@@ -5,14 +5,20 @@ const PageContext = createContext();
 
 export const PageProvider = ({ children }) => {
     const [page, setPage] = useState("dashboard");
+    const [selectedId, setSelectedId] = useState(1);
 
     const onSelectedPage = (selectedPage) => {
         setPage(selectedPage);
+    };
+    const onSelectedId = (id) => {
+        setSelectedId(id);
     };
 
     const pageContextValue = {
         page,
         onSelectedPage,
+        selectedId,
+        onSelectedId,
     };
 
     return (

@@ -16,6 +16,8 @@ import Packages from './components/Website/Packages';
 import PackageDetails from './components/Website/PackageDetails';
 import NotFound from './components/NotFound';
 import AdminAccount from './components/Admin/AdminAccount';
+import Payment from './components/Website/Payment/Payment';
+import { useLocation } from 'react-router-dom';
 
 function App() {
   return (
@@ -23,7 +25,6 @@ function App() {
       <Router >
         <Header />
         <div className='h-full' id='root'>
-
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/destinations' element={<Destinations />} />
@@ -38,6 +39,7 @@ function App() {
             <Route path='/about' element={<AboutUs />} />
             <Route path='/contact' element={<Contact />} />
             <Route path='/dashboard' element={<AdminAccount />} />
+            <Route path='/payment' element={<Payment />} />
             <Route path='*' element={<NotFound />} />
           </Routes>
         </div>

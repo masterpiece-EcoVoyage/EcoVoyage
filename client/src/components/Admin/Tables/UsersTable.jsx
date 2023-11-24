@@ -1,5 +1,6 @@
 // import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import Swal from "sweetalert2";
 import {
   Card,
   CardHeader,
@@ -17,12 +18,12 @@ import { usePage } from "../../Context/SelectedPageContext";
 
 export const UsersTable = () => {
   const [users, setUsers] = useState([]);
-  const [currentUsers, setCurrentUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState(users);
+//   const [currentUsers, setCurrentUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
-  const {page, onSelectedPage} = usePage();
+  const { page, onSelectedPage, selectedId, onSelectedId } = usePage();
 
   const TABLE_HEAD = ["Users", "Country", "Admin", ""];
   useEffect(() => {
@@ -31,6 +32,7 @@ export const UsersTable = () => {
       .then((response) => {
         // Handle the response data here
         setUsers(response.data);
+        setFilteredUsers(response.data)
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -41,14 +43,8 @@ export const UsersTable = () => {
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  let currentUsers =filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-  useEffect(() => {
-    if (filteredUsers.length === 0) {
-      setCurrentUsers(users.slice(indexOfFirstUser, indexOfLastUser));
-    } else {
-      setCurrentUsers(filteredUsers.slice(indexOfFirstUser, indexOfLastUser));
-    }
-  }, [filteredUsers, users]);
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -66,13 +62,52 @@ export const UsersTable = () => {
         )
       );
     }
+    setCurrentPage(1);
+  };
+const handleEdit=(id)=>{}
+
+  const handleDelete = (id) => {
+    console.log(id);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .put(`http://localhost:3999/deleteUser/${id}`)
+          .then((response) => {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your file has been deleted.",
+              icon: "success",
+            });
+          })
+          .catch((error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong with deleting the user.",
+              confirmButtonText: "OK",
+              customClass: {
+                confirmButton:
+                  "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+              },
+            });
+          });
+      }
+    });
   };
   return (
     <Card className="lg:ml-80 p-2 w-full h-full border border-sky-700">
-        <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
-          Users
-        </h1>
-        <hr className="text-sky-700 mb-5"/>
+      <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
+        Users
+      </h1>
+      <hr className="text-sky-700" />
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="flex items-center justify-between gap-8 m-4">
           <form className="w-full lg:w-1/3" onSubmit={handleSearch}>
@@ -119,20 +154,15 @@ export const UsersTable = () => {
             <Button
               variant="outlined"
               size="sm"
+              className="border border-sky-900 bg-sky-900 text-white hover:bg-white hover:text-sky-900"
               onClick={() => onSelectedPage("users")}
             >
               view all
             </Button>
-            <Button
-              className="flex items-center gap-3 border border-sky-900 bg-sky-900 hover:bg-white hover:text-sky-900"
-              size="sm"
-            >
-              <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add member
-            </Button>
           </div>
         </div>
       </CardHeader>
-      <CardBody className="px-0 overflow-auto">
+      <CardBody className="px-0 h-[466px] mb-auto overflow-auto">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
@@ -156,14 +186,14 @@ export const UsersTable = () => {
             {currentUsers.map((user, index) => {
               const isLast =
                 (index === filteredUsers.length) === 0
-                  ? users.length
+                  ? users.length - 1
                   : filteredUsers.length - 1;
               const classes = isLast
                 ? "p-4"
                 : "p-4 border-b border-blue-gray-50";
 
               return (
-                <tr key={user.email}>
+                <tr key={index}>
                   <td className={classes}>
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col">
@@ -207,14 +237,19 @@ export const UsersTable = () => {
                       />
                     </div>
                   </td>
-                  <td className={classes}>
+                  <td className={`${classes} text-end`}>
                     <Tooltip content="Edit User">
-                      <IconButton variant="text">
+                      <IconButton
+                      onClick={()=>{handleEdit(user.user_id)}}
+                      variant="text">
                         <PencilIcon className="h-4 w-4 text-sky-900" />
                       </IconButton>
                     </Tooltip>
                     <Tooltip content="Delete User">
-                      <IconButton variant="text">
+                      <IconButton
+                        variant="text"
+                        onClick={()=>{handleDelete(user.user_id)}}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"

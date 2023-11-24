@@ -53,6 +53,7 @@ export const DestinationsTable = () => {
     setCurrentPage(pageNumber);
   };
 
+  console.log(destinations);
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery === "") {
@@ -174,7 +175,7 @@ export const DestinationsTable = () => {
             {currentPlaces.map((place, index) => {
               const isLast =
                 (index === filteredPlaces.length) === 0
-                  ? destinations.length
+                  ? destinations.length-1
                   : filteredPlaces.length - 1;
               const classes = isLast
                 ? "p-4"
