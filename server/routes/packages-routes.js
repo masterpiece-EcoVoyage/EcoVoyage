@@ -1,20 +1,26 @@
 const { Router } = require('express');
 const packagesController = require('../controllers/packages-controller');
 const router = Router();
+const verifyJWT = require('../Middleware/VerifyJWT');
 
 router.get('/getPackages', packagesController.getPackages);
 
-router.post('/addPackages', packagesController.addPackages);
+router.post('/addPackages', verifyJWT.authorize([2]),packagesController.addPackages);
 
-router.put('/updatePackages/:id', packagesController.updatePackages);
+router.put('/updatePackages/:id',verifyJWT.authorize([2]), packagesController.updatePackages);
 
-router.put('/deletePackages', packagesController.deletePackages);
+router.put('/deletePackages',verifyJWT.authorize([2]), packagesController.deletePackages);
 
 router.get('/getPackagesById/:id', packagesController.getPackagesById);
 
+router.post('/addCommentPac',verifyJWT.authorize([1 , 2]),packagesController.addCommentPac);
 
-router.post('/addCommentPC', packagesController.addComment);
+router.get('/getPackagesWithComments/:id', packagesController.getPackagesWithComments);
 
-router.get('/getAccommodationsByID2PC/:id', packagesController.getAccommodationsByID2);
+router.post('/BookPackage/:id',verifyJWT.authorize([1 , 2]), packagesController.BookPackage);
+
+router.get('/getBookPackages/:id', packagesController.getBookPackages);
+
+router.get('/getPackagesPaginated', packagesController.getPackagesPaginated);
 
 module.exports = router;

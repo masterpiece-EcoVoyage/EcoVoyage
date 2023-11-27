@@ -1,7 +1,23 @@
 const { Router } = require('express');
-const cartController = require('../controllers/destinations_controller');
+const destinationController = require('../controllers/destinations_controller');
 const router = Router();
 
-router.get("/destinations", cartController.getDestinations);
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+const verifyJWT = require('../Middleware/VerifyJWT');
+
+
+router.get("/getDestinations", destinationController.getDestinations);
+
+router.get("/getDestinationsByID/:id", destinationController.getDestinationsByID);
+
+router.get("/getDestinationsPaginated", destinationController.getDestinationsPaginated);
+
+router.post("/addDestinations",  upload.single('image'), verifyJWT.authorize([2]),destinationController.addDestinations);
+
+router.put("/updateDestinations/:id", verifyJWT.authorize([1 , 2]),destinationController.updateDestinations);
+
+router.put("/markDestinationsAsDeleted/:id", verifyJWT.authorize([2]),destinationController.markDestinationsAsDeleted);
 
 module.exports = router;
