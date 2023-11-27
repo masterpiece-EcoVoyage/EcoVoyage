@@ -1,12 +1,14 @@
-import React from "react";
 import Swal from "sweetalert2";
-import { PencilIcon } from "@heroicons/react/24/solid";
+import React from "react";
+import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
   Typography,
   Button,
   CardBody,
+  Chip,
+  CardFooter,
   IconButton,
   Tooltip,
 } from "@material-tailwind/react";
@@ -14,20 +16,31 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
 
-export const AllPackages = () => {
-  const [destinations, setDestinations] = useState([]);
-  const [currentPlaces, setCurrentPlaces] = useState([]);
-  const [filteredPlaces, setFilteredPlaces] = useState(destinations);
+const FlightsTable = () => {
+  const [flights, setFlights] = useState([]);
+  const [filteredFlights, setFilteredFlights] = useState(flights);
   const [searchQuery, setSearchQuery] = useState("");
+  const [destination, setDestination] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const { page, onSelectedPage, selectedId, onSelectedId } = usePage();
+  const flightsPerPage = 3;
 
-  const TABLE_HEAD = ["Number", "Title", "Cost", "Destination", "Days", ""];
+  const TABLE_HEAD = [
+    "Number",
+    "Destination",
+    "Depart",
+    "Return",
+    "Airport",
+    "Cost",
+    "",
+  ];
   useEffect(() => {
     axios
-      .get(`http://localhost:3999/getPackages`)
+      .get(`http://localhost:3999/getFlights`)
       .then((response) => {
         // Handle the response data here
-        setDestinations(response.data);
+        setFlights(response.data);
+        setFilteredFlights(response.data);
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -36,28 +49,25 @@ export const AllPackages = () => {
       });
   }, []);
 
-  useEffect(() => {
-    if (filteredPlaces.length === 0) {
-      setCurrentPlaces(destinations);
-    } else {
-      setCurrentPlaces(filteredPlaces);
-    }
-  }, [filteredPlaces, destinations]);
+  const indexOfLastUser = currentPage * flightsPerPage;
+  const indexOfFirstUser = indexOfLastUser - flightsPerPage;
+  const currentFlights = filteredFlights.slice(
+    indexOfFirstUser,
+    indexOfLastUser
+  );
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery === "") {
-      setFilteredPlaces(destinations);
+      setFilteredFlights(flights);
     } else {
-      setFilteredPlaces(
-        destinations.filter(
-          (destination) =>
-            destination.title
+      setFilteredFlights(
+        flights.filter(
+          (flight) =>
+            flight.destination
               .toLowerCase()
               .includes(searchQuery.toLowerCase()) ||
-            destination.destination
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
+            flight.peratedby.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
     }
@@ -65,7 +75,7 @@ export const AllPackages = () => {
   const handleEdit = (id) => {
     console.log(id);
     onSelectedId(id);
-    onSelectedPage("updatePackage");
+    onSelectedPage("updateFlight");
   };
   const handleDelete = (id) => {
     Swal.fire({
@@ -79,7 +89,7 @@ export const AllPackages = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .put(`http://localhost:3999/deletePackages/${id}`)
+          .put(`http://localhost:3999/softDeleteFlight/${id}`)
           .then((response) => {
             Swal.fire({
               title: "Deleted!",
@@ -103,14 +113,14 @@ export const AllPackages = () => {
     });
   };
   return (
-    <Card className="lg:ml-80 p-2 w-screen lg:w-full h-full border border-sky-700">
+    <Card className="p-2 lg:m-10 m-5 w-auto h-full border border-sky-700">
       <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
-        Packages
+        Flights
       </h1>
-      <hr className="text-sky-700 mb-5" />
-      <CardHeader floated={false} shadow={false} className="rounded-none">
+      <hr className="text-sky-700" />
+      <CardHeader floated={false} shadow={false} className="rounded-none mt-0">
         <div className="flex items-center justify-between gap-8 m-4">
-          <form className="w-full lg:w-1/3" onSubmit={handleSearch}>
+          <form className="w-full lg:w-1/3" onSubmit={() => handleSearch()}>
             <label
               for="default-search"
               class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -139,7 +149,7 @@ export const AllPackages = () => {
                 type="search"
                 id="default-search"
                 class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Search Place"
+                placeholder="Search Flight"
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <button
@@ -152,10 +162,17 @@ export const AllPackages = () => {
           </form>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
             <Button
+              variant="outlined"
+              size="sm"
+              onClick={() => onSelectedPage("flights")}
+            >
+              view all
+            </Button>
+            <Button
               className="flex items-center gap-3 border border-sky-900 bg-sky-900 hover:bg-white hover:text-sky-900"
               size="sm"
               onClick={() => {
-                onSelectedPage("addPackage");
+                onSelectedPage("addFlight");
               }}
             >
               <svg
@@ -171,13 +188,13 @@ export const AllPackages = () => {
                   stroke-width="2"
                   d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
-              </svg>
-              Add new package
+              </svg>{" "}
+              Add new flight
             </Button>
           </div>
         </div>
       </CardHeader>
-      <CardBody className="px-0 overflow-auto">
+      <CardBody className="px-3 pt-0 overflow-auto">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
@@ -198,18 +215,18 @@ export const AllPackages = () => {
             </tr>
           </thead>
           <tbody>
-            {currentPlaces.map((place, index) => {
+            {currentFlights.map((flight, index) => {
               const isLast =
-                (index === filteredPlaces.length) === 0
-                  ? destinations.length - 1
-                  : filteredPlaces.length - 1;
+                (index === filteredFlights.length) === 0
+                  ? flights.length - 1
+                  : filteredFlights.length - 1;
               const classes = isLast
                 ? "p-4"
                 : "p-4 border-b border-blue-gray-50";
 
               return (
                 <tr
-                  key={index}
+                  key={flight.flights_id}
                   className={index % 2 !== 0 ? "bg-white" : "bg-gray-200"}
                 >
                   <td className={classes}>
@@ -220,79 +237,117 @@ export const AllPackages = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {place.packages_id}
+                          {flight.flights_id}
                         </Typography>
                       </div>
                     </div>
                   </td>
                   <td className={classes}>
-                    <div className="flex flex-col">
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-col">
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {flight.destination}
+                        </Typography>
+                      </div>
+                    </div>
+                  </td>
+                  <td className={classes}>
+                    <div>
                       <Typography
                         variant="small"
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {place.title}
+                        {flight.depart_date}
                       </Typography>
+                      <div className="flex flex-col">
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {flight.depart_time && flight.return_time.boarding}
+                        </Typography>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {flight.depart_time && flight.return_time.arrival}
+                        </Typography>
+                      </div>
                     </div>
                   </td>
                   <td className={classes}>
+                    <div>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {flight.return_date}
+                      </Typography>
+                      <div className="flex flex-col">
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {flight.return_time && flight.return_time.boarding}
+                        </Typography>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {flight.return_time && flight.return_time.arrival}
+                        </Typography>
+                      </div>
+                    </div>
+                  </td>
+                  <td className={classes}>
+                    <div className="w-max">
+                      <img
+                        src={flight.imagecomp}
+                        alt="Airline"
+                        className="h-10 w-auto"
+                      />
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {flight.peratedby}
+                      </Typography>
+                    </div>
+                  </td>
+                  <td>
                     <div className="w-max">
                       <Typography
                         variant="small"
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {place.cost}
-                      </Typography>
-                    </div>
-                  </td>
-                  <td className={classes}>
-                    <div className="w-max">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {place.destination}
-                      </Typography>
-                    </div>
-                  </td>
-                  <td className={classes}>
-                    <div className="w-max">
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {place.itinerary ? (
-                          Object.keys(place.itinerary).length === 1 ? (
-                            `${Object.keys(place.itinerary).length} Day`
-                          ) : (
-                            `${Object.keys(place.itinerary).length} Days`
-                          )
-                        ) : (
-                          <>
-                            <p>help</p>
-                          </>
-                        )}
+                        {flight.best} JOD
                       </Typography>
                     </div>
                   </td>
                   <td className={`${classes} text-end`}>
-                    <Tooltip content="Edit Package">
+                    <Tooltip content="Edit flight">
                       <IconButton
-                        onClick={() => handleEdit(place.packages_id)}
+                        onClick={() => handleEdit(flight.flights_id)}
                         variant="text"
                       >
                         <PencilIcon className="h-4 w-4 text-sky-900" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip content="Delete Package">
+                    <Tooltip content="Delete flight">
                       <IconButton
-                        onClick={() => {
-                          handleDelete(place.packages_id);
-                        }}
+                        onClick={() => handleDelete(flight.flights_id)}
                         variant="text"
                       >
                         <svg
@@ -318,6 +373,73 @@ export const AllPackages = () => {
           </tbody>
         </table>
       </CardBody>
+      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+        <Typography variant="small" color="blue-gray" className="font-normal">
+          Page {currentPage} of{" "}
+          {Math.ceil(
+            filteredFlights.length === 0
+              ? flights.length / flightsPerPage
+              : filteredFlights.length / flightsPerPage
+          )}
+        </Typography>
+        <div className="flex gap-2">
+          {Array.from(
+            {
+              length: Math.ceil(
+                filteredFlights.length === 0
+                  ? flights.length / flightsPerPage
+                  : filteredFlights.length / flightsPerPage
+              ),
+            },
+            (_, index) => (
+              <Button
+                key={index}
+                variant="outlined"
+                size="sm"
+                className={currentPage === index + 1 && "bg-sky-900 text-white"}
+                onClick={() => paginate(index + 1)}
+              >
+                {index + 1}
+              </Button>
+            )
+          )}
+        </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => currentPage !== 1 && paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="text-sky-900"
+            variant="outlined"
+            size="sm"
+          >
+            Previous
+          </Button>
+          <Button
+            onClick={() =>
+              currentPage !==
+                Math.ceil(
+                  filteredFlights.length === 0
+                    ? flights.length / flightsPerPage
+                    : filteredFlights.length / flightsPerPage
+                ) && paginate(currentPage + 1)
+            }
+            disabled={
+              currentPage ===
+              Math.ceil(
+                filteredFlights.length === 0
+                  ? flights.length / flightsPerPage
+                  : filteredFlights.length / flightsPerPage
+              )
+            }
+            className="text-sky-900"
+            variant="outlined"
+            size="sm"
+          >
+            Next
+          </Button>
+        </div>
+      </CardFooter>
     </Card>
   );
 };
+export default FlightsTable;

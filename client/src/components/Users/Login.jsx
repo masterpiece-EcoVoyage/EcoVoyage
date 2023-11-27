@@ -4,12 +4,13 @@ import axios from "axios";
 import logo from '../../Images/logo.png'
 import Swal from 'sweetalert2';
 import { useCookies } from 'react-cookie';
-// import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Context/AuthContext";
 
 const Login = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
   const [cookies, setCookie] = useCookies(['token']);
   const [error, setError] = useState("");
+  const {isAdmin, onLogin} = useAuth();
 
   // const [email, setEmail] = useState("");
   // const [password, setPassword] = useState("");
@@ -56,8 +57,12 @@ const Login = () => {
           confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
         }
       });
+      if(response.data.role_id === 1){
       history("/");
-
+      }else if(response.data.role_id === 2){
+        onLogin(response.data.role_id)
+      history("/dashboard");
+      }
       // Handle successful sign-in, e.g., redirect or show a success message
       // alert("Sign-in successful:", response.data);
       console.log("Sign-in successful:", response.data);
@@ -133,7 +138,7 @@ console.log("token:" + token);
 
   return (
     <div className="bg-[url('https://images.unsplash.com/photo-1529718836725-f449d3a52881?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')]">
-      <form action="" onSubmit={()=>handleSubmit()}>
+      <form action="" onSubmit={(e)=>handleSubmit(e)}>
         <div className="min-h-screen flex justify-center items-center">
           <div className="py-8 px-12 bg-white rounded-2xl shadow-xl z-20">
             <div className="flex flex-col justify-center items-center">

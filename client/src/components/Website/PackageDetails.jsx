@@ -2,14 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import Comments from "./Comments";
+import { useBooking } from "../Context/BookingContext";
+import { useNavigate } from "react-router-dom";
 
 const PackageDetails = () => {
   const { id } = useParams();
   const [packageData, setPackageData] = useState([]);
+  const { bookData, onBooking } = useBooking();
   const [itinerary, setItinerary] = useState([]);
   const [inclusions, setInclusions] = useState([]);
   const [exclusions, setExclusions] = useState([]);
   const [highlights, setHighlights] = useState([]);
+  const history = useNavigate();
 
   const [booking, setBooking] = useState({
     first_name: "",
@@ -28,32 +32,28 @@ const PackageDetails = () => {
     });
   }
   async function handleSubmit(e) {
+    let total =
+      booking.adults * booking.cost + (booking.children * booking.cost) / 2;
+    booking.cost = total;
+    booking.packages_id = id;
+
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `http://localhost:3999/BookPackage/${packageData.packages_id}`,
-        booking
-      );
-      setBooking({
-        first_name: "",
-        last_name: "",
-        address: "",
-        phone: "",
-        adults: 0,
-        children: 0,
-      });
+      onBooking(booking);
+      history("/payment");
     } catch (error) {
       console.error("Error:", error);
     }
   }
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     axios
       .get(`http://localhost:3999/getPackagesById/${id}`)
       .then((response) => {
         // Handle the response data here
         setPackageData(response.data[0]);
+        booking.cost = response.data[0].cost;
       })
       .catch((error) => {
         // Handle errors here
@@ -84,7 +84,6 @@ const PackageDetails = () => {
       </>
     );
   }
-  console.log(itinerary);
 
   return (
     <div>
@@ -97,7 +96,15 @@ const PackageDetails = () => {
               <h1 className="text-sky-900 text-start text-3xl font-bold">
                 {packageData.title}{" "}
                 <span className="text-gray-500 text-xl font-normal">
-                  {itinerary? Object.keys(itinerary).length===1? "Day":`${Object.keys(itinerary).length} Days`:<></>}
+                  {itinerary ? (
+                    Object.keys(itinerary).length === 1 ? (
+                      "Day"
+                    ) : (
+                      `${Object.keys(itinerary).length} Days`
+                    )
+                  ) : (
+                    <></>
+                  )}
                 </span>
               </h1>
               {/* overview */}
@@ -131,7 +138,7 @@ const PackageDetails = () => {
                 <br />
               </h5>
               <ol className="text-start text-xl px-5 list-disc list-inside">
-              {highlights && Object.keys(highlights).length > 0 ? (
+                {highlights && Object.keys(highlights).length > 0 ? (
                   renderAttributes(highlights)
                 ) : (
                   <li>No itinerary data available.</li>
@@ -145,14 +152,16 @@ const PackageDetails = () => {
               <h5 className="text-2xl text-start text-sky-700 font-bold">
                 Cost
               </h5>
-              <h5 className="text-start text-xl px-3">{packageData.cost} JOD per person</h5>
+              <h5 className="text-start text-xl px-3">
+                {packageData.cost} JOD per person
+              </h5>
 
               {/* inclusion */}
               <h5 className="text-2xl text-start text-sky-700 font-bold">
                 Inclusions
               </h5>
               <ol className="text-start text-xl px-5 list-disc list-inside">
-              {inclusions && Object.keys(inclusions).length > 0 ? (
+                {inclusions && Object.keys(inclusions).length > 0 ? (
                   renderAttributes(inclusions)
                 ) : (
                   <li>No itinerary data available.</li>
@@ -164,7 +173,7 @@ const PackageDetails = () => {
                 Exclusions
               </h5>
               <ol className="text-start text-xl px-5 list-disc list-inside">
-              {exclusions && Object.keys(exclusions).length > 0 ? (
+                {exclusions && Object.keys(exclusions).length > 0 ? (
                   renderAttributes(exclusions)
                 ) : (
                   <li>No itinerary data available.</li>
@@ -185,14 +194,18 @@ const PackageDetails = () => {
               />
               {/* reviews */}
               <div className="py-12">
-                <Comments id= {id} type="Packages"></Comments>
+                <Comments id={id} type="Packages"></Comments>
               </div>
 
               <div>
                 <h5 className="text-2xl text-start text-sky-700 font-bold mb-5">
                   Book your trip
                 </h5>
-                <form action="" onSubmit={handleSubmit} className="bg-gray-100 border border-sky-700 rounded-xl">
+                <form
+                  action=""
+                  onSubmit={handleSubmit}
+                  className="bg-gray-100 border border-sky-700 rounded-xl"
+                >
                   <div className="min-h-screen flex justify-center items-start md:items-center">
                     <div className="p-8 w-full">
                       <div className="space-y-4 flex flex-col justify-center items-center">

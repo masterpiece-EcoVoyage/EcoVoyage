@@ -40,13 +40,12 @@ const addPackages = async (req, res) => {
 }
 
 const updatePackages = async (req, res) => {
-    // const packages_id = req.query.packages_id;
-    const { id } = req.params;
+    const packages_id = req.params.id;
 
     const { cost, title, overview, highlights, inclusions, exclusions, destination, itinerary } = req.body;
 
     try {
-        const values = [id, cost, title, overview, highlights, inclusions, exclusions, destination, itinerary];
+        const values = [packages_id, cost, title, overview, highlights, inclusions, exclusions, destination, itinerary];
         const result = await db.query(packageQueries.updatePackagesQuery, values);
 
 
@@ -64,7 +63,8 @@ const updatePackages = async (req, res) => {
 }
 
 const deletePackages = async (req, res) => {
-    const packages_id = req.query.packages_id;
+    // const packages_id = req.query.packages_id;
+    const packages_id = req.params.id;
     try {
         const result = await db.query(packageQueries.deletePackagesQuery, [packages_id]);
         if (!result.rowCount) {

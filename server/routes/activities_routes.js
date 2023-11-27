@@ -8,7 +8,7 @@ router.post('/addActivities', activitiesController.addActivities);
 
 router.put('/updateActivities/:id', activitiesController.updateActivities);
 
-router.put('/deleteActivities', activitiesController.deleteActivities);
+router.put('/deleteActivities/:id', activitiesController.deleteActivities);
 
 router.get('/getActivitiesByID/:id', activitiesController.getActivitiesByID);
 

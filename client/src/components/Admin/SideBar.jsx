@@ -29,9 +29,9 @@ const SideBar = () => {
   }
   return (
     <div className="">
-      <div className="relative w-[260px] ">
+      <div className="relative w-[260px]">
         <div
-          className={`peer absolute z-50 top-0 border ${position} lg:left-0 h-full w-full object-cover transition-all delay-100 duration-1000`}
+          className={`peer absolute z-50 top-0 border ${position} lg:left-0 h-full w-full object-cover transition-all delay-50 duration-500`}
         >
           <button
             aria-label="toggle sidebar"
@@ -125,7 +125,7 @@ const SideBar = () => {
             <div className="flex flex-col justify-between flex-1 mt-6">
               <nav className="-mx-3 space-y-6 ">
                 <div className="space-y-3 ">
-                  <label className="px-3 text-xs text-sky-700 uppercase dark:text-gray-400">
+                  <label className="px-3 text-start text-xs font-bold text-sky-700 uppercase dark:text-gray-400">
                     Manage Account
                   </label>
 
@@ -139,55 +139,55 @@ const SideBar = () => {
                   </button>
                   <button
                     className={`w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 ${
-                        page === "profile" ? "bg-gray-200" : ""
-                      }`}
+                      page === "profile" ? "bg-gray-200" : ""
+                    }`}
                     onClick={() => onSelectedPage("profile")}
                   >
                     <span className="mx-2 text-sm font-medium">Profile</span>
                   </button>
                 </div>
-
+                <hr />
                 <div className="space-y-3 ">
-                  <label className="px-3 text-xs text-sky-700 uppercase dark:text-gray-400">
+                  <label className="px-3 text-start font-bold text-xs text-sky-700 uppercase dark:text-gray-400">
                     Manage Users
                   </label>
 
                   <button
                     onClick={() => onSelectedPage("users")}
                     className={`w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 ${
-                        page === "users" ? "bg-gray-200" : ""
-                      }`}
+                      page === "users" ? "bg-gray-200" : ""
+                    }`}
                   >
                     <span className="mx-2 text-sm font-medium">Users</span>
                   </button>
                   <button
                     onClick={() => onSelectedPage("bookings")}
                     className={`w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 ${
-                        page === "bookings" ? "bg-gray-200" : ""
-                      }`}
+                      page === "bookings" ? "bg-gray-200" : ""
+                    }`}
                   >
                     <span className="mx-2 text-sm font-medium">Bookings</span>
                   </button>
                 </div>
-
+                <hr />
                 <div className="space-y-3 ">
-                  <label className="px-3 text-xs text-sky-700 uppercase dark:text-gray-400">
+                  <label className="px-3 text-xs font-bold text-sky-700 uppercase dark:text-gray-400">
                     Manage Flights
                   </label>
 
                   <button
                     onClick={() => onSelectedPage("flights")}
                     className={`w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 ${
-                        page === "flights" ? "bg-gray-200" : ""
-                      }`}
+                      page === "flights" ? "bg-gray-200" : ""
+                    }`}
                   >
                     <span className="mx-2 text-sm font-medium">Flights</span>
                   </button>
                   <button
                     onClick={() => onSelectedPage("destinations")}
                     className={`w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 ${
-                        page === "destinations" ? "bg-gray-200" : ""
-                      }`}
+                      page === "destinations" ? "bg-gray-200" : ""
+                    }`}
                   >
                     <span className="mx-2 text-sm font-medium">
                       Destinations
@@ -196,23 +196,23 @@ const SideBar = () => {
                   <button
                     onClick={() => onSelectedPage("packages")}
                     className={`w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 ${
-                        page === "packages" ? "bg-gray-200" : ""
-                      }`}
+                      page === "packages" ? "bg-gray-200" : ""
+                    }`}
                   >
                     <span className="mx-2 text-sm font-medium">Packages</span>
                   </button>
                 </div>
-
+                <hr />
                 <div className="space-y-3 ">
-                  <label className="px-3 text-xs text-sky-700 uppercase dark:text-gray-400">
+                  <label className="px-3 text-xs font-bold text-sky-700 uppercase dark:text-gray-400">
                     Other Services
                   </label>
 
                   <button
                     onClick={() => onSelectedPage("accommodations")}
                     className={`w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 ${
-                        page === "accommodations" ? "bg-gray-200" : ""
-                      }`}
+                      page === "accommodations" ? "bg-gray-200" : ""
+                    }`}
                   >
                     <span className="mx-2 text-sm font-medium">
                       Accommodations
@@ -231,13 +231,13 @@ const SideBar = () => {
                   <button
                     onClick={() => onSelectedPage("activities")}
                     className={`w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700 ${
-                        page === "activities" ? "bg-gray-200" : ""
-                      }`}
+                      page === "activities" ? "bg-gray-200" : ""
+                    }`}
                   >
                     <span className="mx-2 text-sm font-medium">Activities</span>
                   </button>
                 </div>
-<hr />
+                <hr />
                 <div className="space-y-3 ">
                   <button
                     className="w-full flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"

@@ -23,13 +23,12 @@ const Activites = () => {
   // end of dropdown
 
   const [filterOpen, setFilterOpen] = useState(false);
-  const openFilter=()=>{
+  const openFilter = () => {
     setFilterOpen(!filterOpen);
-  }
-
+  };
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     axios
       .get("http://localhost:5000/destinations?_limit=3")
       .then((response) => {
@@ -61,14 +60,20 @@ const Activites = () => {
     <>
       <div className="flex flex-col md:flex-row justify-center">
         <div className="">
-          <div className={`${filterOpen?'h-auto': 'h-16'} md:h-auto overflow-hidden my-16 mx-3 border gap-4 flex-wrap p-3 flex justify-center md:flex-col`}>
+          <div
+            className={`${
+              filterOpen ? "h-auto" : "h-16 overflow-hidden"
+            } md:overflow-visible md:h-auto my-16 mx-3 border gap-4 flex-wrap p-3 flex justify-center md:flex-col`}
+          >
             <div className="w-full flex justify-between">
               <h2 className="mb-3 text-start text-sky-700 text-xl font-bold">
                 Filter
               </h2>
               <svg
-              onClick={openFilter}
-                class={`w-4 h-auto ${filterOpen?'hidden': 'block'} md:hidden`}
+                onClick={openFilter}
+                class={`w-4 h-auto ${
+                  filterOpen ? "hidden" : "block"
+                } md:hidden`}
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -91,8 +96,10 @@ const Activites = () => {
                 <line x1="4" y1="4" x2="10" y2="10" />
               </svg>
               <svg
-              onClick={openFilter}
-                class={`w-4 h-auto ${filterOpen?'block': 'hidden'} md:hidden`}
+                onClick={openFilter}
+                class={`w-4 h-auto ${
+                  filterOpen ? "block" : "hidden"
+                } md:hidden`}
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -119,7 +126,9 @@ const Activites = () => {
               <p className="mb-3 text-lg text-start">Price</p>
               <input
                 type="number"
+                step="0.01"
                 id="first_name"
+                placeholder="0.00"
                 className="bg-white border border-gray-300 text-sky-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               ></input>
             </div>
@@ -206,7 +215,7 @@ const Activites = () => {
           </div>
         </div>
         <div className="my-16 mx-8 md:w-1/2">
-        <form className="mb-5">
+          <form className="mb-5">
             <label
               for="default-search"
               class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -248,18 +257,18 @@ const Activites = () => {
           <div className="flex flex-col flex-wrap justify-center items-center md:flex-row gap-8 md:gap-4">
             {destinations.map((destination, id) => (
               <Link key={id} to="/">
-              <article className="md:max-w-[15rem] max-w-[20rem] shadow-xl bg-cover bg-center overflow-hidden md:h-[350px] h-[400px] transform duration-500 hover:-translate-y-2 cursor-pointer group bg-[url('https://afhomeph.com/cdn/shop/files/Website_Banner_Direct_from_the_Factory_1.png?v=1685417210&width=2800')]">
-                <div className="text-start hover:bg-[#12243a8f] bg-opacity-20 h-full px-5 flex flex-wrap flex-col pt-40 md:pt-28 hover:bg-opacity-75 transform duration-300">
-                  <h1 className="text-white text-2xl mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
-                    {destination.title}
-                  </h1>
-                  <div className="w-16 h-2 bg-sky-700 rounded-full mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300"></div>
-                  <p className="my-3 py-3 opacity-0 max-h-[100px] overflow-hidden text-white text-xl group-hover:opacity-80 transform duration-500">
-                    {destination.destinations_details}
-                  </p>
-                </div>
-              </article>
-            </Link>
+                <article className="md:max-w-[15rem] max-w-[20rem] shadow-xl bg-cover bg-center overflow-hidden md:h-[350px] h-[400px] transform duration-500 hover:-translate-y-2 cursor-pointer group bg-[url('https://afhomeph.com/cdn/shop/files/Website_Banner_Direct_from_the_Factory_1.png?v=1685417210&width=2800')]">
+                  <div className="text-start hover:bg-[#12243a8f] bg-opacity-20 h-full px-5 flex flex-wrap flex-col pt-40 md:pt-28 hover:bg-opacity-75 transform duration-300">
+                    <h1 className="text-white text-2xl mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
+                      {destination.title}
+                    </h1>
+                    <div className="w-16 h-2 bg-sky-700 rounded-full mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300"></div>
+                    <p className="my-3 py-3 opacity-0 max-h-[100px] overflow-hidden text-white text-xl group-hover:opacity-80 transform duration-500">
+                      {destination.destinations_details}
+                    </p>
+                  </div>
+                </article>
+              </Link>
             ))}
           </div>
         </div>

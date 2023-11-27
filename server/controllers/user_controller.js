@@ -109,6 +109,7 @@ const loginUser = async (req, res) => {
                 validate,
                 message: "Successfully Login",
                 token: token,
+                role_id: userData.rows[0].role_id,
             });
         }
     } catch (err) {

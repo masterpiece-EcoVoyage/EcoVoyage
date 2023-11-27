@@ -31,8 +31,8 @@ const AddActivity = () => {
   };
   return (
     <div>
-      <div className="flex flex-col justify-center top-64 items-center lg:ml-28 h-full w-full">
-        <div className="lg:w-2/3 w-full bg-white p-6 rounded shadow-lg h-auto m-6">
+      <div className="flex flex-col justify-center top-64 items-center lg:ml-28 h-full w-auto">
+        <div className="lg:w-2/3 w-full bg-gray-200 p-6 rounded shadow-lg h-auto m-6">
           <form action="" onSubmit={() => handleSubmit}>
             <div className="p-6 w-full">
               <div className="flex flex-col justify-center">
@@ -118,6 +118,7 @@ const AddActivity = () => {
                   </label>
                   <input
                     type="number"
+                    step="0.01"
                     name="pricing"
                     placeholder="Enter the country the place in"
                     value={formData.pricing}
@@ -134,15 +135,16 @@ const AddActivity = () => {
                 >
                   Add
                 </button>
+                <button
+                  type="clear"
+                  onClick={() => handleClose()}
+                  className="mt-4 m-2 py-2 px-5 border-2 border-sky-900 text-sky-900 rounded-2xl hover:bg-white"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </form>
-          <button
-            onClick={() => handleClose()}
-            className="mt-4 m-2 py-2 px-5 border-2 border-sky-900 text-sky-900 rounded-2xl hover:bg-gray-200"
-          >
-            Close
-          </button>
         </div>
       </div>
     </div>

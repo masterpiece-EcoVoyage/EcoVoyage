@@ -1,5 +1,6 @@
 import React from "react";
 import { PencilIcon } from "@heroicons/react/24/solid";
+import Swal from "sweetalert2";
 import {
   Card,
   CardHeader,
@@ -17,12 +18,11 @@ import { usePage } from "../../Context/SelectedPageContext";
 
 export const DestinationsTable = () => {
   const [destinations, setDestinations] = useState([]);
-  const [currentPlaces, setCurrentPlaces] = useState([]);
   const [filteredPlaces, setFilteredPlaces] = useState(destinations);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const destinationPerPage = 5;
-  const { page, onSelectedPage } = usePage();
+  const { page, onSelectedPage, onSelectedId } = usePage();
 
   const TABLE_HEAD = ["Destinations", "Type", "Country", "Action"];
   useEffect(() => {
@@ -31,6 +31,7 @@ export const DestinationsTable = () => {
       .then((response) => {
         // Handle the response data here
         setDestinations(response.data);
+        setFilteredPlaces(response.data);
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -41,19 +42,13 @@ export const DestinationsTable = () => {
 
   const indexOfLastPlace = currentPage * destinationPerPage;
   const indexOfFirstPlace = indexOfLastPlace - destinationPerPage;
-
-  useEffect(() => {
-    if (filteredPlaces.length === 0) {
-      setCurrentPlaces(destinations.slice(indexOfFirstPlace, indexOfLastPlace));
-    } else {
-      setCurrentPlaces(filteredPlaces.slice(indexOfFirstPlace, indexOfLastPlace));
-    }
-  }, [filteredPlaces, destinations]);
+  const currentPlaces = filteredPlaces.slice(
+    indexOfFirstPlace,
+    indexOfLastPlace
+  );
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
-
-  console.log(destinations);
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery === "") {
@@ -71,6 +66,46 @@ export const DestinationsTable = () => {
         )
       );
     }
+  };
+  const handleEdit = (id) => {
+    console.log(id);
+    onSelectedId(id);
+    onSelectedPage("updateDestination");
+  };
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .put(`http://localhost:3999/softDeleteFlight/${id}`)
+          .then((response) => {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your file has been deleted.",
+              icon: "success",
+            });
+          })
+          .catch((error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong with deleting the user.",
+              confirmButtonText: "OK",
+              customClass: {
+                confirmButton:
+                  "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+              },
+            });
+          });
+      }
+    });
   };
   return (
     <Card className="p-2 w-full h-full border border-sky-700">
@@ -131,6 +166,9 @@ export const DestinationsTable = () => {
             <Button
               className="flex items-center gap-3 border border-sky-900 bg-sky-900 hover:bg-white hover:text-sky-900"
               size="sm"
+              onClick={() => {
+                onSelectedPage("addDestination");
+              }}
             >
               <svg
                 class="w-4 h-4"
@@ -151,7 +189,7 @@ export const DestinationsTable = () => {
           </div>
         </div>
       </CardHeader>
-      <CardBody className="px-0 overflow-auto">
+      <CardBody className="px-0 overflow-auto h-[312px] mb-auto">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
@@ -175,14 +213,17 @@ export const DestinationsTable = () => {
             {currentPlaces.map((place, index) => {
               const isLast =
                 (index === filteredPlaces.length) === 0
-                  ? destinations.length-1
+                  ? destinations.length - 1
                   : filteredPlaces.length - 1;
               const classes = isLast
                 ? "p-4"
                 : "p-4 border-b border-blue-gray-50";
 
               return (
-                <tr key={index}>
+                <tr
+                  key={index}
+                  className={index % 2 !== 0 ? "bg-white" : "bg-gray-200"}
+                >
                   <td className={classes}>
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col">
@@ -220,12 +261,18 @@ export const DestinationsTable = () => {
                   </td>
                   <td className={classes}>
                     <Tooltip content="Edit Place">
-                      <IconButton variant="text">
+                      <IconButton
+                        onClick={() => handleEdit(place.destinations_id)}
+                        variant="text"
+                      >
                         <PencilIcon className="h-4 w-4 text-sky-900" />
                       </IconButton>
                     </Tooltip>
                     <Tooltip content="Delete Place">
-                      <IconButton variant="text">
+                      <IconButton
+                        onClick={() => handleDelete(place.destinations_id)}
+                        variant="text"
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"

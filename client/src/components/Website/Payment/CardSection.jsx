@@ -8,13 +8,11 @@ const CARD_ELEMENT_OPTIONS = {
       iconColor: "#0369a1",
       color: "#0c4a6e",
       fontSize: "20px",
-      backgroundColor: "white",
       fontFamily: '"Open Sans", sans-serif',
       fontSmoothing: "antialiased",
       "::placeholder": {
         color: "#6b7280"
       },
-      padding: "10px"
     },
     invalid: {
       color: "#e5424d",

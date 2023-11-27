@@ -23,7 +23,7 @@ const ProductsStatistics = () => {
 
     //   fetch flights
     axios
-      .get(`http://localhost:3999/user`)
+      .get(`http://localhost:3999/getFlights`)
       .then((response) => {
         // Handle the response data here
         setFlights(response.data.length);

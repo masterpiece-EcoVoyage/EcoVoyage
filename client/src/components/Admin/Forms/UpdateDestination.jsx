@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { usePage } from "../../Context/SelectedPageContext";
+import { Dropdown } from "flowbite-react";
 
 const UpdateDestination = ({ id }) => {
   const [formData, setFormData] = useState([]);
+  const { onSelectedPage, page } = usePage();
+  const [selected, setSelected] = useState("Select Type");
+
+  const dropdownStyles = {
+    backgroundColor: "#ffffff",
+    color: "#0369a1",
+  };
 
   useEffect(() => {
     axios
@@ -16,39 +25,50 @@ const UpdateDestination = ({ id }) => {
         // Handle errors here
         console.error("Error:", error);
       });
-    console.log(formData);
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if(name==="image"){
-        setFormData({
-            ...formData,
-            [name]: e.target.files,
-          });
-    }else{
-    setFormData({
-      ...formData,
-      [name]: value,
-    });}
+    if (name === "image") {
+      setFormData({
+        ...formData,
+        [name]: e.target.files,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    if (selected !== "Select Type") {
+      setFormData({
+        ...formData,
+        type: selected,
+      });
+      axios.put(`http://localhost:3999/addAccommodation/${id}`, formData);
+    }
+  };
+  const handleClose = (e) => {
+    e.preventDefault();
+    setFormData([]);
+    onSelectedPage("dashboard");
   };
   return (
     <div>
-      <div className="flex flex-col justify-center items-center lg:ml-28 h-full w-full">
-        <div className="lg:w-2/3 w-full bg-white p-6 rounded shadow-lg h-auto m-6">
+      <div className="flex flex-col justify-center top-64 items-center lg:ml-28 h-full w-auto">
+        <div className="lg:w-2/3 w-full bg-gray-200 p-6 rounded shadow-lg h-auto m-6">
           <form action="" onSubmit={handleSubmit}>
             <div className="p-6 w-full">
               <div className="flex flex-col justify-center">
                 <h1 className="text-3xl text-sky-900 font-bold text-center mb-4 cursor-pointer">
-                  Update Destination
+                  Update destination
                 </h1>
               </div>
               <div className="space-y-4">
+                {/* image */}
                 <div className="text-start">
                   <label
                     class="block mb-2 text-sm font-medium text-sky-900"
@@ -64,6 +84,8 @@ const UpdateDestination = ({ id }) => {
                     multiple
                   />
                 </div>
+
+                {/* title */}
                 <div className="text-start">
                   <label className="text-sm font-medium text-sky-900">
                     Title
@@ -78,6 +100,8 @@ const UpdateDestination = ({ id }) => {
                     className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                   />
                 </div>
+
+                {/* overview */}
                 <div className="text-start">
                   <label className="text-sm font-medium text-sky-900">
                     Overview
@@ -85,56 +109,76 @@ const UpdateDestination = ({ id }) => {
                   <textarea
                     name="activity_details"
                     rows="4"
-                    value={formData.activity_details}
+                    value={formData.accommodation_details}
                     class="block p-2.5 w-full my-2 text-sm rounded-lg border border-[#0c4a6e69] outline-none"
                     placeholder="Enter a description or an overview about the place..."
                     required
                     onChange={(e) => handleChange(e)}
                   ></textarea>
                 </div>
+
+                {/* country */}
                 <div className="text-start">
                   <label className="text-sm font-medium text-sky-900">
-                    Type
+                    City
                   </label>
                   <input
                     type="text"
-                    name="type"
-                    placeholder="Place type"
-                    value={formData.type}
+                    name="country"
+                    placeholder="City"
+                    value={formData.country}
                     required
                     onChange={(e) => handleChange(e)}
                     className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                   />
                 </div>
+
+                {/* Type */}
                 <div className="text-start">
-                  <label className="text-sm font-medium text-sky-900">
-                    Availability
-                  </label>
-                  <input
-                    type="text"
-                    name="availability"
-                    placeholder="Enter the country the place in"
-                    value={formData.availability}
-                    required
-                    onChange={(e) => handleChange(e)}
-                    className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
-                  />
-                </div>
-                <div className="text-start">
-                  <label className="text-sm font-medium text-sky-900">
-                    Price
-                  </label>
-                  <input
-                    type="number"
-                    name="pricing"
-                    placeholder="Enter the country the place in"
-                    value={formData.pricing}
-                    required
-                    onChange={(e) => handleChange(e)}
-                    className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
-                  />
+                  <div className="my-2">
+                    <label className="text-sm font-medium text-sky-900">
+                      Type
+                    </label>
+                  </div>
+                  <div>
+                    <Dropdown
+                      label={selected}
+                      placement="right-start"
+                      style={dropdownStyles}
+                    >
+                      <Dropdown.Item
+                        onClick={() => {
+                          setSelected("Beach");
+                        }}
+                      >
+                        Beach
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setSelected("Mountain");
+                        }}
+                      >
+                        Mountain
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setSelected("Forest");
+                        }}
+                      >
+                        Forest
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setSelected("City");
+                        }}
+                      >
+                        City
+                      </Dropdown.Item>
+                    </Dropdown>
+                  </div>
                 </div>
               </div>
+              {/* buttons */}
               <div className="text-center mt-6">
                 <button
                   type="submit"
@@ -144,8 +188,8 @@ const UpdateDestination = ({ id }) => {
                 </button>
                 <button
                   type="clear"
-                  // onClick={onClose}
-                  className="mt-4 m-2 py-2 px-5 border-2 border-sky-900 text-sky-900 rounded-2xl hover:bg-gray-200"
+                  onClick={(e) => handleClose(e)}
+                  className="mt-4 m-2 py-2 px-5 border-2 border-sky-900 text-sky-900 rounded-2xl hover:bg-white"
                 >
                   Close
                 </button>

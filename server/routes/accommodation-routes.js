@@ -16,11 +16,11 @@ router.put('/deleteAccommodation/:id', accommodationController.markAccommodation
 
 router.get('/getAccommodationsByID/:id', accommodationController.getAccommodationsByID);
 
-router.post('/addComment/:id', verifyJWT.authorize([1]), accommodationController.addCommentAccomm);
+router.post('/addComment/:id', verifyJWT.authorize([1 , 2]), accommodationController.addCommentAccomm);
 
 router.get('/getAccommodationsWithComments/:id', accommodationController.getAccommodationsWithComments);
 
-router.post('/BookAccommodation/:id', verifyJWT.authorize([1]), accommodationController.bookAccommodation);
+router.post('/BookAccommodation/:id', verifyJWT.authorize([1, 2]), accommodationController.bookAccommodation);
 
 router.get('/getBookAccommodations/:id', accommodationController.getBookAccommodations);
 

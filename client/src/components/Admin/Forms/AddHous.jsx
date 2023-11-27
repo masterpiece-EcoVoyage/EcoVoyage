@@ -4,35 +4,20 @@ import { usePage } from "../../Context/SelectedPageContext";
 import { Dropdown } from "flowbite-react";
 import { Checkbox, Label } from "flowbite-react";
 
-const UpdateHouse = ({ id }) => {
-  console.log(id);
+const AddHouse = () => {
   const [formData, setFormData] = useState([]);
   const { onSelectedPage, page } = usePage();
-
   const [selected, setSelected] = useState("Select rating");
   const [selectedType, setSelectedType] = useState("inside");
   const [isPool, setIsPool] = useState(false);
   const [isFreeWifi, setIsFreeWifi] = useState(false);
   const [isParking, setParking] = useState(false);
+  
 
   const dropdownStyles = {
     backgroundColor: "#ffffff",
     color: "#0369a1",
   };
-
-  useEffect(() => {
-    axios
-      .get(`http://localhost:3999/getAccommodationsByID/${id}`)
-      .then((response) => {
-        // Handle the response data here
-        setFormData(response.data[0]);
-        // setTypes(response.data.destinations_type);
-      })
-      .catch((error) => {
-        // Handle errors here
-        console.error("Error:", error);
-      });
-  }, []);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => {
@@ -55,26 +40,26 @@ const UpdateHouse = ({ id }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const amenities = [];
-    if (isPool) {
+    if(isPool){
       amenities.push("Pool");
     }
-    if (isFreeWifi) {
+    if(isFreeWifi){
       amenities.push("Free Wi-Fi");
     }
-    if (isParking) {
+    if(isParking){
       amenities.push("Free Parking");
     }
     setFormData({
       ...formData,
-      type: selectedType === "inside" ? "inside" : "outside",
+      type: selectedType==="inside"?"inside":"outside",
       amenities: amenities,
-    });
-    if (selected !== "Select rating") {
+    })
+    if(selected !== "Select rating"){
       setFormData({
         ...formData,
-        rating: selected.replace(/\D/g, ""),
-      });
-      axios.put(`http://localhost:3999/updateAccommodation/${id}`, formData);
+        rating: selected.replace(/\D/g, ''),
+      })
+      axios.post(`http://localhost:3999/addAccommodation`, formData);
     }
   };
   const handleClose = (e) => {
@@ -90,7 +75,7 @@ const UpdateHouse = ({ id }) => {
             <div className="p-6 w-full">
               <div className="flex flex-col justify-center">
                 <h1 className="text-3xl text-sky-900 font-bold text-center mb-4 cursor-pointer">
-                  Update Accommodation
+                  Add new accommodation
                 </h1>
               </div>
               <div className="space-y-4">
@@ -143,6 +128,7 @@ const UpdateHouse = ({ id }) => {
                   ></textarea>
                 </div>
 
+                
                 {/* price */}
                 <div className="text-start">
                   <label className="text-sm font-medium text-sky-900">
@@ -291,26 +277,20 @@ const UpdateHouse = ({ id }) => {
 
                 {/* amenities */}
                 <div className="text-start">
-                  <label className="text-sm font-medium text-sky-900">
+                <label className="text-sm font-medium text-sky-900">
                     Amenities
                   </label>
                   <div className="flex flex-wrap justify-around">
                     <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="Wifi"
-                        onClick={() => setIsFreeWifi(!isFreeWifi)}
-                      />
+                      <Checkbox id="Wifi" onClick={()=>setIsFreeWifi(!isFreeWifi)} />
                       <Label htmlFor="Wifi">Free Wi-Fi</Label>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Checkbox
-                        id="parking"
-                        onClick={() => setParking(!isParking)}
-                      />
+                      <Checkbox id="parking" onClick={()=>setParking(!isParking)} />
                       <Label htmlFor="parking">Free parking</Label>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Checkbox id="pool" onClick={() => setIsPool(!isPool)} />
+                      <Checkbox id="pool" onClick={()=>setIsPool(!isPool)}/>
                       <Label htmlFor="pool">Pool</Label>
                     </div>
                   </div>
@@ -322,7 +302,7 @@ const UpdateHouse = ({ id }) => {
                   type="submit"
                   className="mt-4 m-2 py-2 px-5 border-2 border-sky-900 bg-sky-900 hover:bg-white rounded-2xl text-white hover:text-sky-900"
                 >
-                  Update
+                  Add
                 </button>
                 <button
                   type="clear"
@@ -340,4 +320,4 @@ const UpdateHouse = ({ id }) => {
   );
 };
 
-export default UpdateHouse;
+export default AddHouse;

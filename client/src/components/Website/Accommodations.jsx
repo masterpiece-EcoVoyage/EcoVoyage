@@ -28,7 +28,7 @@ const Accommodations = () => {
   };
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     axios
       .get("http://localhost:3999/getAccommodations")
       .then((response) => {
@@ -58,42 +58,12 @@ const Accommodations = () => {
 
   return (
     <>
-      <div class="flex flex-col h-full items-center justify-center">
-        <div class="px-6 text-sky-700 text-left md:px-12 ">
-          <h1 class="mt-6 my-8 text-3xl font-bold tracking-tight md:text-4xl xl:text-5xl">
-            Plan Your Eco-Friendly Adventure <br />
-          </h1>
-        </div>
-        <div className="flex flex-col gap-8 md:flex-row items-center justify-center p-12 container mx-auto rounded-lg md:h-24 bg-[#7dafbfb3]">
-          <input
-            class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
-            type="text"
-            placeholder="Where are you going?"
-          />
-          <input
-            class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
-            type="date"
-          />
-          <input
-            class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
-            type="date"
-          />
-          <input
-            class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
-            type="number"
-            placeholder="Guests"
-          />
-          <button class="border-sky-900 border-2 hover:bg-white bg-sky-900 hover:text-sky-900 text-white font-bold py-2 px-4 rounded w-full md:w-1/4">
-            Search
-          </button>
-        </div>
-      </div>
       <div className="flex flex-col md:flex-row justify-center">
         <div className="">
           <div
             className={`${
-              filterOpen ? "h-auto" : "h-16"
-            } md:h-auto my-16 mx-3 border gap-4 flex-wrap p-3 flex justify-center md:flex-col`}
+              filterOpen ? "h-auto" : "h-16 overflow-hidden"
+            } md:overflow-visible md:h-auto my-16 mx-3 border gap-4 flex-wrap p-3 flex justify-center md:flex-col`}
           >
             <div className="w-full flex justify-between">
               <h2 className="mb-3 text-start text-sky-700 text-xl font-bold">
@@ -156,7 +126,9 @@ const Accommodations = () => {
               <p className="mb-3 text-lg text-start">Price</p>
               <input
                 type="number"
+                step="0.01"
                 id="first_name"
+                placeholder="0.00"
                 className="bg-white border border-gray-300 text-sky-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               ></input>
             </div>
@@ -441,7 +413,9 @@ const Accommodations = () => {
                     </div>
                     <div className="px-2 m-4">
                       <div className="sm:flex sm:justify-end">
-                        <Link to={`/accommodation/${accommodation.accommodation_id}`}>
+                        <Link
+                          to={`/accommodation/${accommodation.accommodation_id}`}
+                        >
                           <button className="sm:mt-3 my-2 py-2 px-5 bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 md:text-lg rounded-lg shadow-md">
                             Read more
                           </button>

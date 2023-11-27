@@ -1,4 +1,3 @@
-// AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 
@@ -7,11 +6,11 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [cookies, setCookie, removeCookie] = useCookies(['token']);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
         // Check if the token is present in cookies
         const token = cookies['token'];
-
         if (token) {
             // Token exists, user is logged in
             setIsLoggedIn(true);
@@ -30,9 +29,18 @@ export const AuthProvider = ({ children }) => {
         removeCookie('yourTokenCookieName', { path: '/' });
         setIsLoggedIn(false);
     };
+    const onLogin = (role)=>{
+        if(role === 2){
+            setIsAdmin(true);
+        }else{
+            setIsAdmin(false);
+        }
+    }
 
     const authContextValue = {
         isLoggedIn,
+        isAdmin,
+        onLogin,
         login,
         logout,
     };

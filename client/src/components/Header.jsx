@@ -6,7 +6,7 @@ import { useAuth } from "./Context/AuthContext";
 const Header = () => {
   const [isMenuOpened, setIsMenuOpened] = useState(false);
   const [selectedLink, setSelectedLink] = useState("Home");
-  const { isLoggedIn, login, logout } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   const location = useLocation();
   if (location.pathname === "/login" || location.pathname === "/signup") {

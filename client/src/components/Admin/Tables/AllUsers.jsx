@@ -57,6 +57,7 @@ const AllUsers = () => {
     }
   };
 
+  const handleEdit = (id) => {};
   return (
     <Card className="lg:ml-80 p-2 w-screen lg:w-full h-full border border-sky-700">
         <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
@@ -138,7 +139,7 @@ const AllUsers = () => {
                 : "p-4 border-b border-blue-gray-50";
 
               return (
-                <tr key={user.email}>
+                <tr key={user.email} className={index%2 !== 0? "bg-white":"bg-gray-200"}>
                   <td className={classes}>
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col">
@@ -182,26 +183,26 @@ const AllUsers = () => {
                       />
                     </div>
                   </td>
-                  <td className={`${classes} text-end`}>
-                    <Tooltip content="Edit User">
-                      <IconButton variant="text">
-                        <PencilIcon className="h-4 w-4 text-sky-900" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip content="Delete User">
-                      <IconButton variant="text">
+                  <td className={`${classes}`}>
+                    <Tooltip content="Assign as admin">
+                      <IconButton
+                        variant="text"
+                        onClick={() => {
+                          handleEdit(user.user_id);
+                        }}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke-width="1.5"
                           stroke="currentColor"
-                          className="text-sky-900 w-4 h-4 font-bold"
+                          class="w-6 h-6 text-sky-900"
                         >
                           <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                            d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
                           />
                         </svg>
                       </IconButton>

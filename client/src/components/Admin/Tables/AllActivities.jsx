@@ -1,5 +1,6 @@
 import React from "react";
 import { PencilIcon } from "@heroicons/react/24/solid";
+import Swal from "sweetalert2";
 import {
   Card,
   CardHeader,
@@ -14,57 +15,91 @@ import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
 
 export const AllActivities = () => {
-  const [destinations, setDestinations] = useState([]);
-  const [filteredPlaces, setFilteredPlaces] = useState(destinations);
+    const [activities, setActivities] = useState([]);
+  const [filteredActivities, setFilteredActivities] = useState(activities);
   const [searchQuery, setSearchQuery] = useState("");
-  const { page, onSelectedPage, selectedId, onSelectedId } = usePage();
+  const { onSelectedPage, onSelectedId } = usePage();
 
-  const TABLE_HEAD = ["Destinations", "Type", "Country", "Action"];
-  useEffect(() => {
-    axios
-      .get(`http://localhost:3999/destinations`)
+  const TABLE_HEAD = ["Activities", "Type", "Availability", "Action"];
+  
+  async function fetchData(){
+    await axios
+      .get(`http://localhost:3999/getActivities`)
       .then((response) => {
         // Handle the response data here
-        setDestinations(response.data);
-        setFilteredPlaces(response.data);
+        setActivities(response.data);
+        setFilteredActivities(response.data)
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
         // Handle errors here
         console.error("Error:", error);
       });
+  }
+  useEffect(() => {
+    fetchData();
   }, []);
-  const [currentPlaces, setCurrentPlaces] = useState([]);
 
-  const indexOfLastPlace = currentPlaces.length - 1;
-  const indexOfFirstPlace = 0;
+  const currentActivities = filteredActivities;
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery === "") {
-      setFilteredPlaces(destinations);
+      setFilteredActivities(activities);
     } else {
-      setFilteredPlaces(
-        destinations.filter(
-          (destination) =>
-            destination.title
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            destination.location
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
+      setFilteredActivities(
+        activities.filter(
+          (activitie) =>
+            activitie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            activitie.type.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
     }
-};
+  };
   const handleEdit = (id) => {
     onSelectedId(id);
     onSelectedPage("updateActivity");
   };
+  const handleDelete=(id)=>{
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+            axios
+            .put(`http://localhost:3999/deleteActivities/${id}`)
+            .then((response) => {
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "Your file has been deleted.",
+                    icon: "success",
+                });
+                fetchData();
+            })
+            .catch((error) => {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong with deleting the user.",
+                confirmButtonText: "OK",
+                customClass: {
+                  confirmButton:
+                    "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+                },
+              });
+            });
+        }
+      });
+  };
   return (
     <Card className="lg:ml-80 p-2 w-screen lg:w-full h-full border border-sky-700">
       <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
-        Destinations
+        Activities
       </h1>
       <hr className="text-sky-700 mb-5" />
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -113,7 +148,9 @@ export const AllActivities = () => {
             <Button
               className="flex items-center gap-3 border border-sky-900 bg-sky-900 hover:bg-white hover:text-sky-900"
               size="sm"
-              onClick={()=>{onSelectedPage('addActivity')}}
+              onClick={() => {
+                onSelectedPage("addActivity");
+              }}
             >
               <svg
                 class="w-4 h-4"
@@ -135,7 +172,7 @@ export const AllActivities = () => {
         </div>
       </CardHeader>
       <CardBody className="px-0 overflow-auto">
-        <table className="w-full min-w-max table-auto text-left">
+      <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
               {TABLE_HEAD.map((head) => (
@@ -155,17 +192,17 @@ export const AllActivities = () => {
             </tr>
           </thead>
           <tbody>
-            {currentPlaces.map((place, index) => {
+            {currentActivities.map((activity, index) => {
               const isLast =
-                (index === filteredPlaces.length) === 0
-                  ? destinations.length - 1
-                  : filteredPlaces.length - 1;
+                (index === filteredActivities.length) === 0
+                  ? activities.length - 1
+                  : filteredActivities.length - 1;
               const classes = isLast
                 ? "p-4"
                 : "p-4 border-b border-blue-gray-50";
 
               return (
-                <tr key={index}>
+                <tr key={index} className={index%2 !== 0? "bg-white":"bg-gray-200"}>
                   <td className={classes}>
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col">
@@ -174,7 +211,7 @@ export const AllActivities = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {place.title}
+                          {activity.title}
                         </Typography>
                       </div>
                     </div>
@@ -186,7 +223,7 @@ export const AllActivities = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {place.destinations_type}
+                        {activity.type}
                       </Typography>
                     </div>
                   </td>
@@ -197,23 +234,25 @@ export const AllActivities = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {place.location}
+                        {activity.availability}
                       </Typography>
                     </div>
                   </td>
                   <td className={classes}>
-                    <Tooltip content="Edit Place">
+                    <Tooltip content="Edit Activity">
                       <IconButton
                         onClick={() => {
-                            handleEdit(place.activities_id);
-                          }}
+                          handleEdit(activity.activities_id);
+                        }}
                         variant="text"
                       >
                         <PencilIcon className="h-4 w-4 text-sky-900" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip content="Delete Place">
-                      <IconButton variant="text">
+                    <Tooltip content="Delete Activity">
+                      <IconButton
+                    onClick={()=>{handleDelete(activity.activities_id)}}
+                    variant="text">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"

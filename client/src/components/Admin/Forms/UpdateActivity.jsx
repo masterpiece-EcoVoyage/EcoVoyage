@@ -1,9 +1,10 @@
-
 import React, { useEffect, useState } from "react";
+import { usePage } from "../../Context/SelectedPageContext";
 import axios from "axios";
 
-const UpdateActivity = ({id}) => {
+const UpdateActivity = ({ id }) => {
   const [formData, setFormData] = useState([]);
+  const { onSelectedPage } = usePage();
 
   useEffect(() => {
     axios
@@ -19,32 +20,34 @@ const UpdateActivity = ({id}) => {
       });
   }, []);
 
-  console.log(formData);
-  console.log(id);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if(name==="image"){
-        setFormData({
-            ...formData,
-            [name]: e.target.file,
-          });
-    }else{
-    setFormData({
-      ...formData,
-      [name]: value,
-    });}
+    if (name === "image") {
+      setFormData({
+        ...formData,
+        [name]: e.target.file,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.put(`http://localhost:3999/updateActivities/${id}`, formData)
+    axios.put(`http://localhost:3999/updateActivities/${id}`, formData);
+  };
+  const handleClose = () => {
+    setFormData([]);
+    onSelectedPage("dashboard");
   };
   return (
     <div>
-      <div className="flex flex-col justify-center top-64 items-center absolute z-10 lg:ml-28 h-full w-full">
-        <div className="lg:w-2/3 w-full bg-white p-6 rounded shadow-lg h-auto m-6">
-        <form action="" onSubmit={handleSubmit}>
+      <div className="flex flex-col justify-center top-64 items-center lg:ml-28 h-full w-auto">
+        <div className="lg:w-2/3 w-full bg-gray-200 p-6 rounded shadow-lg h-auto m-6">
+          <form action="" onSubmit={handleSubmit}>
             <div className="p-6 w-full">
               <div className="flex flex-col justify-center">
                 <h1 className="text-3xl text-sky-900 font-bold text-center mb-4 cursor-pointer">
@@ -129,6 +132,7 @@ const UpdateActivity = ({id}) => {
                   </label>
                   <input
                     type="number"
+                    step="0.01"
                     name="pricing"
                     placeholder="Enter the country the place in"
                     value={formData.pricing}
@@ -143,12 +147,12 @@ const UpdateActivity = ({id}) => {
                   type="submit"
                   className="mt-4 m-2 py-2 px-5 border-2 border-sky-900 bg-sky-900 hover:bg-white rounded-2xl text-white hover:text-sky-900"
                 >
-                  Update
+                  Add
                 </button>
                 <button
                   type="clear"
-                  // onClick={onClose}
-                  className="mt-4 m-2 py-2 px-5 border-2 border-sky-900 text-sky-900 rounded-2xl hover:bg-gray-200"
+                  onClick={() => handleClose()}
+                  className="mt-4 m-2 py-2 px-5 border-2 border-sky-900 text-sky-900 rounded-2xl hover:bg-white"
                 >
                   Close
                 </button>

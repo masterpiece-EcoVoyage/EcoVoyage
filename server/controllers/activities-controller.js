@@ -56,7 +56,7 @@ const updateActivities = async (req, res) => {
 }
 
 const deleteActivities = async (req, res) => {
-    const activities_id = req.query.activities_id;
+    const activities_id = req.params.id;
     try {
         const result = await db.query(activitiesQueries.deleteActivitiesQuery, [activities_id]);
         if (!result.rowCount) {

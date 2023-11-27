@@ -9,7 +9,7 @@ router.post('/addPackages', packagesController.addPackages);
 
 router.put('/updatePackages/:id', packagesController.updatePackages);
 
-router.put('/deletePackages', packagesController.deletePackages);
+router.put('/deletePackages/:id', packagesController.deletePackages);
 
 router.get('/getPackagesById/:id', packagesController.getPackagesById);
 
