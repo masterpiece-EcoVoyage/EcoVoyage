@@ -23,5 +23,4 @@ router.post('/addCommentToAc/:id', verifyJWT.authorize([1, 2]), activitiesContro
 
 router.get('/getActivitiesWithComments/:id', activitiesController.getActivitiesWithComments);
 
-
 module.exports = router;

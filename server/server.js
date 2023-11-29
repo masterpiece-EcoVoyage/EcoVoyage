@@ -6,9 +6,11 @@ app.use(express.json());
 var cors = require('cors');
 app.use(cors());
 
+
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 const userRouter = require("./routes/user_routes");
 

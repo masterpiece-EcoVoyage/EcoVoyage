@@ -7,8 +7,6 @@ const nodemailer = require('nodemailer');
 const userQueries = require('../Models/userQueries');
 const Firebase = require("../Middleware/FirebaseConfig/FireBaseConfig")
 
-
-
 const registerUser = async (req, res) => {
     // TLD " Top-Level-Domain Like org,gov,edu,maul"
     const { first_name, last_name, email, password, confirm_password, country } = req.body;
@@ -69,6 +67,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
+
     try {
         const schema = Joi.object({
             email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
@@ -241,7 +240,6 @@ const getUserData = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
-
 
 const getUserId = async (req, res) => {
     const user_id = req.user.user_id;

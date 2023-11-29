@@ -13,5 +13,4 @@ router.get("/getContactById/:id", contactUsController.getContactById);
 router.put('/updateContactShownStatus/:id', contactUsController.updateContactShownStatus);
 
 
-
 module.exports = router;
