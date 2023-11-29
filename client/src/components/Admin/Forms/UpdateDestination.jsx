@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
 import { Dropdown } from "flowbite-react";
+import { useAuth } from "../../Context/AuthContext";
 
 const UpdateDestination = ({ id }) => {
   const [formData, setFormData] = useState([]);
   const { onSelectedPage, page } = usePage();
   const [selected, setSelected] = useState("Select Type");
+  const { headers } = useAuth();
 
   const dropdownStyles = {
     backgroundColor: "#ffffff",
@@ -25,7 +27,7 @@ const UpdateDestination = ({ id }) => {
         // Handle errors here
         console.error("Error:", error);
       });
-  }, []);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,7 +50,9 @@ const UpdateDestination = ({ id }) => {
         ...formData,
         type: selected,
       });
-      axios.put(`http://localhost:3999/addAccommodation/${id}`, formData);
+      axios.put(`http://localhost:3999/addAccommodation/${id}`, formData, {
+        headers: headers,
+      });
     }
   };
   const handleClose = (e) => {
@@ -93,7 +97,7 @@ const UpdateDestination = ({ id }) => {
                   <input
                     type="text"
                     name="title"
-                    value={formData.title}
+                    value={formData && formData.title}
                     placeholder="Place Name"
                     onChange={(e) => handleChange(e)}
                     required
@@ -109,7 +113,7 @@ const UpdateDestination = ({ id }) => {
                   <textarea
                     name="activity_details"
                     rows="4"
-                    value={formData.accommodation_details}
+                    value={formData && formData.accommodation_details}
                     class="block p-2.5 w-full my-2 text-sm rounded-lg border border-[#0c4a6e69] outline-none"
                     placeholder="Enter a description or an overview about the place..."
                     required
@@ -126,7 +130,7 @@ const UpdateDestination = ({ id }) => {
                     type="text"
                     name="country"
                     placeholder="City"
-                    value={formData.country}
+                    value={formData && formData.country}
                     required
                     onChange={(e) => handleChange(e)}
                     className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"

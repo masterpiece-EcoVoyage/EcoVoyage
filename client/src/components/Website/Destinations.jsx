@@ -6,6 +6,8 @@ const Destinations = () => {
   const [destinations, setDestinations] = useState([]);
   const [types, setTypes] = useState(null);
   const [selectedType, setSelectedType] = useState("Select type");
+  const [filteredPlaces, setFilteredPlaces] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // dropdown for destination type
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,10 +24,11 @@ const Destinations = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     axios
-      .get("http://localhost:5000/destinations?_limit=3")
+      .get("http://localhost:3999/getDestinations")
       .then((response) => {
         // Handle the response data here
         setDestinations(response.data);
+        setFilteredPlaces(response.data);
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -47,6 +50,38 @@ const Destinations = () => {
       setTypes(uniqueArray);
     }
   }, [destinations]);
+
+  const handleSearch = (e) => {
+    const searchQuery = e.target.value;
+    if (searchQuery === "") {
+      setFilteredPlaces(destinations);
+    } else {
+      setFilteredPlaces(
+        filteredPlaces.filter(
+          (destination) =>
+            destination.title
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase()) ||
+            destination.country
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase())
+        )
+      );
+    }
+  };
+  useEffect(() => {
+    if (selectedType !== "Select type") {
+      setFilteredPlaces(
+        destinations.filter(
+          (destination) =>
+            destination.destinations_type.toLowerCase() ===
+            selectedType.toLowerCase()
+        )
+      );
+    } else {
+      setFilteredPlaces(destinations);
+    }
+  }, [selectedType, searchQuery]);
 
   return (
     <div className="flex flex-col md:flex-row justify-center">
@@ -109,6 +144,41 @@ const Destinations = () => {
               <line x1="15" y1="15" x2="21" y2="21" />
             </svg>
           </div>
+          <form class="flex items-center" onSubmit={(e)=>(e.preventDefault())}>
+            <label for="simple-search" class="sr-only">
+              Search
+            </label>
+            <div class="relative w-full">
+              <input
+                type="text"
+                id="simple-search"
+                onChange={(e) => handleSearch(e)}
+                class="bg-white border border-gray-300 text-sky-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Search branch name..."
+              />
+            </div>
+            <button
+              type="submit"
+              className="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              <svg
+                class="w-4 h-4"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                />
+              </svg>
+              <span class="sr-only">Search</span>
+            </button>
+          </form>
           <hr className="my-6 hidden md:block" />
           <div className="w-full">
             <p className="mb-3 text-lg text-start">Destination type</p>
@@ -185,22 +255,11 @@ const Destinations = () => {
               )}
             </div>
           </div>
-          <hr className="my-6 hidden md:block" />
-          <div className="w-full">
-            <p className="mb-3 text-lg text-start">Price Range</p>
-            <input
-              type="number"
-              step="0.01"
-              placeholder="0.00"
-              id="first_name"
-              class="bg-white border border-gray-300 text-sky-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            ></input>
-          </div>{" "}
         </div>
       </div>
       <div className="my-16 mx-8">
         <div className="flex flex-col gap-8">
-          {destinations.map((destination, id) => (
+          {filteredPlaces.map((destination, id) => (
             <div key={id}>
               <article className=" flex flex-wrap sm:flex-nowrap shadow-lg border border-sky-200 mx-auto max-w-3xl group transform duration-500 hover:-translate-y-1 mb-2">
                 <img
@@ -214,7 +273,7 @@ const Destinations = () => {
                       {destination.title}
                     </h1>
                     <p className="text-md overflow-hidden h-28 text-gray-400 mt-2 leading-relaxed">
-                      {destination.destinations_details}
+                      {destination.details}
                     </p>
                   </div>
                   <div className="px-2">

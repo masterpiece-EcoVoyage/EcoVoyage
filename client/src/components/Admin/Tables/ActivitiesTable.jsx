@@ -15,6 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 export const ActivitiesTable = () => {
   const [activities, setActivities] = useState([]);
@@ -31,7 +32,7 @@ export const ActivitiesTable = () => {
       .then((response) => {
         // Handle the response data here
         setActivities(response.data);
-        setFilteredActivities(response.data)
+        setFilteredActivities(response.data);
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -39,10 +40,13 @@ export const ActivitiesTable = () => {
         console.error("Error:", error);
       });
   }, []);
-
+  const { headers } = useAuth();
   const indexOfLastActivity = currentPage * activityPerPage;
   const indexOfFirstActivity = indexOfLastActivity - activityPerPage;
-  const currentActivities = filteredActivities.slice(indexOfFirstActivity, indexOfLastActivity);
+  const currentActivities = filteredActivities.slice(
+    indexOfFirstActivity,
+    indexOfLastActivity
+  );
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -66,50 +70,52 @@ export const ActivitiesTable = () => {
     onSelectedId(id);
     onSelectedPage("updateActivity");
   };
-  const handleDelete=(id)=>{
+  const handleDelete = (id) => {
     Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          axios
-            .put(`http://localhost:3999/deleteActivities/${id}`)
-            .then((response) => {
-              Swal.fire({
-                title: "Deleted!",
-                text: "Your file has been deleted.",
-                icon: "success",
-              });
-            })
-            .catch((error) => {
-              Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Something went wrong with deleting the user.",
-                confirmButtonText: "OK",
-                customClass: {
-                  confirmButton:
-                    "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
-                },
-              });
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .put(`http://localhost:3999/deleteActivities/${id}`, null, {
+            headers: headers,
+          })
+          .then((response) => {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your file has been deleted.",
+              icon: "success",
             });
-        }
-      });
+          })
+          .catch((error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong with deleting the user.",
+              confirmButtonText: "OK",
+              customClass: {
+                confirmButton:
+                  "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+              },
+            });
+          });
+      }
+    });
   };
   return (
-    <Card className="p-2 w-full h-full border border-sky-700">
+    <Card className="p-2 w-full md:w-1/2 h-full border border-sky-700">
       <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
         Activities
       </h1>
       <hr className="text-sky-700 mb-5" />
       <CardHeader floated={false} shadow={false} className="rounded-none">
-        <div className="flex items-center justify-between gap-8 m-4">
-          <form className="w-full lg:w-1/3" onSubmit={handleSearch}>
+        <div className="flex flex-col-reverse items-center justify-center gap-8 m-4">
+          <form className="w-full" onSubmit={handleSearch}>
             <label
               for="default-search"
               class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -149,7 +155,7 @@ export const ActivitiesTable = () => {
               </button>
             </div>
           </form>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+          <div className="flex shrink-0 w-full flex-col justify-between gap-2 sm:flex-row">
             <Button
               variant="outlined"
               size="sm"
@@ -160,7 +166,9 @@ export const ActivitiesTable = () => {
             <Button
               className="flex items-center gap-3 border border-sky-900 bg-sky-900 hover:bg-white hover:text-sky-900"
               size="sm"
-              onClick={()=>{onSelectedPage('addActivity')}}
+              onClick={() => {
+                onSelectedPage("addActivity");
+              }}
             >
               <svg
                 class="w-4 h-4"
@@ -176,7 +184,7 @@ export const ActivitiesTable = () => {
                   d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              Add new activity
+              Add new
             </Button>
           </div>
         </div>
@@ -212,7 +220,10 @@ export const ActivitiesTable = () => {
                 : "p-4 border-b border-blue-gray-50";
 
               return (
-                <tr key={index} className={index%2 !== 0? "bg-white":"bg-gray-200"}>
+                <tr
+                  key={index}
+                  className={index % 2 !== 0 ? "bg-white" : "bg-gray-200"}
+                >
                   <td className={classes}>
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col">
@@ -251,16 +262,21 @@ export const ActivitiesTable = () => {
                   <td className={classes}>
                     <Tooltip content="Edit Activity">
                       <IconButton
-                        onClick={() => {handleEdit(activity.activities_id)}}
+                        onClick={() => {
+                          handleEdit(activity.activities_id);
+                        }}
                         variant="text"
                       >
                         <PencilIcon className="h-4 w-4 text-sky-900" />
                       </IconButton>
                     </Tooltip>
                     <Tooltip content="Delete Activity">
-                      <IconButton 
-                      onClick={()=>{handleDelete(activity.activities_id)}}
-                      variant="text">
+                      <IconButton
+                        onClick={() => {
+                          handleDelete(activity.activities_id);
+                        }}
+                        variant="text"
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -293,28 +309,6 @@ export const ActivitiesTable = () => {
               : filteredActivities.length / activityPerPage
           )}
         </Typography>
-        <div className="flex gap-2">
-          {Array.from(
-            {
-              length: Math.ceil(
-                filteredActivities.length === 0
-                  ? activities.length / activityPerPage
-                  : filteredActivities.length / activityPerPage
-              ),
-            },
-            (_, index) => (
-              <Button
-                key={index}
-                variant="outlined"
-                size="sm"
-                className={currentPage === index + 1 && "bg-sky-900 text-white"}
-                onClick={() => paginate(index + 1)}
-              >
-                {index + 1}
-              </Button>
-            )
-          )}
-        </div>
         <div className="flex gap-2">
           <Button
             onClick={() => currentPage !== 1 && paginate(currentPage - 1)}

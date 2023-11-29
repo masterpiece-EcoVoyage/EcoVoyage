@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 export const AllHousing = () => {
   const [destinations, setDestinations] = useState([]);
@@ -40,6 +41,7 @@ export const AllHousing = () => {
 
   const indexOfLastPlace = currentPlaces.length - 1;
   const indexOfFirstPlace = 0;
+  const {headers} = useAuth();
 
   useEffect(() => {
     if (filteredPlaces.length === 0) {
@@ -84,7 +86,9 @@ export const AllHousing = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .put(`http://localhost:3999/deleteAccommodation/${id}`)
+          .put(`http://localhost:3999/deleteAccommodation/${id}`, null, {
+            headers: headers,
+          })
           .then((response) => {
             Swal.fire({
               title: "Deleted!",
@@ -105,14 +109,13 @@ export const AllHousing = () => {
             });
           });
       }
+      fetchData();
     });
   };
-  useEffect(() => {
-    fetchData();
-  }, [destinations]);
+  // useEffect(() => {
+  //   fetchData();
+  // }, [destinations]);
   return (
-    <div className="w-full flex flex-col justify-start">
-      <div className="flex justify-center items-center m-5 gap-5 flex-col lg:flex-row">
         <Card className="lg:ml-80 p-2 w-full h-full border border-sky-700">
           <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
             Accommodations
@@ -340,7 +343,5 @@ export const AllHousing = () => {
             </table>
           </CardBody>
         </Card>
-      </div>
-    </div>
   );
 };

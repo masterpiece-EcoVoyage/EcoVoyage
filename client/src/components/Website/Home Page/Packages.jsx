@@ -14,7 +14,7 @@ const Packages = () => {
     });
 
     axios
-      .get("http://localhost:3999/getPackages?_limit=3")
+      .get("http://localhost:3999/getPackages")
       .then((response) => {
         // Handle the response data here
         setPackages(response.data);
@@ -51,7 +51,7 @@ const Packages = () => {
                             {packages[0].overview}
                           </p>
                           <p className="text-md overflow-hidden max-h-28 text-gray-400 mt-2 leading-relaxed">
-                            Destination: {packages[0].destination}
+                            Destination: {packages[0].country}
                           </p>
                         </div>
                         <div className="flex justify-between items-center p-5 bg-gray-100">
@@ -72,7 +72,8 @@ const Packages = () => {
             <div data-aos="fade-left" className="flex flex-col gap-8 lg:gap-0">
               {packages.map((data, id) => (
                 <div key={id}>
-                  {id === 0 ? (
+                  {id<3?
+                  id === 0 ? (
                     <div></div>
                   ) : (
                     <article className=" flex flex-wrap sm:flex-nowrap shadow-lg border border-sky-200 mx-auto max-w-3xl md:w-[500px] group transform duration-500 hover:-translate-y-1 mb-2">
@@ -86,11 +87,11 @@ const Packages = () => {
                           <h1 className="text-2xl font-semibold text-sky-900">
                             {data.title}
                           </h1>
-                          <p className="text-md overflow-hidden max-h-28 text-gray-400 mt-2 leading-relaxed">
+                          <p className="text-md overflow-hidden max-h-12 text-gray-400 mt-2 leading-relaxed">
                             {data.overview}
                           </p>
                           <p className="text-md overflow-hidden max-h-28 text-gray-400 mt-2 leading-relaxed">
-                            Destination: {data.destination}
+                            Destination: {data.country}
                           </p>
                         </div>
                         <div className="flex justify-between items-center p-5 bg-gray-100">
@@ -107,7 +108,7 @@ const Packages = () => {
                         </div>
                       </div>
                     </article>
-                  )}
+                  ):<></>}
                 </div>
               ))}
             </div>

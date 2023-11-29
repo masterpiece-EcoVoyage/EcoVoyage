@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 const AddPackage = () => {
   const [formData, setFormData] = useState([]);
@@ -14,6 +15,7 @@ const AddPackage = () => {
   const [inclusionInput, setInclusionInput] = useState("");
   const [exclusion, setExclusion] = useState([]);
   const [exclusionInput, setExclusionInput] = useState("");
+  const { headers } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,7 +46,9 @@ const AddPackage = () => {
       highlight.map((item, index) => [`high ${index + 1}`, item])
     );
     console.log(formData);
-    axios.post(`http://localhost:3999/addPackages`, formData);
+    axios.post(`http://localhost:3999/addPackages`, formData, {
+      headers: headers,
+    });
   };
   const handleClose = () => {
     setFormData([]);

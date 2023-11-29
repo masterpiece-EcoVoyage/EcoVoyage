@@ -11,7 +11,7 @@ const Explore = () => {
           <h1 className="py-3 text-white text-4xl md:text-5xl lg:text-6xl font-bold">
             Explore every destination
           </h1>
-          <button class="border-sky-900 border-2 my-5 hover:bg-white bg-sky-900 hover:text-sky-900 text-white font-bold py-2 px-4 rounded w-2/3 md:w-1/3"
+          <button className="border-sky-900 border-2 my-5 hover:bg-white bg-sky-900 hover:text-sky-900 text-white font-bold py-2 px-4 rounded w-2/3 md:w-1/3"
           onClick={()=>{window.scrollTo({ top: 0, behavior: 'smooth' });}}
           >
             Search everywhere

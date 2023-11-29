@@ -13,13 +13,14 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 export const AllActivities = () => {
     const [activities, setActivities] = useState([]);
   const [filteredActivities, setFilteredActivities] = useState(activities);
   const [searchQuery, setSearchQuery] = useState("");
   const { onSelectedPage, onSelectedId } = usePage();
-
+  const {headers} = useAuth();
   const TABLE_HEAD = ["Activities", "Type", "Availability", "Action"];
   
   async function fetchData(){
@@ -60,41 +61,42 @@ export const AllActivities = () => {
     onSelectedId(id);
     onSelectedPage("updateActivity");
   };
-  const handleDelete=(id)=>{
+  const handleDelete = (id) => {
     Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-            axios
-            .put(`http://localhost:3999/deleteActivities/${id}`)
-            .then((response) => {
-                Swal.fire({
-                    title: "Deleted!",
-                    text: "Your file has been deleted.",
-                    icon: "success",
-                });
-                fetchData();
-            })
-            .catch((error) => {
-              Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Something went wrong with deleting the user.",
-                confirmButtonText: "OK",
-                customClass: {
-                  confirmButton:
-                    "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
-                },
-              });
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .put(`http://localhost:3999/deleteActivities/${id}`, null, {
+            headers: headers,
+          })
+          .then((response) => {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your file has been deleted.",
+              icon: "success",
             });
-        }
-      });
+          })
+          .catch((error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong with deleting the user.",
+              confirmButtonText: "OK",
+              customClass: {
+                confirmButton:
+                  "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+              },
+            });
+          });
+      }
+    });
   };
   return (
     <Card className="lg:ml-80 p-2 w-screen lg:w-full h-full border border-sky-700">

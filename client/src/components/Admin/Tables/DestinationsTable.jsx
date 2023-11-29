@@ -15,19 +15,21 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 export const DestinationsTable = () => {
   const [destinations, setDestinations] = useState([]);
   const [filteredPlaces, setFilteredPlaces] = useState(destinations);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const destinationPerPage = 5;
+  const destinationPerPage = 3;
   const { page, onSelectedPage, onSelectedId } = usePage();
+  const { headers } = useAuth();
 
   const TABLE_HEAD = ["Destinations", "Type", "Country", "Action"];
-  useEffect(() => {
+  function fetchData(){
     axios
-      .get(`http://localhost:3999/destinations`)
+      .get(`http://localhost:3999/getDestinations`)
       .then((response) => {
         // Handle the response data here
         setDestinations(response.data);
@@ -38,6 +40,9 @@ export const DestinationsTable = () => {
         // Handle errors here
         console.error("Error:", error);
       });
+  }
+  useEffect(() => {
+    fetchData();
   }, []);
 
   const indexOfLastPlace = currentPage * destinationPerPage;
@@ -60,7 +65,7 @@ export const DestinationsTable = () => {
             destination.title
               .toLowerCase()
               .includes(searchQuery.toLowerCase()) ||
-            destination.location
+            destination.country
               .toLowerCase()
               .includes(searchQuery.toLowerCase())
         )
@@ -84,7 +89,9 @@ export const DestinationsTable = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .put(`http://localhost:3999/softDeleteFlight/${id}`)
+          .put(`http://localhost:3999/markDestinationsAsDeleted/${id}`,null, {
+            headers: headers,
+          })
           .then((response) => {
             Swal.fire({
               title: "Deleted!",
@@ -105,17 +112,18 @@ export const DestinationsTable = () => {
             });
           });
       }
+      fetchData();
     });
   };
   return (
-    <Card className="p-2 w-full h-full border border-sky-700">
+    <Card className="p-2 w-full md:w-1/2 h-full border border-sky-700">
       <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
         Destinations
       </h1>
       <hr className="text-sky-700 mb-5" />
       <CardHeader floated={false} shadow={false} className="rounded-none">
-        <div className="flex items-center justify-between gap-8 m-4">
-          <form className="w-full lg:w-1/3" onSubmit={handleSearch}>
+        <div className="flex flex-col-reverse items-center justify-center gap-8 m-4">
+          <form className="w-full" onSubmit={handleSearch}>
             <label
               for="default-search"
               class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -155,7 +163,7 @@ export const DestinationsTable = () => {
               </button>
             </div>
           </form>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+          <div className="flex shrink-0 justify-between flex-col w-full gap-2 sm:flex-row">
             <Button
               variant="outlined"
               size="sm"
@@ -184,13 +192,13 @@ export const DestinationsTable = () => {
                   d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              Add new place
+              Add new
             </Button>
           </div>
         </div>
       </CardHeader>
       <CardBody className="px-0 overflow-auto h-[312px] mb-auto">
-        <table className="w-full min-w-max table-auto text-left">
+        <table className="w-full table-auto text-left">
           <thead>
             <tr>
               {TABLE_HEAD.map((head) => (
@@ -255,11 +263,11 @@ export const DestinationsTable = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {place.location}
+                        {place.country}
                       </Typography>
                     </div>
                   </td>
-                  <td className={classes}>
+                  <td className={`${classes} flex flex-nowrap`}>
                     <Tooltip content="Edit Place">
                       <IconButton
                         onClick={() => handleEdit(place.destinations_id)}
@@ -301,32 +309,12 @@ export const DestinationsTable = () => {
           Page {currentPage} of{" "}
           {Math.ceil(
             filteredPlaces.length === 0
-              ? destinations.length / destinationPerPage
+              ? destinations.length === 0
+                ? 1
+                : destinations.length / destinationPerPage
               : filteredPlaces.length / destinationPerPage
           )}
         </Typography>
-        <div className="flex gap-2">
-          {Array.from(
-            {
-              length: Math.ceil(
-                filteredPlaces.length === 0
-                  ? destinations.length / destinationPerPage
-                  : filteredPlaces.length / destinationPerPage
-              ),
-            },
-            (_, index) => (
-              <Button
-                key={index}
-                variant="outlined"
-                size="sm"
-                className={currentPage === index + 1 && "bg-sky-900 text-white"}
-                onClick={() => paginate(index + 1)}
-              >
-                {index + 1}
-              </Button>
-            )
-          )}
-        </div>
         <div className="flex gap-2">
           <Button
             onClick={() => currentPage !== 1 && paginate(currentPage - 1)}

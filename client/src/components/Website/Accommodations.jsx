@@ -122,6 +122,41 @@ const Accommodations = () => {
                 <line x1="15" y1="15" x2="21" y2="21" />
               </svg>
             </div>
+            <form class="flex items-center">
+                <label for="simple-search" class="sr-only">
+                  Search
+                </label>
+                <div class="relative w-full">
+                  <input
+                    type="text"
+                    id="simple-search"
+                    class="bg-white border border-gray-300 text-sky-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Search branch name..."
+                  />
+                </div>
+                <button
+                  type="submit"
+                  class="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                    />
+                  </svg>
+                  <span class="sr-only">Search</span>
+                </button>
+              </form>
+          <hr className="my-6 hidden md:block" />
             <div className="w-full">
               <p className="mb-3 text-lg text-start">Price</p>
               <input
@@ -381,10 +416,10 @@ const Accommodations = () => {
           <div className="flex flex-col gap-8">
             {accommodations.map((accommodation, id) => (
               <div key={id}>
-                <article className=" flex flex-wrap sm:flex-nowrap shadow-lg border border-sky-200 mx-auto max-w-3xl md:w-[600px] group transform duration-500 hover:-translate-y-1 mb-2">
+                <article className=" flex flex-wrap sm:flex-nowrap shadow-lg border border-sky-200 mx-auto max-w-3xl md:w-[650px] group transform duration-500 mb-2">
                   <img
-                    className="w-full sm:w-52 h-auto"
-                    src="https://i.ibb.co/Kr4b0zJ/152013403-10158311889099633-8423107287930246533-o.jpg"
+                    className="w-full sm:w-52 h-auto object-cover"
+                    src={accommodation.imageurl[0]}
                     alt=""
                   />
                   <div className="h-auto w-full flex flex-col justify-between">
@@ -404,7 +439,7 @@ const Accommodations = () => {
                           <path d="M239.2 97.4A16.4 16.4.0 00224.6 86l-59.4-4.1-22-55.5A16.4 16.4.0 00128 16h0a16.4 16.4.0 00-15.2 10.4L90.4 82.2 31.4 86A16.5 16.5.0 0016.8 97.4 16.8 16.8.0 0022 115.5l45.4 38.4L53.9 207a18.5 18.5.0 007 19.6 18 18 0 0020.1.6l46.9-29.7h.2l50.5 31.9a16.1 16.1.0 008.7 2.6 16.5 16.5.0 0015.8-20.8l-14.3-58.1L234 115.5A16.8 16.8.0 00239.2 97.4z"></path>
                         </svg>
                       </p>
-                      <p className="text-md overflow-hidden max-h-28 text-gray-400 mt-2 leading-relaxed">
+                      <p className="text-md overflow-hidden max-h-20 text-gray-400 mt-2 leading-relaxed">
                         {accommodation.accommodation_details}
                       </p>
                       <p className="text-md overflow-hidden text-gray-900 mt-2 leading-relaxed">

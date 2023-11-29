@@ -28,7 +28,7 @@ export const UsersTable = () => {
   const TABLE_HEAD = ["Users", "Country", "Admin", ""];
   useEffect(() => {
     axios
-      .get(`http://localhost:3999/user`)
+      .get(`http://localhost:3999/getUserData`)
       .then((response) => {
         // Handle the response data here
         setUsers(response.data);
@@ -64,9 +64,11 @@ export const UsersTable = () => {
     }
     setCurrentPage(1);
   };
-  const handleEdit = (id) => {};
+  const handleEdit = (id) => {
+
+  };
   return (
-    <Card className="lg:ml-80 p-2 w-full h-full border border-sky-700">
+    <Card className="p-2 lg:ml-80 m-5 w-auto h-full border border-sky-700">
       <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
         Users
       </h1>
@@ -243,28 +245,6 @@ export const UsersTable = () => {
               : filteredUsers.length / usersPerPage
           )}
         </Typography>
-        <div className="flex gap-2">
-          {Array.from(
-            {
-              length: Math.ceil(
-                filteredUsers.length === 0
-                  ? users.length / usersPerPage
-                  : filteredUsers.length / usersPerPage
-              ),
-            },
-            (_, index) => (
-              <Button
-                key={index}
-                variant="outlined"
-                size="sm"
-                className={currentPage === index + 1 && "bg-sky-900 text-white"}
-                onClick={() => paginate(index + 1)}
-              >
-                {index + 1}
-              </Button>
-            )
-          )}
-        </div>
         <div className="flex gap-2">
           <Button
             onClick={() => currentPage !== 1 && paginate(currentPage - 1)}

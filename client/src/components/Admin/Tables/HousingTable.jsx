@@ -14,6 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 const HousingTable = () => {
   const [destinations, setDestinations] = useState([]);
@@ -22,6 +23,7 @@ const HousingTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const { page, onSelectedPage, selectedId, onSelectedId } = usePage();
   const destinationPerPage = 5;
+  const {headers} = useAuth();
 
   const TABLE_HEAD = ["Title", "Cost", "City", "Rating", ""];
   const fetchData = () => {
@@ -55,17 +57,12 @@ const HousingTable = () => {
     if (searchQuery === "") {
       setFilteredPlaces(destinations);
     } else {
-      setFilteredPlaces(
-        destinations.filter(
-          (destination) =>
-            destination.title
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            destination.location
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
-        )
+      const filtered = destinations.filter(
+        (destination) =>
+          destination.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          destination.location.toLowerCase().includes(searchQuery.toLowerCase())
       );
+      setFilteredPlaces(filtered);
     }
   };
 
@@ -85,7 +82,9 @@ const HousingTable = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .put(`http://localhost:3999/deleteAccommodation/${id}`)
+          .put(`http://localhost:3999/deleteAccommodation/${id}`, null, {
+            headers: headers,
+          })
           .then((response) => {
             Swal.fire({
               title: "Deleted!",
@@ -106,12 +105,10 @@ const HousingTable = () => {
             });
           });
       }
+      fetchData();
     });
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [destinations]);
   return (
     <div>
       <Card className="p-2 w-auto h-full border border-sky-700">
@@ -190,7 +187,7 @@ const HousingTable = () => {
                     d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                Add new Accommodation
+                Add new
               </Button>
             </div>
           </div>
@@ -332,30 +329,6 @@ const HousingTable = () => {
                 : filteredPlaces.length / destinationPerPage
             )}
           </Typography>
-          <div className="flex gap-2">
-            {Array.from(
-              {
-                length: Math.ceil(
-                  filteredPlaces.length === 0
-                    ? destinations.length / destinationPerPage
-                    : filteredPlaces.length / destinationPerPage
-                ),
-              },
-              (_, index) => (
-                <Button
-                  key={index}
-                  variant="outlined"
-                  size="sm"
-                  className={
-                    currentPage === index + 1 && "bg-sky-900 text-white"
-                  }
-                  onClick={() => paginate(index + 1)}
-                >
-                  {index + 1}
-                </Button>
-              )
-            )}
-          </div>
           <div className="flex gap-2">
             <Button
               onClick={() => currentPage !== 1 && paginate(currentPage - 1)}

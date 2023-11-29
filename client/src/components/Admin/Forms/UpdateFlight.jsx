@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 const UpdateFlight = ({id}) => {
     const [formData, setFormData] = useState([]);
   const { onSelectedPage } = usePage();
+  const {headers} = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,7 +24,7 @@ const UpdateFlight = ({id}) => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post(`http://localhost:3999/updateFlight/${id}`, formData);
+    axios.post(`http://localhost:3999/updateFlight/${id}`, formData, {headers:headers});
   };
   const handleClose = (e) => {
     e.preventDefault();
@@ -66,23 +68,11 @@ const UpdateFlight = ({id}) => {
                   </label>
                   <div className="">
                     <div className="flex items-center gap-3 w-full">
-                      <label>From:</label>
-                      <input
-                        type="text"
-                        name="from"
-                        value={formData.from}
-                        placeholder="Ticket destination"
-                        onChange={(e) => handleChange(e)}
-                        required
-                        className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
-                      />
-                    </div>
-                    <div className="flex items-center gap-3 w-full">
                       <label>To:</label>
                       <input
                         type="text"
                         name="destination"
-                        value={formData.destination}
+                        value={formData&&formData.destination}
                         placeholder="Ticket destination"
                         onChange={(e) => handleChange(e)}
                         required
@@ -100,7 +90,7 @@ const UpdateFlight = ({id}) => {
                   <input
                     type="text"
                     name="best"
-                    value={formData.best}
+                    value={formData&&formData.best}
                     placeholder="Price"
                     onChange={(e) => handleChange(e)}
                     required
@@ -125,7 +115,7 @@ const UpdateFlight = ({id}) => {
                       <input
                         type="text"
                         name="boarding"
-                        value={formData.best}
+                        value={formData&&formData.best}
                         placeholder="00:00"
                         onChange={(e) => handleChange(e)}
                         required
@@ -134,7 +124,7 @@ const UpdateFlight = ({id}) => {
                       <input
                         type="text"
                         name="arrival"
-                        value={formData.best}
+                        value={formData&&formData.best}
                         placeholder="00:00"
                         onChange={(e) => handleChange(e)}
                         required
@@ -161,7 +151,7 @@ const UpdateFlight = ({id}) => {
                       <input
                         type="text"
                         name="boarding"
-                        value={formData.best}
+                        value={formData&&formData.best}
                         placeholder="00:00"
                         onChange={(e) => handleChange(e)}
                         required
@@ -170,7 +160,7 @@ const UpdateFlight = ({id}) => {
                       <input
                         type="text"
                         name="arrival"
-                        value={formData.best}
+                        value={formData&&formData.best}
                         placeholder="00:00"
                         onChange={(e) => handleChange(e)}
                         required

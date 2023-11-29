@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { usePage } from "../../Context/SelectedPageContext";
 import axios from "axios";
+import { useAuth } from "../../Context/AuthContext";
 
 const UpdateActivity = ({ id }) => {
   const [formData, setFormData] = useState([]);
   const { onSelectedPage } = usePage();
+  const { headers } = useAuth();
 
   useEffect(() => {
     axios
@@ -18,14 +20,14 @@ const UpdateActivity = ({ id }) => {
         // Handle errors here
         console.error("Error:", error);
       });
-  }, []);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "image") {
       setFormData({
         ...formData,
-        [name]: e.target.file,
+        [name]: e.target.files[0],
       });
     } else {
       setFormData({
@@ -37,9 +39,10 @@ const UpdateActivity = ({ id }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.put(`http://localhost:3999/updateActivities/${id}`, formData);
+    axios.put(`http://localhost:3999/updateActivities/${id}`, formData, {headers:headers});
   };
-  const handleClose = () => {
+  const handleClose = (e) => {
+    e.preventDefault();
     setFormData([]);
     onSelectedPage("dashboard");
   };
@@ -77,7 +80,7 @@ const UpdateActivity = ({ id }) => {
                   <input
                     type="text"
                     name="title"
-                    value={formData.title}
+                    value={formData&&formData.title}
                     placeholder="Place Name"
                     onChange={(e) => handleChange(e)}
                     required
@@ -91,7 +94,7 @@ const UpdateActivity = ({ id }) => {
                   <textarea
                     name="activity_details"
                     rows="4"
-                    value={formData.activity_details}
+                    value={formData&&formData.activity_details}
                     class="block p-2.5 w-full my-2 text-sm rounded-lg border border-[#0c4a6e69] outline-none"
                     placeholder="Enter a description or an overview about the place..."
                     required
@@ -106,7 +109,7 @@ const UpdateActivity = ({ id }) => {
                     type="text"
                     name="type"
                     placeholder="Place type"
-                    value={formData.type}
+                    value={formData&&formData.type}
                     required
                     onChange={(e) => handleChange(e)}
                     className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
@@ -120,7 +123,7 @@ const UpdateActivity = ({ id }) => {
                     type="text"
                     name="availability"
                     placeholder="Enter the country the place in"
-                    value={formData.availability}
+                    value={formData&&formData.availability}
                     required
                     onChange={(e) => handleChange(e)}
                     className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
@@ -135,7 +138,7 @@ const UpdateActivity = ({ id }) => {
                     step="0.01"
                     name="pricing"
                     placeholder="Enter the country the place in"
-                    value={formData.pricing}
+                    value={formData&&formData.pricing}
                     required
                     onChange={(e) => handleChange(e)}
                     className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
@@ -151,7 +154,7 @@ const UpdateActivity = ({ id }) => {
                 </button>
                 <button
                   type="clear"
-                  onClick={() => handleClose()}
+                  onClick={(e) => handleClose(e)}
                   className="mt-4 m-2 py-2 px-5 border-2 border-sky-900 text-sky-900 rounded-2xl hover:bg-white"
                 >
                   Close

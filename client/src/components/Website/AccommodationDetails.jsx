@@ -83,7 +83,7 @@ const AccommodationDetails = () => {
       console.error("Error:", error);
     }
   }
-  console.log();
+  // console.log(accommodation);
   return (
     <div>
       {/* <div className="w-full h-96 bg-cover bg-[50%] bg-[url('https://cdn.pixabay.com/photo/2017/06/04/16/32/new-york-2371488_960_720.jpg')]"></div> */}
@@ -95,7 +95,7 @@ const AccommodationDetails = () => {
         <div className="relative h-96 overflow-hidden rounded-lg">
           <div className="duration-700 ease-in-out" data-carousel-item>
             <img
-              src={images[currentImage]}
+              src={accommodation&&accommodation.imageurl[currentImage]}
               className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
               alt="..."
             />
@@ -170,8 +170,7 @@ const AccommodationDetails = () => {
                     Amenities
                   </h1>
                   <ol className="text-start text-xl list-disc list-inside">
-                    <li>Free Wi-Fi</li>
-                    <li>Free parking</li>
+                    {accommodation.amenities.map((data, id)=>(<li key={id}>{data}</li>))}
                   </ol>
                   <h1 className="text-sky-700 text-start text-3xl font-bold">
                     Price

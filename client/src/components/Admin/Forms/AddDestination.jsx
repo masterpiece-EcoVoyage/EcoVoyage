@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
 import { Dropdown } from "flowbite-react";
+import { useAuth } from "../../Context/AuthContext";
 
 const AddDestination = () => {
   const [formData, setFormData] = useState([]);
   const { onSelectedPage, page } = usePage();
   const [selected, setSelected] = useState("Select Type"); 
+  const {headers} = useAuth();
 
   const dropdownStyles = {
     backgroundColor: "#ffffff",
@@ -15,10 +17,10 @@ const AddDestination = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "image") {
+    if (name === "file") {
       setFormData({
         ...formData,
-        [name]: e.target.files,
+        [name]: e.target.files[0],
       });
     } else {
       setFormData({
@@ -34,7 +36,8 @@ const AddDestination = () => {
         ...formData,
         type: selected,
       })
-      axios.post(`http://localhost:3999/addAccommodation`, formData);
+      console.log(formData);
+      axios.post(`http://localhost:3999/addDestinations`, formData, {headers:headers});
     }
   };
   const handleClose = (e) => {
@@ -64,7 +67,7 @@ const AddDestination = () => {
                   </label>
                   <input
                     class="block w-full text-md file:bg-sky-900 file:hover:bg-white file:border-sky-900 file:text-white file:hover:text-sky-900  text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none file:py-2 file:px-4"
-                    name="image"
+                    name="flie"
                     onChange={(e) => handleChange(e)}
                     type="file"
                     multiple
@@ -93,9 +96,9 @@ const AddDestination = () => {
                     Overview
                   </label>
                   <textarea
-                    name="activity_details"
+                    name="details"
                     rows="4"
-                    value={formData.accommodation_details}
+                    value={formData.details}
                     class="block p-2.5 w-full my-2 text-sm rounded-lg border border-[#0c4a6e69] outline-none"
                     placeholder="Enter a description or an overview about the place..."
                     required
@@ -106,12 +109,12 @@ const AddDestination = () => {
                 {/* country */}
                 <div className="text-start">
                     <label className="text-sm font-medium text-sky-900">
-                      City
+                    Country
                     </label>
                     <input
                       type="text"
                       name="country"
-                      placeholder="City"
+                      placeholder="Country"
                       value={formData.country}
                       required
                       onChange={(e) => handleChange(e)}

@@ -75,16 +75,16 @@ const Comments = (id) => {
         });
       }
     } else if (id.type === "Packages") {
-      setFormData({
-        ...formData,
-        packages_id: id.id,
-      });
       axios
-        .post(`http://localhost:3999/addCommentPac/${id.id}`, formData, {
-          headers: {
-            authorization: `${token}`,
-          },
-        })
+        .post(
+          `http://localhost:3999/addCommentPac`,
+          { packages_id: id.id, comment_text: formData.comment_text },
+          {
+            headers: {
+              authorization: `${token}`,
+            },
+          }
+        )
         .then((response) => {
           setFormData({
             comment_text: "",

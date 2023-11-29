@@ -5,7 +5,7 @@ const knex = require('knex')({
         password: '123',
         host: 'localhost',
         port: 5432,
-        database: 'EcoVoyage'
+        database: 'ecovoyage'
     }
 });
 

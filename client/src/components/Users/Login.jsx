@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import logo from '../../Images/logo.png'
-import Swal from 'sweetalert2';
-import { useCookies } from 'react-cookie';
+import logo from "../../assests/Images/logo.png";
+import Swal from "sweetalert2";
+import { useCookies } from "react-cookie";
 import { useAuth } from "../Context/AuthContext";
 
 const Login = () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  const [cookies, setCookie] = useCookies(['token']);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  const [cookies, setCookie] = useCookies(["token"]);
   const [error, setError] = useState("");
-  const {isAdmin, onLogin} = useAuth();
+  const { isAdmin, onLogin } = useAuth();
 
   // const [email, setEmail] = useState("");
   // const [password, setPassword] = useState("");
@@ -38,30 +38,31 @@ const Login = () => {
 
     try {
       const response = await axios.post("http://localhost:3999/Login", {
-        email:formData.email,
-        password:formData.password
+        email: formData.email,
+        password: formData.password,
       });
 
       // Assuming the API returns a token
       const token = response.data.token;
 
       // Set the token in a cookie
-      setCookie('token', token, { path: '/' });
+      setCookie("token", token, { path: "/" });
       setError("Sign-in successful");
       Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: 'You have Signed in successfully.',
-        confirmButtonText: 'OK',
+        icon: "success",
+        title: "Success!",
+        text: "You have Signed in successfully.",
+        confirmButtonText: "OK",
         customClass: {
-          confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
-        }
+          confirmButton:
+            "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+        },
       });
-      if(response.data.role_id === 1){
-      history("/");
-      }else if(response.data.role_id === 2){
-        onLogin(response.data.role_id)
-      history("/dashboard");
+      if (response.data.role_id === 2) {
+        onLogin(true);
+        history("/dashboard");
+      } else {
+        history("/");
       }
       // Handle successful sign-in, e.g., redirect or show a success message
       // alert("Sign-in successful:", response.data);
@@ -71,58 +72,62 @@ const Login = () => {
       setTimeout(() => {
         console.error("Sign-in error:", error);
         Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Sign-in failed. Email or password is invalid.',
-          confirmButtonText: 'OK',
+          icon: "error",
+          title: "Oops...",
+          text: "Sign-in failed. Email or password is invalid.",
+          confirmButtonText: "OK",
           customClass: {
-            confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
-          }
+            confirmButton:
+              "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+          },
         });
         setError("Sign-in failed. Email or password is invalid");
       }, 100);
     }
   };
-  const handleGoogle = ()=>{
+  const handleGoogle = () => {
     // history('/');
-    window.location.href = 'http://localhost:3999/auth/google';
-    axios.get("http://localhost:3999/auth/google")
-    .then((response) => {
-      console.log(response.data);
-      const token = response.data.token;
-console.log("token:" + token);
-      // Set the token in a cookie
-      setCookie('token', token, { path: '/' });
-      setError("Sign-in successful");
-      Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: 'You have Signed in successfully.',
-        confirmButtonText: 'OK',
-        customClass: {
-          confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
-        }
-      });
-      // history("/");
-    })
-    .catch((error) => {
-      setTimeout(() => {
-        console.error("Sign-in error:", error);
+    window.location.href = "http://localhost:3999/auth/google";
+    axios
+      .get("http://localhost:3999/auth/google")
+      .then((response) => {
+        console.log(response.data);
+        const token = response.data.token;
+        console.log("token:" + token);
+        // Set the token in a cookie
+        setCookie("token", token, { path: "/" });
+        setError("Sign-in successful");
         Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Sign-in failed. Something went wrong.',
-          confirmButtonText: 'OK',
+          icon: "success",
+          title: "Success!",
+          text: "You have Signed in successfully.",
+          confirmButtonText: "OK",
           customClass: {
-            confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
-          }
+            confirmButton:
+              "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+          },
         });
-        setError("Sign-in failed. Email or password is invalid");
-      }, 100);
-      // Handle errors here
-      console.error("Error:", error);
-    });
-  }
+        // history("/");
+      })
+      .catch((error) => {
+        setTimeout(() => {
+          console.error("Sign-in error:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Sign-in failed. Something went wrong.",
+            confirmButtonText: "OK",
+            customClass: {
+              confirmButton:
+                "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+            },
+          });
+          setError("Sign-in failed. Email or password is invalid");
+        }, 100);
+        // Handle errors here
+        console.error("Error:", error);
+      });
+  };
   // async function handleSubmit(e) {
   //   e.preventDefault();
   //   try {
@@ -138,7 +143,7 @@ console.log("token:" + token);
 
   return (
     <div className="bg-[url('https://images.unsplash.com/photo-1529718836725-f449d3a52881?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')]">
-      <form action="" onSubmit={(e)=>handleSubmit(e)}>
+      <form action="" onSubmit={(e) => handleSubmit(e)}>
         <div className="min-h-screen flex justify-center items-center">
           <div className="py-8 px-12 bg-white rounded-2xl shadow-xl z-20">
             <div className="flex flex-col justify-center items-center">
@@ -166,7 +171,10 @@ console.log("token:" + token);
                 className="block text-sm py-3 px-4 rounded-lg w-full border border-[#0c4a6e69] outline-none"
               />
               <Link to={"/"}>
-                <p className="mt-4 text-sm text-sky-900 cursor-pointer text-start"> Forgot yo password?</p>
+                <p className="mt-4 text-sm text-sky-900 cursor-pointer text-start">
+                  {" "}
+                  Forgot yo password?
+                </p>
               </Link>
             </div>
             <p className="text-sm text-start text-red-500">{error}</p>
@@ -178,13 +186,28 @@ console.log("token:" + token);
                 Log In
               </button>
               <p className="mt-4 text-sm text-sky-900">
-                Or login with:{" "}<br/>
+                Or login with: <br />
                 <button
-                onClick={()=>handleGoogle()}
-                className="p-3 mt-2 text-xl text-white hover:text-sky-900 border-2 hover:bg-white bg-gray-200 rounded-2xl"
-              >
-                <svg className="text-sky-700 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"> <path stroke="none" d="M0 0h24v24H0z"/> <path d="M17.788 5.108A9 9 0 1021 12h-8" /></svg>
-              </button>
+                  onClick={() => handleGoogle()}
+                  className="p-3 mt-2 text-xl text-white hover:text-sky-900 border-2 hover:bg-white bg-gray-200 rounded-2xl"
+                >
+                  <svg
+                    className="text-sky-700 w-4 h-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    {" "}
+                    <path stroke="none" d="M0 0h24v24H0z" />{" "}
+                    <path d="M17.788 5.108A9 9 0 1021 12h-8" />
+                  </svg>
+                </button>
               </p>
               <p className="mt-4 text-sm text-sky-900">
                 Don't Have An Account?{" "}

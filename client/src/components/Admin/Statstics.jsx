@@ -114,7 +114,7 @@ const Statstics = () => {
   useEffect(() => {
     // fetch users
     axios
-      .get(`http://localhost:3999/user`)
+      .get(`http://localhost:3999/getUserData`)
       .then((response) => {
         // Handle the response data here
         setUsers(response.data.length);
@@ -127,7 +127,7 @@ const Statstics = () => {
 
     //   fetch flights
     axios
-      .get(`http://localhost:3999/user`)
+      .get(`http://localhost:3999/getCommentCount`)
       .then((response) => {
         // Handle the response data here
         setReviews(response.data.length);
@@ -140,7 +140,7 @@ const Statstics = () => {
 
     //   fetch Activites
     axios
-      .get(`http://localhost:3999/getActivities`)
+      .get(`http://localhost:3999/getBookingCount`)
       .then((response) => {
         // Handle the response data here
         setActivities(response.data.length);

@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 const AddActivity = () => {
   const [formData, setFormData] = useState([]);
   const { onSelectedPage } = usePage();
+  const {headers} = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "image") {
       setFormData({
         ...formData,
-        [name]: e.target.file,
+        [name]: e.target.files[0],
       });
     } else {
       setFormData({
@@ -23,9 +25,11 @@ const AddActivity = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post(`http://localhost:3999/addActivities`, formData);
+    axios.post(`http://localhost:3999/addActivities`, formData, {headers:headers});
+    setFormData([]);
   };
-  const handleClose = () => {
+  const handleClose = (e) => {
+    e.preventDefault();
     setFormData([]);
     onSelectedPage("dashboard");
   };
@@ -33,7 +37,7 @@ const AddActivity = () => {
     <div>
       <div className="flex flex-col justify-center top-64 items-center lg:ml-28 h-full w-auto">
         <div className="lg:w-2/3 w-full bg-gray-200 p-6 rounded shadow-lg h-auto m-6">
-          <form action="" onSubmit={() => handleSubmit}>
+          <form action="" onSubmit={(e) => handleSubmit(e)}>
             <div className="p-6 w-full">
               <div className="flex flex-col justify-center">
                 <h1 className="text-3xl text-sky-900 font-bold text-center mb-4 cursor-pointer">
@@ -137,7 +141,7 @@ const AddActivity = () => {
                 </button>
                 <button
                   type="clear"
-                  onClick={() => handleClose()}
+                  onClick={(e) => handleClose(e)}
                   className="mt-4 m-2 py-2 px-5 border-2 border-sky-900 text-sky-900 rounded-2xl hover:bg-white"
                 >
                   Close

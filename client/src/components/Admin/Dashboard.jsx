@@ -19,15 +19,13 @@ const Dashboard = () => {
       <div className="lg:ml-80">
         <Statstics />
       </div>
-      <div className="w-full flex flex-col justify-start">
-        <div className="flex justify-center items-center m-5 gap-5 flex-col lg:flex-row">
+      <div>
         <UsersTable onSelectedPage={onSelectedPage} />
-        </div>
       </div>
       <div>
         <ProductsStatistics />
       </div>
-      <div className="flex justify-center items-center m-5 lg:m-10 gap-5 flex-col lg:flex-row">
+      <div className="flex justify-center items-center m-5 lg:ml-80 gap-5 flex-col lg:flex-row">
         <DestinationsTable />
         <ActivitiesTable />
       </div>
@@ -37,7 +35,7 @@ const Dashboard = () => {
       <div>
         <FlightsTable />
       </div>
-      <div className="flex justify-center items-center m-5 lg:m-10 gap-5 flex-col lg:flex-row">
+      <div className="flex justify-center items-center m-5 lg:ml-80 gap-5 flex-col lg:flex-row">
         <div className="md:w-1/3">
           <h1>hi</h1>
         </div>

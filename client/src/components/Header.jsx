@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../Images/logo.png";
+import logo from "../assests/Images/logo.png";
 import { useAuth } from "./Context/AuthContext";
 
 const Header = () => {
@@ -9,7 +9,7 @@ const Header = () => {
   const { isLoggedIn } = useAuth();
 
   const location = useLocation();
-  if (location.pathname === "/login" || location.pathname === "/signup") {
+  if (location.pathname === "/login" || location.pathname === "/signup" || location.pathname === "/dashboard") {
     return null;
   }
 

@@ -25,6 +25,19 @@ const getFlights = async () => {
     }
 };
 
+const getFlightsByID = async (flights_id) => {
+    try {
+        return await db('flights')
+            .select('*')
+            .where({
+                is_deleted: false,
+                flights_id: flights_id
+            });
+    } catch (err) {
+        console.error(err);
+        throw new Error('Error fetching destination by ID');
+    }
+};
 
 const softDeleteFlights = async (flights_id) => {
     try {
@@ -50,10 +63,28 @@ const updateFlight = async (flights_id, flightsData) => {
     }
 };
 
-
+const getFlightsPaginated = async (page, pageSize) => {
+    try {
+        const offset = (page - 1) * pageSize;
+        return await db('flights')
+            .where('is_deleted', false)
+            .limit(pageSize)
+            .offset(offset);
+    } catch (err) {
+        console.error(err);
+        throw new Error('Error fetching paginated accommodations');
+    }
+};
 module.exports = {
     addFlight,
+
     getFlights,
+
     softDeleteFlights,
-    updateFlight
+
+    updateFlight,
+
+    getFlightsPaginated,
+
+    getFlightsByID
 }

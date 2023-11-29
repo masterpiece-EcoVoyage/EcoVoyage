@@ -14,6 +14,7 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth } from "../../Context/AuthContext";
 import { usePage } from "../../Context/SelectedPageContext";
 
 const FlightsTable = () => {
@@ -22,6 +23,7 @@ const FlightsTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [destination, setDestination] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const { headers } = useAuth();
   const { page, onSelectedPage, selectedId, onSelectedId } = usePage();
   const flightsPerPage = 3;
 
@@ -39,8 +41,16 @@ const FlightsTable = () => {
       .get(`http://localhost:3999/getFlights`)
       .then((response) => {
         // Handle the response data here
-        setFlights(response.data);
-        setFilteredFlights(response.data);
+        let newData = response.data.map((data) => ({
+          ...data,
+          depart: new Date(data.depart_date).toLocaleDateString("en-GB"),
+          return: new Date(data.return_date).toLocaleDateString("en-GB"),
+        }));
+        axios.get(`http://localhost:3999/getDestinations`).then((response) => {
+          setDestination(response.data);
+        });
+        setFlights(newData);
+        setFilteredFlights(newData);
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -55,7 +65,9 @@ const FlightsTable = () => {
     indexOfFirstUser,
     indexOfLastUser
   );
-
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery === "") {
@@ -67,7 +79,7 @@ const FlightsTable = () => {
             flight.destination
               .toLowerCase()
               .includes(searchQuery.toLowerCase()) ||
-            flight.peratedby.toLowerCase().includes(searchQuery.toLowerCase())
+            flight.operatedby.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
     }
@@ -89,7 +101,9 @@ const FlightsTable = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .put(`http://localhost:3999/softDeleteFlight/${id}`)
+          .put(`http://localhost:3999/softDeleteFlight/${id}`, null, {
+            headers: headers,
+          })
           .then((response) => {
             Swal.fire({
               title: "Deleted!",
@@ -113,7 +127,7 @@ const FlightsTable = () => {
     });
   };
   return (
-    <Card className="p-2 lg:m-10 m-5 w-auto h-full border border-sky-700">
+    <Card className="p-2 lg:ml-80 m-5 w-auto h-full border border-sky-700">
       <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
         Flights
       </h1>
@@ -189,12 +203,12 @@ const FlightsTable = () => {
                   d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>{" "}
-              Add new flight
+              Add new
             </Button>
           </div>
         </div>
       </CardHeader>
-      <CardBody className="px-3 pt-0 overflow-auto">
+      <CardBody className="px-3 pt-0 h-[312px] overflow-auto">
         <table className="w-full min-w-max table-auto text-left">
           <thead>
             <tr>
@@ -250,7 +264,12 @@ const FlightsTable = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {flight.destination}
+                          {destination &&
+                            destination.map(
+                              (item) =>
+                                item.destinations_id ===
+                                  flight.destinations_id && `${item.title}`
+                            )}
                         </Typography>
                       </div>
                     </div>
@@ -262,16 +281,31 @@ const FlightsTable = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {flight.depart_date}
+                        Date: {flight.depart}
                       </Typography>
-                      <div className="flex flex-col">
+                      <div className="flex gap-2">
                         <Typography
                           variant="small"
                           color="blue-gray"
                           className="font-normal"
                         >
+                          Time:{" "}
                           {flight.depart_time && flight.return_time.boarding}
                         </Typography>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          class="w-6 h-6"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+                          />
+                        </svg>
                         <Typography
                           variant="small"
                           color="blue-gray"
@@ -289,16 +323,31 @@ const FlightsTable = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {flight.return_date}
+                        Date: {flight.return}
                       </Typography>
-                      <div className="flex flex-col">
+                      <div className="flex gap-2">
                         <Typography
                           variant="small"
                           color="blue-gray"
                           className="font-normal"
                         >
+                          Time:{" "}
                           {flight.return_time && flight.return_time.boarding}
                         </Typography>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke-width="1.5"
+                          stroke="currentColor"
+                          class="w-6 h-6"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+                          />
+                        </svg>
                         <Typography
                           variant="small"
                           color="blue-gray"
@@ -321,7 +370,7 @@ const FlightsTable = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {flight.peratedby}
+                        {flight.operatedby}
                       </Typography>
                     </div>
                   </td>
@@ -378,32 +427,12 @@ const FlightsTable = () => {
           Page {currentPage} of{" "}
           {Math.ceil(
             filteredFlights.length === 0
-              ? flights.length / flightsPerPage
+              ? flights.length === 0
+                ? 1
+                : flights.length / flightsPerPage
               : filteredFlights.length / flightsPerPage
           )}
         </Typography>
-        <div className="flex gap-2">
-          {Array.from(
-            {
-              length: Math.ceil(
-                filteredFlights.length === 0
-                  ? flights.length / flightsPerPage
-                  : filteredFlights.length / flightsPerPage
-              ),
-            },
-            (_, index) => (
-              <Button
-                key={index}
-                variant="outlined"
-                size="sm"
-                className={currentPage === index + 1 && "bg-sky-900 text-white"}
-                onClick={() => paginate(index + 1)}
-              >
-                {index + 1}
-              </Button>
-            )
-          )}
-        </div>
         <div className="flex gap-2">
           <Button
             onClick={() => currentPage !== 1 && paginate(currentPage - 1)}

@@ -1,3 +1,4 @@
+// const db = require('./config/db');
 const db = require('../Models/config/knexConfig');
 
 const getAccommodations = async () => {
@@ -8,6 +9,8 @@ const getAccommodations = async () => {
             .where({
                 is_deleted: false,
             })
+        // .orderBy('titile', 'desc') // Assuming 'created_at' is the timestamp for when the accommodation was created
+        // .limit(5);
     } catch (err) {
         console.error(err);
         throw new Error('Error fetching accommodations');
@@ -108,16 +111,14 @@ const getAccommodationsWithComments = async (accommodation_id) => {
                 'users.user_id',
                 'users.first_name',
                 'users.last_name'
-            )
-            .orderBy('timestamp', 'desc') 
-            .limit(5);
+            );
     } catch (err) {
         console.error(err);
         throw new Error('Error fetching accommodations with comments');
     }
 };
 
-const bookAccommodation = async (accommodation_id, user_id, address, phone, room_preference, adults, children) => {
+const bookAccommodation = async (accommodation_id, user_id, address, phone, room_preference, adults, children, date_from, date_to) => {
     try {
         return await db('booking')
             .insert({
@@ -127,7 +128,10 @@ const bookAccommodation = async (accommodation_id, user_id, address, phone, room
                 phone: phone,
                 room_preference: room_preference,
                 adults: adults,
-                children: children
+                children: children,
+                date_from: date_from,
+                date_to: date_to,
+                is_shown: true
             })
             .returning('*');
     } catch (err) {
@@ -136,6 +140,17 @@ const bookAccommodation = async (accommodation_id, user_id, address, phone, room
     }
 };
 
+const CancelBook = async (book_id) => {
+    try {
+        return await db('booking')
+            .where({ book_id: book_id })
+            .update({ is_shown: false })
+            .returning('*');
+    } catch (err) {
+        console.error(err);
+        throw new Error('Error booking accommodation');
+    }
+};
 
 const getBookAccommodations = async (accommodation_id) => {
     try {
@@ -200,6 +215,8 @@ module.exports = {
 
     // getBookByIdQuery,
 
-    getAccommodationsPaginated
+    getAccommodationsPaginated,
+
+    CancelBook
 
 };

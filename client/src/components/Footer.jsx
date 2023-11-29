@@ -3,9 +3,7 @@ import { useLocation } from "react-router-dom";
 
 const Footer = () => {
   const location = useLocation();
-  console.log(location.pathname);
-  if (location.pathname == "/login" || location.pathname == "/signup") {
-    console.log("hello");
+  if (location.pathname == "/login" || location.pathname == "/signup"|| location.pathname == "/dashboard") {
     return null;
   }
 

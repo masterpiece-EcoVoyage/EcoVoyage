@@ -15,17 +15,18 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 export const AllDestinations = () => {
   const [destinations, setDestinations] = useState([]);
   const [filteredPlaces, setFilteredPlaces] = useState(destinations);
   const [searchQuery, setSearchQuery] = useState("");
   const { page, onSelectedPage, selectedId, onSelectedId } = usePage();
-
+  const { headers } = useAuth();
   const TABLE_HEAD = ["Destinations", "Type", "Country", "Action"];
   useEffect(() => {
     axios
-      .get(`http://localhost:3999/destinations`)
+      .get(`http://localhost:3999/getDestinations`)
       .then((response) => {
         // Handle the response data here
         setDestinations(response.data);
@@ -75,7 +76,9 @@ export const AllDestinations = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .put(`http://localhost:3999/softDeleteFlight/${id}`)
+          .put(`http://localhost:3999/markDestinationsAsDeleted/${id}`, null, {
+            headers: headers,
+          })
           .then((response) => {
             Swal.fire({
               title: "Deleted!",
@@ -96,11 +99,12 @@ export const AllDestinations = () => {
             });
           });
       }
+      fetchData();
     });
   };
   return (
-    <Card className="lg:ml-80 p-2 w-screen lg:w-full h-full border border-sky-700">
-      <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
+    <Card className="lg:ml-80 p-2 lg:w-full h-full border border-sky-700">
+      <h1 className="text-sky-900 text-start mt-5 text-lg font-bold">
         Destinations
       </h1>
       <hr className="text-sky-700 mb-5" />

@@ -7,7 +7,7 @@ const Testimonials = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3999/getContact?_limit=6")
+      .get("http://localhost:3999/getContact?_limit=3")
       .then((response) => {
         // Handle the response data here
         setTestimonials(response.data);
@@ -60,7 +60,7 @@ const Testimonials = () => {
                   <div className="flex flex-wrap justify-center">
                     <div className="w-full text-start shrink-0 grow-0 basis-auto px-10 lg:w-8/12 py-4 rounded-xl bg-[#0c4a6e69]">
                       <h5 className=" text-lg text-sky-900 font-bold">
-                        {testimonial.username}
+                        {testimonial.fullname}
                       </h5>
 
                       <div className="flex items-center">

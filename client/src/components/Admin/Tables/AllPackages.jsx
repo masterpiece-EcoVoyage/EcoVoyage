@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 export const AllPackages = () => {
   const [destinations, setDestinations] = useState([]);
@@ -20,7 +21,7 @@ export const AllPackages = () => {
   const [filteredPlaces, setFilteredPlaces] = useState(destinations);
   const [searchQuery, setSearchQuery] = useState("");
   const { page, onSelectedPage, selectedId, onSelectedId } = usePage();
-
+  const {headers} = useAuth();
   const TABLE_HEAD = ["Number", "Title", "Cost", "Destination", "Days", ""];
   useEffect(() => {
     axios
@@ -79,7 +80,9 @@ export const AllPackages = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .put(`http://localhost:3999/deletePackages/${id}`)
+          .put(`http://localhost:3999/deletePackages/${id}`, null, {
+            headers: headers,
+          })
           .then((response) => {
             Swal.fire({
               title: "Deleted!",
@@ -101,6 +104,7 @@ export const AllPackages = () => {
           });
       }
     });
+    fetchData();
   };
   return (
     <Card className="lg:ml-80 p-2 w-screen lg:w-full h-full border border-sky-700">

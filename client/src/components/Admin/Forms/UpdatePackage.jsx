@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { usePage } from "../../Context/SelectedPageContext";
 import axios from "axios";
+import { useAuth } from "../../Context/AuthContext";
 
 const UpdatePackage = ({ id }) => {
   const [formData, setFormData] = useState([]);
@@ -14,6 +15,7 @@ const UpdatePackage = ({ id }) => {
   const [inclusionInput, setInclusionInput] = useState("");
   const [exclusion, setExclusion] = useState([]);
   const [exclusionInput, setExclusionInput] = useState("");
+  const {headers} = useAuth();
 
   useEffect(() => {
     axios
@@ -39,7 +41,7 @@ const UpdatePackage = ({ id }) => {
         // Handle errors here
         console.error("Error:", error);
       });
-  }, []);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,9 +72,10 @@ const UpdatePackage = ({ id }) => {
       highlight.map((item, index) => [`high ${index + 1}`, item])
     );
     console.log(formData);
-    axios.put(`http://localhost:3999/updatePackages/${id}`, formData);
+    axios.put(`http://localhost:3999/updatePackages/${id}`, formData, {headers:headers});
   };
-  const handleClose = () => {
+  const handleClose = (e) => {
+    e.preventDefault();
     setFormData([]);
     onSelectedPage("dashboard");
   };
@@ -158,7 +161,7 @@ const UpdatePackage = ({ id }) => {
                   <input
                     type="text"
                     name="title"
-                    value={formData.title}
+                    value={formData&&formData.title}
                     placeholder="Place Name"
                     onChange={(e) => handleChange(e)}
                     required
@@ -174,7 +177,7 @@ const UpdatePackage = ({ id }) => {
                   <textarea
                     name="overview"
                     rows="4"
-                    value={formData.overview}
+                    value={formData&&formData.overview}
                     class="block p-2.5 w-full my-2 text-sm rounded-lg border border-[#0c4a6e69] outline-none"
                     placeholder="Enter a description or an overview about the place..."
                     required
@@ -364,7 +367,7 @@ const UpdatePackage = ({ id }) => {
                       <input
                         type="text"
                         name="destination"
-                        value={formData.destination}
+                        value={formData&&formData.destination}
                         onChange={(e) => handleChange(e)}
                         className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
                         placeholder="Add a tag..."
@@ -383,7 +386,7 @@ const UpdatePackage = ({ id }) => {
                     step="0.01"
                     name="cost"
                     placeholder="Enter the country the place in"
-                    value={formData.cost}
+                    value={formData&&formData.cost}
                     required
                     onChange={(e) => handleChange(e)}
                     className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
@@ -400,7 +403,7 @@ const UpdatePackage = ({ id }) => {
                 </button>
                 <button
                   type="clear"
-                  onClick={() => handleClose()}
+                  onClick={(e) => handleClose(e)}
                   className="mt-4 m-2 py-2 px-5 border-2 border-sky-900 text-sky-900 rounded-2xl hover:bg-white"
                 >
                   Close

@@ -15,12 +15,14 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 export const PackagesTable = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState(users);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const {headers} = useAuth();
   const { page, onSelectedPage, selectedId, onSelectedId } = usePage();
   const usersPerPage = 3;
 
@@ -31,7 +33,7 @@ export const PackagesTable = () => {
       .then((response) => {
         // Handle the response data here
         setUsers(response.data);
-        setFilteredUsers(response.data)
+        setFilteredUsers(response.data);
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -80,7 +82,9 @@ export const PackagesTable = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .put(`http://localhost:3999/deletePackages/${id}`)
+          .put(`http://localhost:3999/deletePackages/${id}`, null, {
+            headers: headers,
+          })
           .then((response) => {
             Swal.fire({
               title: "Deleted!",
@@ -105,7 +109,7 @@ export const PackagesTable = () => {
     fetchData();
   };
   return (
-    <Card className="p-2 lg:m-10 m-5 w-auto h-full border border-sky-700">
+    <Card className="p-2 lg:ml-80 m-5 w-auto h-full border border-sky-700">
       <h1 className="text-sky-900 text-start mt-5 mx-5 text-lg font-bold">
         Packages
       </h1>
@@ -181,7 +185,7 @@ export const PackagesTable = () => {
                   d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>{" "}
-              Add new package
+              Add new
             </Button>
           </div>
         </div>
@@ -265,7 +269,7 @@ export const PackagesTable = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {user.destination}
+                        {user.country}
                       </Typography>
                     </div>
                   </td>
@@ -315,28 +319,6 @@ export const PackagesTable = () => {
               : filteredUsers.length / usersPerPage
           )}
         </Typography>
-        <div className="flex gap-2">
-          {Array.from(
-            {
-              length: Math.ceil(
-                filteredUsers.length === 0
-                  ? users.length / usersPerPage
-                  : filteredUsers.length / usersPerPage
-              ),
-            },
-            (_, index) => (
-              <Button
-                key={index}
-                variant="outlined"
-                size="sm"
-                className={currentPage === index + 1 && "bg-sky-900 text-white"}
-                onClick={() => paginate(index + 1)}
-              >
-                {index + 1}
-              </Button>
-            )
-          )}
-        </div>
         <div className="flex gap-2">
           <Button
             onClick={() => currentPage !== 1 && paginate(currentPage - 1)}

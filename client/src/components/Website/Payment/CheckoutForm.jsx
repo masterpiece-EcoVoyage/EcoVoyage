@@ -5,6 +5,7 @@ import CardSection from "./CardSection";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useBooking } from "../../Context/BookingContext";
+import { useAuth } from "../../Context/AuthContext";
 
 export default function CheckoutForm() {
   const [success, setSuccess] = useState(false);
@@ -13,7 +14,7 @@ export default function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
   const token = cookies["token"];
-
+  const { headers } = useAuth();
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { error, paymentMethod } = await stripe.createPaymentMethod({
@@ -35,10 +36,16 @@ export default function CheckoutForm() {
     if (!error) {
       try {
         const { id } = paymentMethod;
-        const response = await axios.post("http://localhost:3999/payment", {
-          amount: bookData.cost * 100,
-          id,
-        });
+        const response = await axios.post(
+          "http://localhost:3999/payment",
+          {
+            amount: bookData.cost * 100,
+            id,
+          },
+          {
+            headers: headers,
+          }
+        );
 
         if (response.data.success) {
           try {
@@ -50,18 +57,18 @@ export default function CheckoutForm() {
                 booking,
                 {
                   headers: {
-                    authorization: `${token}`,
+                    headers,
                   },
                 }
               );
             } else if (bookData.packages_id) {
               console.log(bookData.packages_id);
               const response = await axios.post(
-                `http://localhost:3999/getBookPackages/${bookData.packages_id}`,
+                `http://localhost:3999/BookPackage/${bookData.packages_id}`,
                 booking,
                 {
                   headers: {
-                    authorization: `${token}`,
+                    headers,
                   },
                 }
               );

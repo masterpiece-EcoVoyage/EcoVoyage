@@ -6,24 +6,19 @@ const flightsModel = require('../Models/flightsModel');
 
 const addFlight = async (req, res) => {
     try {
+        const flightsData = req.body;
         const file = req.file;
 
-        if (!file) {
-            return res.status(400).json({ error: "No file provided" });
+        if (file) {
+            const fileName = `${Date.now()}_${file.originalname}`;
+            const fileUrl = await Firebase.uploadFileToFirebase(file, fileName);
+
+            req.body.imagecomp = fileUrl;
         }
-
-        const fileName = `${Date.now()}_${file.originalname}`;
-
-        const imagecomp = await Firebase.uploadFileToFirebase(file, fileName);
-
-        const flightsData = {
-            ...req.body,
-            imagecomp: imagecomp,
-        };
 
         const result = await flightsModel.addFlight(flightsData);
 
-        res.json({ message: 'Accommodation has been added!', data: result[0] });
+        res.json({ message: 'Flight has been added!', data: result[0] });
 
     } catch (err) {
         console.error(err);
@@ -40,6 +35,17 @@ const getFlights = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 }
+
+const getFlightsByID = async (req, res) => {
+    const flights_id = req.params.id;
+    try {
+        const result = await flightsModel.getFlightsByID(flights_id);
+        res.json(result);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
 const softDeleteFlight = async (req, res) => {
     const flights_id = req.params.id;
@@ -89,9 +95,41 @@ const updateFlight = async (req, res) => {
     }
 };
 
+const getFlightsPaginated = async (req, res) => {
+    try {
+        const page = parseInt(req.params.page) || 1;
+        const pageSize = 4;
+
+        const result = await flightsModel.getFlightsPaginated(page, pageSize);
+        const totalCount = (await flightsModel.getFlights()).length;
+        const totalPages = Math.ceil(totalCount / pageSize);
+        if (!result) {
+            return res.status(404).json({ error: "No Data !" });
+        } else {
+            res.json({
+                data: result,
+                currentPage: page,
+                pageSize: pageSize,
+                totalPages: totalPages,
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
 module.exports = {
     addFlight,
+
     getFlights,
+
     softDeleteFlight,
-    updateFlight
+
+    updateFlight,
+
+    getFlightsPaginated,
+
+    getFlightsByID
 };

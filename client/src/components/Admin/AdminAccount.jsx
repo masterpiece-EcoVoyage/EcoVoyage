@@ -22,63 +22,62 @@ import UpdateHouse from "./Forms/UpdateHouse";
 import AddHouse from "./Forms/AddHous";
 import AddDestination from "./Forms/AddDestination";
 import UpdateDestination from "./Forms/UpdateDestination";
+import { useCookies } from "react-cookie";
 
 const AdminAccount = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
   const [user, setUser] = useState([]);
+  const [cookies, setCookie, removeCookie] = useCookies(["isAdmin"]);
+  const isAdmin = cookies["isAdmin"];
   const { page, onSelectPage, selectedId, onSelectedId } = usePage();
   const history = useNavigate();
 
-  const { isAdmin } = useAuth();
-  const location = useLocation();
-  console.log(isAdmin);
-  //   useEffect(() => {
-  //     if (!isAdmin) {
-  //       Swal.fire({
-  //         icon: "error",
-  //         title: "Oops...",
-  //         text: "You can't access this page.",
-  //         confirmButtonText: "OK",
-  //         customClass: {
-  //           confirmButton:
-  //             "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
-  //         },
-  //       });
-  //       history("/");
-  //     }
-  //   },[]
-  //   );
+  useEffect(() => {
+    if (!isAdmin) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "You can't access this page.",
+        confirmButtonText: "OK",
+        customClass: {
+          confirmButton:
+            "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+        },
+      });
+      history("/");
+    }
+  }, []);
   return (
     <div>
       <SideBar />
-      <div className="min-h-[946px]">
+      <div className="">
         <div className={`${page === "dashboard" ? "block" : "hidden"}`}>
           <Dashboard />
         </div>
-        <div className={`${page === "users" ? "block" : "hidden"} w-4/6 py-5`}>
+        <div className={`${page === "users" ? "block" : "hidden"} w-3/4 py-5`}>
           <AllUsers />
         </div>
         <div
           className={`${
             page === "destinations" ? "block" : "hidden"
-          } w-4/6 py-5`}
+          } w-3/4 py-5`}
         >
           <AllDestinations />
         </div>
         <div
-          className={`${page === "activities" ? "block" : "hidden"} w-4/6 py-5`}
+          className={`${page === "activities" ? "block" : "hidden"} w-3/4 py-5`}
         >
           <AllActivities />
         </div>
         <div
-          className={`${page === "packages" ? "block" : "hidden"} w-4/6 py-5`}
+          className={`${page === "packages" ? "block" : "hidden"} w-3/4 py-5`}
         >
           <AllPackages />
         </div>
-        <div className={`${page === "accommodations" ? "block" : "hidden"}`}>
+        <div className={`${page === "accommodations" ? "block" : "hidden"} w-3/4 py-5`}>
           <AllHousing />
         </div>
-        <div className={`${page === "flights" ? "block" : "hidden"}`}>
+        <div className={`${page === "flights" ? "block" : "hidden"} w-3/4 py-5`}>
           <AllFlights />
         </div>
 

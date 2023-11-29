@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 const AddFlight = () => {
   const [formData, setFormData] = useState([]);
   const { onSelectedPage } = usePage();
   const [departTime,setDepartTime] = useState([]);
   const [returnTime,setReturnTime] = useState([]);
+  const {headers} = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "image") {
       setFormData({
         ...formData,
-        [name]: e.target.file,
+        [name]: e.target.files[0],
       });
     }else if(name === "boardingD"){
         setDepartTime({
@@ -50,14 +52,13 @@ setFormData({
     depart_time: departTime,
     return_time: returnTime,
 })
-    axios.post(`http://localhost:3999/addFlight`, formData);
+    axios.post(`http://localhost:3999/addFlight`, formData, {headers:headers});
   };
   const handleClose = (e) => {
     e.preventDefault();
     setFormData([]);
     onSelectedPage("dashboard");
   };
-
   return (
     <div>
       <div className="flex flex-col justify-center top-64 items-center lg:ml-28 h-full w-auto">
@@ -93,18 +94,7 @@ setFormData({
                     Destination
                   </label>
                   <div className="">
-                    <div className="flex items-center gap-3 w-full">
-                      <label>From:</label>
-                      <input
-                        type="text"
-                        name="from"
-                        value={formData.from}
-                        placeholder="Ticket destination"
-                        onChange={(e) => handleChange(e)}
-                        required
-                        className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
-                      />
-                    </div>
+                  
                     <div className="flex items-center gap-3 w-full">
                       <label>To:</label>
                       <input
@@ -126,7 +116,8 @@ setFormData({
                     Cost
                   </label>
                   <input
-                    type="text"
+                    type="number"
+                    step="0.01"
                     name="best"
                     value={formData.best}
                     placeholder="Price"
@@ -152,8 +143,8 @@ setFormData({
                     <div>
                       <input
                         type="text"
-                        name="boardingD"
-                        value={formData.best}
+                    name="boardingD"
+                        value={departTime.boarding}
                         placeholder="00:00"
                         onChange={(e) => handleChange(e)}
                         required
@@ -162,7 +153,7 @@ setFormData({
                       <input
                         type="text"
                         name="arrivalD"
-                        value={formData.best}
+                        value={departTime.arrival}
                         placeholder="00:00"
                         onChange={(e) => handleChange(e)}
                         required
@@ -189,7 +180,7 @@ setFormData({
                       <input
                         type="text"
                         name="boardingR"
-                        value={formData.best}
+                        value={returnTime.boarding}
                         placeholder="00:00"
                         onChange={(e) => handleChange(e)}
                         required
@@ -198,7 +189,7 @@ setFormData({
                       <input
                         type="text"
                         name="arrivalR"
-                        value={formData.best}
+                        value={returnTime.arrival}
                         placeholder="00:00"
                         onChange={(e) => handleChange(e)}
                         required

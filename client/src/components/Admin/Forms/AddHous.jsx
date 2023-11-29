@@ -3,6 +3,7 @@ import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
 import { Dropdown } from "flowbite-react";
 import { Checkbox, Label } from "flowbite-react";
+import { useAuth } from "../../Context/AuthContext";
 
 const AddHouse = () => {
   const [formData, setFormData] = useState([]);
@@ -12,6 +13,7 @@ const AddHouse = () => {
   const [isPool, setIsPool] = useState(false);
   const [isFreeWifi, setIsFreeWifi] = useState(false);
   const [isParking, setParking] = useState(false);
+  const {headers} = useAuth();
   
 
   const dropdownStyles = {
@@ -59,7 +61,7 @@ const AddHouse = () => {
         ...formData,
         rating: selected.replace(/\D/g, ''),
       })
-      axios.post(`http://localhost:3999/addAccommodation`, formData);
+      axios.post(`http://localhost:3999/addAccommodation`, formData, {headers:headers});
     }
   };
   const handleClose = (e) => {

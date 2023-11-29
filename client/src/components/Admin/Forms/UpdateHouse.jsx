@@ -3,9 +3,9 @@ import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
 import { Dropdown } from "flowbite-react";
 import { Checkbox, Label } from "flowbite-react";
+import { useAuth } from "../../Context/AuthContext";
 
 const UpdateHouse = ({ id }) => {
-  console.log(id);
   const [formData, setFormData] = useState([]);
   const { onSelectedPage, page } = usePage();
 
@@ -14,6 +14,7 @@ const UpdateHouse = ({ id }) => {
   const [isPool, setIsPool] = useState(false);
   const [isFreeWifi, setIsFreeWifi] = useState(false);
   const [isParking, setParking] = useState(false);
+  const {headers} = useAuth();
 
   const dropdownStyles = {
     backgroundColor: "#ffffff",
@@ -74,7 +75,7 @@ const UpdateHouse = ({ id }) => {
         ...formData,
         rating: selected.replace(/\D/g, ""),
       });
-      axios.put(`http://localhost:3999/updateAccommodation/${id}`, formData);
+      axios.put(`http://localhost:3999/updateAccommodation/${id}`, formData, {headers:headers});
     }
   };
   const handleClose = (e) => {
@@ -119,7 +120,7 @@ const UpdateHouse = ({ id }) => {
                   <input
                     type="text"
                     name="title"
-                    value={formData.title}
+                    value={formData&&formData.title}
                     placeholder="Place Name"
                     onChange={(e) => handleChange(e)}
                     required
@@ -135,7 +136,7 @@ const UpdateHouse = ({ id }) => {
                   <textarea
                     name="activity_details"
                     rows="4"
-                    value={formData.accommodation_details}
+                    value={formData&&formData.accommodation_details}
                     class="block p-2.5 w-full my-2 text-sm rounded-lg border border-[#0c4a6e69] outline-none"
                     placeholder="Enter a description or an overview about the place..."
                     required
@@ -153,7 +154,7 @@ const UpdateHouse = ({ id }) => {
                     step="0.01"
                     name="pricing"
                     placeholder="Enter the country the place in"
-                    value={formData.pricing}
+                    value={formData&&formData.pricing}
                     required
                     onChange={(e) => handleChange(e)}
                     className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
@@ -170,7 +171,7 @@ const UpdateHouse = ({ id }) => {
                       type="text"
                       name="location"
                       placeholder="City"
-                      value={formData.location}
+                      value={formData&&formData.location}
                       required
                       onChange={(e) => handleChange(e)}
                       className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
@@ -184,7 +185,7 @@ const UpdateHouse = ({ id }) => {
                       type="text"
                       name="country"
                       placeholder="Country"
-                      value={formData.country}
+                      value={formData&&formData.country}
                       required
                       onChange={(e) => handleChange(e)}
                       className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"

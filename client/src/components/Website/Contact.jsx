@@ -6,7 +6,7 @@ const Contact = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setlastName] = useState("");
   const [formData, setFormData] = useState({
-    username: "",
+    fullname: "",
     email: "",
     subject: "",
     message: "",
@@ -30,14 +30,14 @@ const Contact = () => {
   async function handleSubmit(e){
     e.preventDefault();
     let contactData= {
-      username: `${firstName} ${lastName}`,
+      fullname: `${firstName} ${lastName}`,
       email: formData.email,
       subject:formData.subject,
       message: formData.message,
     }
     try {
       const response = await axios.post(
-        `http://localhost:3999/addContact`,
+        `http://localhost:3999/sendEmailContact`,
         contactData
       );
       setFormData({

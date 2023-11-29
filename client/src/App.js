@@ -45,6 +45,8 @@ function App() {
             <Route path="/dashboard" element={<AdminAccount />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/flights" element={<Flights />} />
+            <Route path="/flights/:id" element={<Flights />} />
+            {/* <Route path="/flight/:id" element={<Flights />} /> */}
             <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

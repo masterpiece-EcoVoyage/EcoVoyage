@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 import axios from "axios";
+import { useAuth } from "../../Context/AuthContext";
 
 const AllUsers = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -19,10 +20,10 @@ const AllUsers = () => {
   const [currentUsers, setCurrentUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const {headers} = useAuth();
   useEffect(() => {
     axios
-      .get(`http://localhost:3999/user`)
+      .get(`http://localhost:3999/getUserData`)
       .then((response) => {
         setUsers(response.data);
       })
