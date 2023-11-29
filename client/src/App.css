@@ -36,3 +36,10 @@
     transform: rotate(360deg);
   }
 }
+
+@font-face {
+  font-family: 'Grape Nuts';
+  src: url('./assests/fonts/GrapeNuts-Regular.ttf') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+}

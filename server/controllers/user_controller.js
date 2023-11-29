@@ -4,6 +4,8 @@ require('dotenv').config();
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
 const nodemailer = require('nodemailer');
+const userQueries = require('../Models/userQueries');
+const Firebase = require("../Middleware/FirebaseConfig/FireBaseConfig")
 
 const registerUser = async (req, res) => {
     // TLD " Top-Level-Domain Like org,gov,edu,maul"
@@ -121,7 +123,7 @@ app.use(express.json());
 var cors = require('cors');
 app.use(cors());
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 
 var transporter = nodemailer.createTransport({
@@ -133,11 +135,9 @@ var transporter = nodemailer.createTransport({
 });
 
 
-// let emailSent = false;
 const generateVerificationCode = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
-
 
 const generatedVerificationCode = generateVerificationCode();
 
@@ -149,7 +149,6 @@ const sendVerificationEmail = async (email, verificationCode) => {
         text: `Your email verification code is: ${verificationCode}`
     };
     console.log('Sending verification email to ' + email);
-    // emailSent = true;
 
     try {
         await transporter.sendMail(mailOptions);
@@ -243,13 +242,13 @@ const getUserData = async (req, res) => {
 };
 
 const getUserId = async (req, res) => {
-    const { id } = req.params;
+    const user_id = req.user.user_id;
     try {
-        const result = await db.query('SELECT * FROM users WHERE is_deleted = false AND user_id = $1', [id]);
+        const result = await db.query(userQueries.getUserByIdQuery, [user_id]);
         if (!result.rowCount) {
             return res.status(404).json({ error: "The User not found" });
         } else {
-            res.status(200).json(result.rows,);
+            res.status(200).json(result.rows);
         }
     } catch (err) {
         res.status(500).send('Internal Server Error');
@@ -257,14 +256,10 @@ const getUserId = async (req, res) => {
 };
 
 const updateUserData = async (req, res) => {
-    const { id } = req.params;
+    const user_id = req.user.user_id;
     const { first_name, last_name, email, password, confirm_password, country } = req.body;
 
     try {
-        const updateFields = [];
-        const values = [];
-        let placeholderCount = 1;
-
         const schema = Joi.object({
             first_name: Joi.string().min(3).max(25),
             last_name: Joi.string().min(3).max(25),
@@ -274,74 +269,62 @@ const updateUserData = async (req, res) => {
             confirm_password: Joi.string().optional().valid(Joi.ref('password')).when('password', {
                 is: Joi.exist(),
                 then: Joi.required(),
-            }),
+            })
         });
 
         const validate = schema.validate({ first_name, last_name, email, password, confirm_password, country });
 
         if (validate.error) {
-            res.status(400).json({ error: validate.error.details })
+            return res.status(400).json({ error: validate.error.details });
+        }
+
+        let hashedPassword;
+        if (password) {
+            hashedPassword = await bcrypt.hash(password, 10);
+        }
+
+        let fileUrl;
+
+        const file = req.file;
+
+        if (file) {
+            const fileName = `${Date.now()}_${file.originalname}`;
+            fileUrl = await Firebase.uploadFileToFirebase(file, fileName);
+
+            // Use req.body.profileimage instead of req.body.fileUrl
+            req.body.profileimage = fileUrl;
+        }
+
+        const userData = {
+            first_name,
+            last_name,
+            email,
+            password: hashedPassword,
+            country,
+            profileimage: fileUrl
+        };
+
+        const updatedUser = await userQueries.updateUser(user_id, userData);
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'The User not found' });
         } else {
-
-            if (first_name) {
-                updateFields.push(`first_name = $${placeholderCount}`);
-                values.push(first_name);
-                placeholderCount++;
-            }
-
-            if (last_name) {
-                updateFields.push(`last_name = $${placeholderCount}`);
-                values.push(last_name);
-                placeholderCount++;
-            }
-
-            if (email) {
-                updateFields.push(`email = $${placeholderCount}`);
-                values.push(email);
-                placeholderCount++;
-            }
-
-            if (password) {
-                const hashedPassword = await bcrypt.hash(password, 10);
-                updateFields.push(`password =  $${placeholderCount}`);
-                values.push(hashedPassword);
-                placeholderCount++;
-            }
-
-            if (country) {
-                updateFields.push(`country = $${placeholderCount}`);
-                values.push(country);
-                placeholderCount++;
-            }
-
-            const query = `
-            UPDATE users
-            SET ${updateFields.join(', ')}
-            WHERE user_id = $${placeholderCount}
-            `;
-
-            values.push(id);
-
-            const result = await db.query(query, values);
-
-            if (!result.rowCount) {
-                return res.status(404).json({ error: "The User not found" });
-            } else {
-                res.status(200).json({
-                    message: 'The User Updated !',
-                    validate,
-                });
-            }
+            res.status(200).json({
+                message: 'The User Updated!',
+                validate,
+                updatedUser
+            });
         }
     } catch (err) {
+        console.error(err);
         res.status(500).send('Internal Server Error');
     }
-}
+};
 
 const deleteUser = async (req, res) => {
-    const user_id = req.query.user_id
+    const user_id = req.user.user_id;
     try {
-        const result = await db.query('UPDATE users SET is_deleted = true WHERE user_id = $1', [user_id]);
+        const result = await db.query(userQueries.deleteUserQuery, [user_id]);
         if (!result.rowCount) {
             return res.status(404).json({ error: "The User not found" });
         } else {
@@ -352,7 +335,82 @@ const deleteUser = async (req, res) => {
     } catch (err) {
         res.status(500).send('Internal Server Error');
     }
-}
+};
+
+const getBookingOfUser = async (req, res) => {
+    const user_id = req.user.user_id;
+
+    try {
+        const result = await userQueries.getBookingOfUser(user_id);
+
+        if (!result || result.length === 0) {
+            return res.status(404).json({ error: "Booking not found for the user" });
+        } else {
+            res.status(200).json(result);
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+};
+const getFlightsOfUser = async (req, res) => {
+    const user_id = req.user.user_id;
+    try {
+        const result = await userQueries.getFlightsOfUser(user_id);
+
+        if (!result || result.length === 0) {
+            return res.status(404).json({ error: "Ticket not found for the user" });
+        } else {
+            res.status(200).json(result);
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+const CancelTicket = async (req, res) => {
+    const ticket_id = req.params.id;
+    try {
+        const result = await userQueries.CancelTicket(ticket_id);
+        res.json(result);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+const MakeAdmin = async (req, res) => {
+    try {
+        const user_id = req.params.id;
+
+        const selectResult = await db.query('SELECT * FROM users WHERE user_id = $1', [user_id]);
+       
+
+        if (selectResult.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        const currentRole = selectResult.rows[0].role_id;
+
+        const newRole = (currentRole === 1) ? 2 : 1;
+
+
+        const updateResult = await db.query('UPDATE users SET role_id = $1 WHERE user_id = $2', [newRole, user_id]);
+
+        if (updateResult.rowCount === 0) {
+            return res.status(404).json({ error: 'User not found or already deleted.' });
+        }
+
+        res.status(200).json({ message: 'User status toggled successfully.', newRole });
+    } catch (error) {
+        
+        console.error('Error toggling contact status:', error);
+        res.status(500).json({ error: 'An error occurred while toggling User status.' });
+    }
+    
+};
 
 module.exports = {
     registerUser,
@@ -363,5 +421,14 @@ module.exports = {
     sendEmail,
     verificationCode,
     getUserId,
-    updateUserData
+
+    updateUserData,
+
+    getBookingOfUser,
+
+    getFlightsOfUser,
+
+    CancelTicket,
+
+    MakeAdmin
 };
