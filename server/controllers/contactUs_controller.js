@@ -68,18 +68,15 @@ const sendEmailContact = async (req, res) => {
     }
 };
 
-//is deleted 
-// update flase to true & true to false
 const getContact =  async (req, res) => {
     try {
-
-        const result = await db.query('SELECT * FROM contact_us WHERE is_deleted = false');
+        const result = await db.query('SELECT * FROM contact_us WHERE is_shown = true');
 
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Contact not found or already deleted.' });
         }
-        const contactDetails = result.rows[0];
-        res.status(200).json({ contact: contactDetails });
+        const contactDetails = result.rows;
+        res.status(200).json(contactDetails);
     } catch (error) {
         console.error('Error fetching contact details:', error);
         res.status(500).json({ error: 'An error occurred while fetching contact details.' });
@@ -90,23 +87,52 @@ const getContactById =  async (req, res) => {
     try {
         const contactId = req.params.id;
 
-        // Fetch contact details from the database
-        const result = await db.query('SELECT * FROM contact_us WHERE contact_id = $1 AND is_deleted = false', [contactId]);
+        const result = await db.query('SELECT * FROM contact_us WHERE contact_id = $1 AND is_shown = true', [contactId]);
 
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Contact not found or already deleted.' });
         }
-        const contactDetails = result.rows[0];
-        res.status(200).json({ contact: contactDetails });
+        const contactDetails = result.rows;
+        res.status(200).json(contactDetails);
     } catch (error) {
         console.error('Error fetching contact details:', error);
         res.status(500).json({ error: 'An error occurred while fetching contact details.' });
     }
 };
+
+const updateContactShownStatus = async (req, res) => {
+    try {
+        const contactId = req.params.id;
+
+        const selectResult = await db.query('SELECT * FROM contact_us WHERE contact_id = $1', [contactId]);
+
+        if (selectResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Contact not found.' });
+        }
+
+        const currentStatus = selectResult.rows[0].is_shown;
+        const newStatus = !currentStatus;
+
+        const updateResult = await db.query('UPDATE contact_us SET is_shown = $1 WHERE contact_id = $2', [newStatus, contactId]);
+
+        if (updateResult.rowCount === 0) {
+            return res.status(404).json({ error: 'Contact not found or already deleted.' });
+        }
+
+        res.status(200).json({ message: 'Contact status toggled successfully.', newStatus });
+    } catch (error) {
+        console.error('Error toggling contact status:', error);
+        res.status(500).json({ error: 'An error occurred while toggling contact status.' });
+    }
+};
+
+
 module.exports = {
     sendEmailContact,
 
     getContact,
     
-    getContactById
+    getContactById,
+
+    updateContactShownStatus
 }

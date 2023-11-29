@@ -1,24 +1,27 @@
 const { Router } = require('express');
 const activitiesController = require('../controllers/activities-controller');
 const router = Router();
-const verifyJWT = require('../Middleware/VerifyJWT');
 
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+const verifyJWT = require('../Middleware/VerifyJWT');
 
 router.get('/getActivities', activitiesController.getActivities);
 
-router.post('/addActivities',verifyJWT.authorize([2]), activitiesController.addActivities);
+router.get('/getActivitiesPaginated', activitiesController.getActivitiesPaginated); //
 
-router.put('/updateActivities/:id', verifyJWT.authorize([2]),activitiesController.updateActivities);
+router.post('/addActivities', upload.array('image', 4), verifyJWT.authorize([2]), activitiesController.addActivities);
 
-router.put('/deleteActivities/:id', verifyJWT.authorize([2]),activitiesController.deleteActivities);
+router.put(`/updateActivities/:id`, upload.array('image', 4), verifyJWT.authorize([2]), activitiesController.updateActivities);
+
+router.put('/markActivityAsDeleted/:id', verifyJWT.authorize([2]), activitiesController.markActivityAsDeleted);
 
 router.get('/getActivitiesByID/:id', activitiesController.getActivitiesByID);
 
-router.post('/addCommentAC', verifyJWT.authorize([1 , 2]),activitiesController.addComment);
+router.post('/addCommentToAc/:id', verifyJWT.authorize([1, 2]), activitiesController.addCommentToAc);
 
-router.get('/getAccommodationsByID2AC/:id', activitiesController.getActivitiesByID2);
-
-router.get('/getActivitiesPaginated', activitiesController.getActivitiesPaginated); //
+router.get('/getActivitiesWithComments/:id', activitiesController.getActivitiesWithComments);
 
 
 module.exports = router;

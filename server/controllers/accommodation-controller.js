@@ -4,21 +4,18 @@ const AccommodationModel = require('../Models/AccommodationModel');
 const Firebase = require("../Middleware/FirebaseConfig/FireBaseConfig")
 const addAccommodation = async (req, res) => {
     try {
-        const file = req.file;
+        const accommodationData = req.body;
 
-        if (!file) {
-            return res.status(400).json({ error: "No file provided" });
+        const files = req.files;
+        if (files && files.length > 0) {
+            const fileUrls = await Promise.all(files.map(async (file) => {
+                const fileName = `${Date.now()}_${file.originalname}`;
+                return await Firebase.uploadFileToFirebase(file, fileName);
+            }));
+
+            req.body.imageurl = fileUrls;
         }
-
-        const fileName = `${Date.now()}_${file.originalname}`;
-
-        const fileUrl = await Firebase.uploadFileToFirebase(file, fileName);
-
-        const accommodationData = {
-            ...req.body,
-            imageUrl: fileUrl,
-        };
-
+        
         const result = await AccommodationModel.addAccommodation(accommodationData);
 
         res.json({ message: 'Accommodation has been added!', data: result[0] });
@@ -53,8 +50,19 @@ const getAccommodationsByID = async (req, res) => {
 
 const updateAccommodation = async (req, res) => {
     const accommodation_id = req.params.id;
-    const accommodationData = req.body;
     try {
+        const accommodationData = req.body;
+
+        const files = req.files;
+        if (files && files.length > 0) {
+            const fileUrls = await Promise.all(files.map(async (file) => {
+                const fileName = `${Date.now()}_${file.originalname}`;
+                return await Firebase.uploadFileToFirebase(file, fileName);
+            }));
+
+            req.body.imageurl = fileUrls;
+        }
+
         const result = await AccommodationModel.updateAccommodation(accommodation_id, accommodationData);
 
         if (!result.length) {
@@ -127,6 +135,16 @@ const bookAccommodation = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+const CancelBook = async (req, res) => {
+    const book_id = req.params.id;
+    try {
+        const result = await AccommodationModel.CancelBook(book_id);
+        res.json(result);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
 const getBookAccommodations = async (req, res) => {
     const accommodation_id = req.params.id;
@@ -186,6 +204,8 @@ module.exports = {
 
     getBookAccommodations,
 
-    getAccommodationsPaginated
+    getAccommodationsPaginated,
+
+    CancelBook
 
 }

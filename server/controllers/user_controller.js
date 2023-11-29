@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const Joi = require('joi');
 const nodemailer = require('nodemailer');
 const userQueries = require('../Models/userQueries');
+const Firebase = require("../Middleware/FirebaseConfig/FireBaseConfig")
+
 
 
 const registerUser = async (req, res) => {
@@ -134,11 +136,9 @@ var transporter = nodemailer.createTransport({
 });
 
 
-// let emailSent = false;
 const generateVerificationCode = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
-
 
 const generatedVerificationCode = generateVerificationCode();
 
@@ -150,7 +150,6 @@ const sendVerificationEmail = async (email, verificationCode) => {
         text: `Your email verification code is: ${verificationCode}`
     };
     console.log('Sending verification email to ' + email);
-    // emailSent = true;
 
     try {
         await transporter.sendMail(mailOptions);
@@ -284,25 +283,45 @@ const updateUserData = async (req, res) => {
         let hashedPassword;
         if (password) {
             hashedPassword = await bcrypt.hash(password, 10);
+        }
 
-            const values = [user_id, first_name, last_name, email, hashedPassword, country];
+        let fileUrl;
 
-            const result = await db.query(userQueries.updateUserQuery, values);
+        const file = req.file;
 
-            if (!result.rowCount) {
-                return res.status(404).json({ error: "The User not found" });
-            } else {
-                res.status(200).json({
-                    message: 'The User Updated!',
-                    validate,
-                });
-            }
+        if (file) {
+            const fileName = `${Date.now()}_${file.originalname}`;
+            fileUrl = await Firebase.uploadFileToFirebase(file, fileName);
+
+            // Use req.body.profileimage instead of req.body.fileUrl
+            req.body.profileimage = fileUrl;
+        }
+
+        const userData = {
+            first_name,
+            last_name,
+            email,
+            password: hashedPassword,
+            country,
+            profileimage: fileUrl
+        };
+
+        const updatedUser = await userQueries.updateUser(user_id, userData);
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'The User not found' });
+        } else {
+            res.status(200).json({
+                message: 'The User Updated!',
+                validate,
+                updatedUser
+            });
         }
     } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
     }
-}
+};
 
 const deleteUser = async (req, res) => {
     const user_id = req.user.user_id;
@@ -320,6 +339,81 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const getBookingOfUser = async (req, res) => {
+    const user_id = req.user.user_id;
+
+    try {
+        const result = await userQueries.getBookingOfUser(user_id);
+
+        if (!result || result.length === 0) {
+            return res.status(404).json({ error: "Booking not found for the user" });
+        } else {
+            res.status(200).json(result);
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+};
+const getFlightsOfUser = async (req, res) => {
+    const user_id = req.user.user_id;
+    try {
+        const result = await userQueries.getFlightsOfUser(user_id);
+
+        if (!result || result.length === 0) {
+            return res.status(404).json({ error: "Ticket not found for the user" });
+        } else {
+            res.status(200).json(result);
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+const CancelTicket = async (req, res) => {
+    const ticket_id = req.params.id;
+    try {
+        const result = await userQueries.CancelTicket(ticket_id);
+        res.json(result);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+const MakeAdmin = async (req, res) => {
+    try {
+        const user_id = req.params.id;
+
+        const selectResult = await db.query('SELECT * FROM users WHERE user_id = $1', [user_id]);
+       
+
+        if (selectResult.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        const currentRole = selectResult.rows[0].role_id;
+
+        const newRole = (currentRole === 1) ? 2 : 1;
+
+
+        const updateResult = await db.query('UPDATE users SET role_id = $1 WHERE user_id = $2', [newRole, user_id]);
+
+        if (updateResult.rowCount === 0) {
+            return res.status(404).json({ error: 'User not found or already deleted.' });
+        }
+
+        res.status(200).json({ message: 'User status toggled successfully.', newRole });
+    } catch (error) {
+        
+        console.error('Error toggling contact status:', error);
+        res.status(500).json({ error: 'An error occurred while toggling User status.' });
+    }
+    
+};
+
 module.exports = {
     registerUser,
     loginUser,
@@ -329,5 +423,14 @@ module.exports = {
     sendEmail,
     verificationCode,
     getUserId,
-    updateUserData
+
+    updateUserData,
+
+    getBookingOfUser,
+
+    getFlightsOfUser,
+
+    CancelTicket,
+
+    MakeAdmin
 };

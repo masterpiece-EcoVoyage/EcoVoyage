@@ -16,11 +16,16 @@ const Hero = () => {
                   </span>
                 </h1>
               </div>
-              <div className="flex flex-col gap-8 md:flex-row items-center justify-center p-12 container mx-auto rounded-lg md:h-24 bg-[#7dafbfb3]">
+              <div className="flex flex-col gap-6 md:flex-row items-center justify-center p-12 container mx-auto rounded-lg md:h-24 bg-[#7dafbfb3]">
                 <input
                   class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
                   type="text"
                   placeholder="Where are you going?"
+                />
+                <input
+                  class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
+                  type="number"
+                  placeholder="Enter your budget"
                 />
                 <input
                   class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"

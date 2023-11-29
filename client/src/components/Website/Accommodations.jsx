@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 const Accommodations = () => {
-  const [destinations, setDestinations] = useState([]);
+  const [accommodations, setAccommodations] = useState([]);
   const [types, setTypes] = useState(null);
   const [selectedType, setSelectedType] = useState("Select type");
   const [selected, setSelected] = useState("Select");
@@ -23,17 +23,17 @@ const Accommodations = () => {
   // end of dropdown
 
   const [filterOpen, setFilterOpen] = useState(false);
-  const openFilter=()=>{
+  const openFilter = () => {
     setFilterOpen(!filterOpen);
-  }
-
+  };
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     axios
-      .get("http://localhost:5000/destinations?_limit=3")
+      .get("http://localhost:3999/getAccommodations")
       .then((response) => {
         // Handle the response data here
-        setDestinations(response.data);
+        setAccommodations(response.data);
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -43,9 +43,9 @@ const Accommodations = () => {
   }, []);
 
   useEffect(() => {
-    if (destinations.length !== 0) {
-      const newTypes = destinations.map(
-        (destination) => destination.destinations_type
+    if (accommodations.length !== 0) {
+      const newTypes = accommodations.map(
+        (accommodation) => accommodation.type
       );
       setTypes(newTypes);
     }
@@ -54,50 +54,26 @@ const Accommodations = () => {
       const uniqueArray = [...new Set(types)];
       setTypes(uniqueArray);
     }
-  }, [destinations]);
+  }, [accommodations]);
 
   return (
     <>
-      <div class="flex flex-col h-full items-center justify-center">
-        <div class="px-6 text-sky-700 text-left md:px-12 ">
-          <h1 class="mt-6 my-8 text-3xl font-bold tracking-tight md:text-4xl xl:text-5xl">
-            Plan Your Eco-Friendly Adventure <br />
-          </h1>
-        </div>
-        <div className="flex flex-col gap-8 md:flex-row items-center justify-center p-12 container mx-auto rounded-lg md:h-24 bg-[#7dafbfb3]">
-          <input
-            class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
-            type="text"
-            placeholder="Where are you going?"
-          />
-          <input
-            class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
-            type="date"
-          />
-          <input
-            class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
-            type="date"
-          />
-          <input
-            class="shadow rounded py-2 px-3 text-gray-700 w-full md:w-1/4"
-            type="number"
-            placeholder="Guests"
-          />
-          <button class="border-sky-900 border-2 hover:bg-white bg-sky-900 hover:text-sky-900 text-white font-bold py-2 px-4 rounded w-full md:w-1/4">
-            Search
-          </button>
-        </div>
-      </div>
       <div className="flex flex-col md:flex-row justify-center">
         <div className="">
-          <div className={`${filterOpen?'h-auto': 'h-16'} md:h-auto overflow-hidden my-16 mx-3 border gap-4 flex-wrap p-3 flex justify-center md:flex-col`}>
+          <div
+            className={`${
+              filterOpen ? "h-auto" : "h-16 overflow-hidden"
+            } md:overflow-visible md:h-auto my-16 mx-3 border gap-4 flex-wrap p-3 flex justify-center md:flex-col`}
+          >
             <div className="w-full flex justify-between">
               <h2 className="mb-3 text-start text-sky-700 text-xl font-bold">
                 Filter
               </h2>
               <svg
-              onClick={openFilter}
-                class={`w-4 h-auto ${filterOpen?'hidden': 'block'} md:hidden`}
+                onClick={openFilter}
+                class={`w-4 h-auto ${
+                  filterOpen ? "hidden" : "block"
+                } md:hidden`}
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -120,8 +96,10 @@ const Accommodations = () => {
                 <line x1="4" y1="4" x2="10" y2="10" />
               </svg>
               <svg
-              onClick={openFilter}
-                class={`w-4 h-auto ${filterOpen?'block': 'hidden'} md:hidden`}
+                onClick={openFilter}
+                class={`w-4 h-auto ${
+                  filterOpen ? "block" : "hidden"
+                } md:hidden`}
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -148,7 +126,9 @@ const Accommodations = () => {
               <p className="mb-3 text-lg text-start">Price</p>
               <input
                 type="number"
+                step="0.01"
                 id="first_name"
+                placeholder="0.00"
                 className="bg-white border border-gray-300 text-sky-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               ></input>
             </div>
@@ -399,27 +379,42 @@ const Accommodations = () => {
         </div>
         <div className="my-16 mx-8">
           <div className="flex flex-col gap-8">
-            {destinations.map((destination, id) => (
+            {accommodations.map((accommodation, id) => (
               <div key={id}>
-                <article className=" flex flex-wrap sm:flex-nowrap shadow-lg border border-sky-200 mx-auto max-w-3xl group transform duration-500 hover:-translate-y-1 mb-2">
+                <article className=" flex flex-wrap sm:flex-nowrap shadow-lg border border-sky-200 mx-auto max-w-3xl md:w-[600px] group transform duration-500 hover:-translate-y-1 mb-2">
                   <img
                     className="w-full sm:w-52 h-auto"
                     src="https://i.ibb.co/Kr4b0zJ/152013403-10158311889099633-8423107287930246533-o.jpg"
                     alt=""
                   />
-                  <div className="h-auto w-full">
+                  <div className="h-auto w-full flex flex-col justify-between">
                     <div className="p-5 text-start">
                       <h1 className="text-xl font-semibold text-gray-800 mt-4">
-                        {destination.title}
+                        {accommodation.title}
                       </h1>
-                      <p className="text-md overflow-hidden h-28 text-gray-400 mt-2 leading-relaxed">
-                        {destination.destinations_details}
+                      <p className="text-md overflow-hidden text-gray-900 mt-2 leading-relaxed">
+                        {accommodation.location}
+                      </p>
+                      <p className="text-lg overflow-hidden flex gap-1 text-gray-900 mt-2 leading-relaxed">
+                        {accommodation.rating}{" "}
+                        <svg
+                          class="h-6 w-6 shrink-0 fill-amber-400"
+                          viewBox="0 0 256 256"
+                        >
+                          <path d="M239.2 97.4A16.4 16.4.0 00224.6 86l-59.4-4.1-22-55.5A16.4 16.4.0 00128 16h0a16.4 16.4.0 00-15.2 10.4L90.4 82.2 31.4 86A16.5 16.5.0 0016.8 97.4 16.8 16.8.0 0022 115.5l45.4 38.4L53.9 207a18.5 18.5.0 007 19.6 18 18 0 0020.1.6l46.9-29.7h.2l50.5 31.9a16.1 16.1.0 008.7 2.6 16.5 16.5.0 0015.8-20.8l-14.3-58.1L234 115.5A16.8 16.8.0 00239.2 97.4z"></path>
+                        </svg>
+                      </p>
+                      <p className="text-md overflow-hidden max-h-28 text-gray-400 mt-2 leading-relaxed">
+                        {accommodation.accommodation_details}
+                      </p>
+                      <p className="text-md overflow-hidden text-gray-900 mt-2 leading-relaxed">
+                        {accommodation.pricing} JOD
                       </p>
                     </div>
-                    <div className="px-2">
+                    <div className="px-2 m-4">
                       <div className="sm:flex sm:justify-end">
                         <Link
-                          to={`/accommodation/${destination.destinations_type}`}
+                          to={`/accommodation/${accommodation.accommodation_id}`}
                         >
                           <button className="sm:mt-3 my-2 py-2 px-5 bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 md:text-lg rounded-lg shadow-md">
                             Read more

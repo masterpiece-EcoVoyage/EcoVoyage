@@ -19,6 +19,8 @@ const getTickets = async () => {
 
 const getTicketByID = async (ticket_id) => {
     try {
+
+
         return await db('ticketbooking')
             .select('*')
             .where({
@@ -31,11 +33,22 @@ const getTicketByID = async (ticket_id) => {
     }
 };
 
-const addTicket = async (ticketData) => {
+const addTicket = async (ticketData, user_id) => {
     try {
-        return await db('ticketbooking')
-            .insert(ticketData)
+        const userResult = await db('users')
+            .where({ user_id: user_id })
+            .first();
+
+        if (!userResult) {
+            throw new Error('User not found');
+        }
+
+        const insertedTicket = await db('ticketbooking')
+            .insert({ ...ticketData, user_id: user_id, is_shown: true })
             .returning('*');
+
+        return insertedTicket;
+
     } catch (err) {
         console.error(err);
         throw new Error('Error adding Ticket');

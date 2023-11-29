@@ -2,14 +2,13 @@ const db = require('../Models/config/knexConfig');
 
 const ticketBookingModel = require('../Models/ticketbookingModel');
 
-const Firebase = require("../Middleware/FirebaseConfig/FireBaseConfig");
-
 const addTicket = async (req, res) => {
+    const user_id = req.user.user_id;
     try {
       
         const ticketData = req.body;
 
-        const result = await ticketBookingModel.addTicket(ticketData);
+        const result = await ticketBookingModel.addTicket(ticketData, user_id);
 
         res.json({ message: 'Ticket has been added!', data: result[0] });
 

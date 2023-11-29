@@ -11,19 +11,21 @@ router.get('/getAccommodations', accommodationController.getAccommodations);
 
 router.get('/getAccommodationsPaginated', accommodationController.getAccommodationsPaginated); //
 
-router.post('/addAccommodation', upload.single('image'),verifyJWT.authorize([2]), accommodationController.addAccommodation);
+router.post('/addAccommodation', upload.array('image', 4), verifyJWT.authorize([2]), accommodationController.addAccommodation);
 
-router.put(`/updateAccommodation/:id`, verifyJWT.authorize([2]),accommodationController.updateAccommodation);
+router.put(`/updateAccommodation/:id`, upload.array('image', 4), verifyJWT.authorize([2]), accommodationController.updateAccommodation);
 
-router.put('/deleteAccommodation/:id', verifyJWT.authorize([2]),accommodationController.markAccommodationAsDeleted);
+router.put('/deleteAccommodation/:id', verifyJWT.authorize([2]), accommodationController.markAccommodationAsDeleted);
 
 router.get('/getAccommodationsByID/:id', accommodationController.getAccommodationsByID);
 
-router.post('/addComment/:id', verifyJWT.authorize([1 , 2]), accommodationController.addCommentAccomm);
+router.post('/addComment/:id', verifyJWT.authorize([1, 2]), accommodationController.addCommentAccomm);
 
 router.get('/getAccommodationsWithComments/:id', accommodationController.getAccommodationsWithComments);
 
-router.post('/BookAccommodation/:id', verifyJWT.authorize([1 , 2]), accommodationController.bookAccommodation);
+router.post('/BookAccommodation/:id', verifyJWT.authorize([1, 2]), accommodationController.bookAccommodation);
+
+router.put('/CancelBook/:id', accommodationController.CancelBook);
 
 router.get('/getBookAccommodations/:id', accommodationController.getBookAccommodations);
 

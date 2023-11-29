@@ -6,21 +6,16 @@ const Firebase = require("../Middleware/FirebaseConfig/FireBaseConfig");
 
 const addDestinations = async (req, res) => {
     try {
-        const file = req.file;
+        const destinationData = req.body;
+        const files = req.files;
+        if (files && files.length > 0) {
+            const fileUrls = await Promise.all(files.map(async (file) => {
+                const fileName = `${Date.now()}_${file.originalname}`;
+                return await Firebase.uploadFileToFirebase(file, fileName);
+            }));
 
-        if (!file) {
-            return res.status(400).json({ error: "No file provided" });
+            req.body.destinationimage = fileUrls;
         }
-
-        const fileName = `${Date.now()}_${file.originalname}`;
-
-        const fileUrl = await Firebase.uploadFileToFirebase(file, fileName);
-
-        const destinationData = {
-            ...req.body,
-            imageurl: fileUrl,
-        };
-
         const result = await destinationsModel.addDestinations(destinationData);
 
         res.json({ message: 'destination has been added!', data: result[0] });
@@ -55,8 +50,17 @@ const getDestinationsByID = async (req, res) => {
 
 const updateDestinations = async (req, res) => {
     const destinations_id = req.params.id;
-    const destinationData = req.body;
     try {
+        const destinationData = req.body;
+        const files = req.files;
+        if (files && files.length > 0) {
+            const fileUrls = await Promise.all(files.map(async (file) => {
+                const fileName = `${Date.now()}_${file.originalname}`;
+                return await Firebase.uploadFileToFirebase(file, fileName);
+            }));
+
+            req.body.destinationimage = fileUrls;
+        }
         const result = await destinationsModel.updateDestinations(destinations_id, destinationData);
 
         if (!result.length) {

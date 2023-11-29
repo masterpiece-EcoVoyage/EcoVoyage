@@ -2,18 +2,26 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import logo from '../../Images/logo.png'
-// import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
+import { useCookies } from 'react-cookie';
+import { useAuth } from "../Context/AuthContext";
+import GoogleLogin from "./GoogleLogin";
+// import { handleGoogle } from '../../App';
+// components/Users/Login.jsx
+
+// ... other imports ...
 
 const Login = () => {
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const [cookies, setCookie] = useCookies(['token']);
+  const [error, setError] = useState("");
+  const { isAdmin, onLogin } = useAuth();
   const history = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  // const emailRegex = /^[^\s@]+@[^\s@]+.[^\s@]+$/;
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData({
@@ -21,23 +29,63 @@ const Login = () => {
       [name]: value,
     });
   }
-  async function handleSubmit(e) {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    if (!formData.email || !formData.password) {
+      setError("Email and password are required.");
+      return;
+    }
+
     try {
-      const response = await axios.post(
-        "http://localhost:5000/Login",
-        formData
-      );
-      history("/");
+      const response = await axios.post("http://localhost:3999/Login", {
+        email: formData.email,
+        password: formData.password
+      });
+
+      const token = response.data.token;
+
+      setCookie('token', token, { path: '/' });
+      setError("Sign-in successful");
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'You have Signed in successfully.',
+        confirmButtonText: 'OK',
+        customClass: {
+          confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
+        }
+      });
+      
+      if (response.data.role_id === 1) {
+        history("/");
+      } else if (response.data.role_id === 2) {
+        onLogin(response.data.role_id)
+        history("/dashboard");
+      }
+
+      console.log("Sign-in successful:", response.data);
     } catch (error) {
-      console.error("Error:", error);
+      setTimeout(() => {
+        console.error("Sign-in error:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Sign-in failed. Email or password is invalid.',
+          confirmButtonText: 'OK',
+          customClass: {
+            confirmButton: 'bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded',
+          }
+        });
+        setError("Sign-in failed. Email or password is invalid");
+      }, 100);
     }
   }
 
   return (
     <div className="bg-[url('https://images.unsplash.com/photo-1529718836725-f449d3a52881?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')]">
-      <form action="" onSubmit={handleSubmit}>
+      <form action="" onSubmit={(e) => handleSubmit(e)}>
         <div className="min-h-screen flex justify-center items-center">
           <div className="py-8 px-12 bg-white rounded-2xl shadow-xl z-20">
             <div className="flex flex-col justify-center items-center">
@@ -51,7 +99,7 @@ const Login = () => {
             </div>
             <div className="space-y-4">
               <input
-                type="text"
+                type="email"
                 name="email"
                 placeholder="Email Addres"
                 onChange={handleChange}
@@ -68,6 +116,7 @@ const Login = () => {
                 <p className="mt-4 text-sm text-sky-900 cursor-pointer text-start"> Forgot yo password?</p>
               </Link>
             </div>
+            <p className="text-sm text-start text-red-500">{error}</p>
             <div className="text-center mt-6">
               <button
                 type="submit"
@@ -76,20 +125,20 @@ const Login = () => {
                 Log In
               </button>
               <p className="mt-4 text-sm text-sky-900">
-                Or login with:{" "}<br/>
-                <Link to={"/"}>
-                <button
-                className="p-3 mt-2 text-xl text-white hover:text-sky-900 border-2 hover:bg-white bg-gray-200 rounded-2xl"
-              >
-                <svg className="text-sky-700 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"> <path stroke="none" d="M0 0h24v24H0z"/> <path d="M17.788 5.108A9 9 0 1021 12h-8" /></svg>
-              </button>
-                </Link>
-              </p>
-              <p className="mt-4 text-sm text-sky-900">
                 Don't Have An Account?{" "}
                 <Link to={"/signup"}>
                   <span className="underline cursor-pointer"> Sign Up</span>
                 </Link>
+              </p>
+              <p className="mt-4 text-sm text-sky-900">
+                Or login with:{" "}<br />
+                <GoogleLogin />
+                {/* <button
+                  onClick={() => handleGoogle()}
+                  className="p-3 mt-2 text-xl text-white hover:text-sky-900 border-2 hover:bg-white bg-gray-200 rounded-2xl"
+                >
+                  <svg className="text-sky-700 w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"> <path stroke="none" d="M0 0h24v24H0z" /> <path d="M17.788 5.108A9 9 0 1021 12h-8" /></svg>
+                </button> */}
               </p>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 <Link
@@ -105,6 +154,6 @@ const Login = () => {
       </form>
     </div>
   );
-};
+}
 
 export default Login;

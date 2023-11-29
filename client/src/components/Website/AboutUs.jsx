@@ -4,6 +4,7 @@ import AOS from "aos";
 
 const AboutUs = () => {
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     AOS.init({
       duration: 1000, // Animation duration in milliseconds
       once: true, // Only run the animation once
