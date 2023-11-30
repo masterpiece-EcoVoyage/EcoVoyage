@@ -13,7 +13,7 @@ EcoVoyage is a website designed to promote eco-friendly travel by connecting env
 
 ## Technologies Utilized
 
-Explore the cutting-edge technologies and tools that power the Eco-Wanderer planner:
+Explore the cutting-edge technologies and tools that power the EcoVoyage:
 
 * Node.js: The JavaScript runtime for building server-side applications.
 * Express: A web application framework for crafting APIs and web applications in Node.js.
@@ -22,7 +22,7 @@ Explore the cutting-edge technologies and tools that power the Eco-Wanderer plan
 * Firebase: Google's comprehensive platform for developing web and mobile applications, offering cloud-based services for seamless backend development.
 * Trello: Our trusted project management tool for organizing tasks and streamlining workflows.
 
-## Oficial Links
+## Official Links
 Here are the official links and resources for the project:
 
 Organization Repository [Link](https://github.com/masterpiece-EcoVoyage/EcoVoyage)
