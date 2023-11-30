@@ -35,9 +35,18 @@ const DestinationDetails = () => {
       }
     });
   }, [destination]);
+  console.log(destination);
   return (
     <div>
-      <div className="w-full h-96 bg-cover bg-[50%] bg-[url('https://cdn.pixabay.com/photo/2017/06/04/16/32/new-york-2371488_960_720.jpg')]"></div>
+      <div
+        className="w-full h-96 bg-cover bg-[50%] bg-fixed"
+        style={{
+          backgroundImage: `url(${
+            destination && destination.destinationimage
+          })`,
+          backgroundSize: "cover",
+        }}
+      ></div>
       <div className="flex flex-col justify-center items-center my-10">
         <div className="w-2/3">
           {destination && (
@@ -78,7 +87,7 @@ const DestinationDetails = () => {
                           key={item.destinations_id}
                           to={`/destination/${item.destinations_id}`}
                         >
-                          <article className="max-w-[20rem] shadow-xl bg-cover bg-center overflow-hidden h-[410px] transform duration-500 hover:-translate-y-2 cursor-pointer group bg-[url('https://afhomeph.com/cdn/shop/files/Website_Banner_Direct_from_the_Factory_1.png?v=1685417210&width=2800')]">
+                          <article className="max-w-[20rem] shadow-xl bg-cover bg-center overflow-hidden h-[410px] transform duration-500 hover:-translate-y-2 cursor-pointer group" style={{backgroundImage:`url(${item.destinationimage})`,backgroundSize: "cover",}}>
                             <div className="text-start hover:bg-[#12243a8f] bg-opacity-20 h-full px-5 flex flex-wrap flex-col pt-44 hover:bg-opacity-75 transform duration-300">
                               <h1 className="text-white text-2xl mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
                                 {item.title}

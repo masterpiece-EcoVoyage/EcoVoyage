@@ -15,6 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import { useAuth } from "../../Context/AuthContext";
 
 export const UsersTable = () => {
   const [users, setUsers] = useState([]);
@@ -22,6 +23,7 @@ export const UsersTable = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const {headers} =useAuth();
   const usersPerPage = 5;
   const { page, onSelectedPage, selectedId, onSelectedId } = usePage();
 
@@ -65,7 +67,7 @@ export const UsersTable = () => {
     setCurrentPage(1);
   };
   const handleEdit = (id) => {
-
+    axios.put(`http://localhost:3999/MakeAdmin/${id}`, null, {headers:headers});
   };
   return (
     <Card className="p-2 lg:ml-80 m-5 w-auto h-full border border-sky-700">
