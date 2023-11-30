@@ -19,10 +19,10 @@ const Flights = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     axios
-      .get(`http://localhost:3999/getFlightsPaginated/${currentPage}`)
+      .get(`http://localhost:3999/getFlights`)
       .then((response) => {
         setPagination(response.data);
-        let newData = response.data.data.map((data) => ({
+        let newData = response.data.map((data) => ({
           ...data,
           depart: new Date(data.depart_date).toLocaleDateString("en-GB"),
           return: new Date(data.return_date).toLocaleDateString("en-GB"),
@@ -30,7 +30,7 @@ const Flights = () => {
         // Handle the response data here
         if (destination) {
           const filtered = newData.filter(
-            (data) => data.destinations_id === destination
+            (data) => data.destinations_id == destination
           );
           setFlights(filtered);
         } else {

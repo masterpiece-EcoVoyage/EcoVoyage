@@ -57,7 +57,7 @@ const Destinations = () => {
       setFilteredPlaces(destinations);
     } else {
       setFilteredPlaces(
-        filteredPlaces.filter(
+        destinations.filter(
           (destination) =>
             destination.title
               .toLowerCase()
@@ -82,7 +82,6 @@ const Destinations = () => {
       setFilteredPlaces(destinations);
     }
   }, [selectedType, searchQuery]);
-
   return (
     <div className="flex flex-col md:flex-row justify-center">
       <div className="">
@@ -263,8 +262,8 @@ const Destinations = () => {
             <div key={id}>
               <article className=" flex flex-wrap sm:flex-nowrap shadow-lg border border-sky-200 mx-auto max-w-3xl group transform duration-500 hover:-translate-y-1 mb-2">
                 <img
-                  className="w-full sm:w-52 h-auto"
-                  src="https://i.ibb.co/Kr4b0zJ/152013403-10158311889099633-8423107287930246533-o.jpg"
+                  className="w-full sm:w-52 h-auto object-cover"
+                  src={destination.destinationimage}
                   alt=""
                 />
                 <div className="h-auto w-full">
