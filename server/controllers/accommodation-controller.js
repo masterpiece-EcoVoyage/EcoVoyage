@@ -207,5 +207,4 @@ module.exports = {
     getAccommodationsPaginated,
 
     CancelBook
-
 }

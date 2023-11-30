@@ -29,6 +29,7 @@ const getPackages = async (req, res) => {
     try {
         const result = await packagesModel.getPackages();
         res.json(result);
+
     } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
@@ -41,6 +42,7 @@ const getPackagesById = async (req, res) => {
     try {
         const result = await packagesModel.getPackagesById(packages_id);
         res.json(result);
+
     } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
