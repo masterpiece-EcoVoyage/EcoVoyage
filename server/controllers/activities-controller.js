@@ -7,16 +7,16 @@ const Firebase = require("../Middleware/FirebaseConfig/FireBaseConfig");
 const addActivities = async (req, res) => {
     try {
         const activitiesData = req.body;
+        console.log(activitiesData);
+        // const files = req.files;
+        // if (files && files.length > 0) {
+        //     const fileUrls = await Promise.all(files.map(async (file) => {
+        //         const fileName = `${Date.now()}_${file.originalname}`;
+        //         return await Firebase.uploadFileToFirebase(file, fileName);
+        //     }));
 
-        const files = req.files;
-        if (files && files.length > 0) {
-            const fileUrls = await Promise.all(files.map(async (file) => {
-                const fileName = `${Date.now()}_${file.originalname}`;
-                return await Firebase.uploadFileToFirebase(file, fileName);
-            }));
-
-            req.body.imageactivity = fileUrls;
-        }
+        //     req.body.imageactivity = fileUrls;
+        // }
         const result = await activityModel.addActivities(activitiesData);
 
         res.json({ message: 'activities has been added!', data: result[0] });

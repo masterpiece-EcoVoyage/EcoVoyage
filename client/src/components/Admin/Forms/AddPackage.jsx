@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import Swal from "sweetalert2";
 import { useAuth } from "../../Context/AuthContext";
 
 const AddPackage = () => {
@@ -48,9 +49,30 @@ const AddPackage = () => {
     console.log(formData);
     axios.post(`http://localhost:3999/addPackages`, formData, {
       headers: headers,
+    }).then((response) => {
+      Swal.fire({
+        title: "Success!",
+        text: "Item has been updated.",
+        icon: "success",
+      });
+      setFormData([]);
+      onSelectedPage("dashboard");
+      setFormData([]);
+    }).catch((err)=>{
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong.",
+        confirmButtonText: "OK",
+        customClass: {
+          confirmButton:
+            "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+        },
+      });
     });
   };
-  const handleClose = () => {
+  const handleClose = (e) => {
+    e.preventDefault();
     setFormData([]);
     onSelectedPage("dashboard");
   };
@@ -332,20 +354,20 @@ const AddPackage = () => {
                   </div>
                 </div>
 
-                {/* destination */}
+                {/* country */}
                 <div className="text-start">
                   <label className="block text-sm font-medium text-gray-700">
-                    Destination
+                    Country
                   </label>
                   <div className="mt-1">
                     <div className="flex">
                       <input
                         type="text"
-                        name="destination"
-                        value={formData.destination}
+                        name="country"
+                        value={formData.country}
                         onChange={(e) => handleChange(e)}
                         className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
-                        placeholder="Add a tag..."
+                        placeholder="Country"
                       />
                     </div>
                   </div>
@@ -378,7 +400,7 @@ const AddPackage = () => {
                 </button>
                 <button
                   type="clear"
-                  onClick={() => handleClose()}
+                  onClick={(e) => handleClose(e)}
                   className="mt-4 m-2 py-2 px-5 border-2 border-sky-900 text-sky-900 rounded-2xl hover:bg-white"
                 >
                   Close

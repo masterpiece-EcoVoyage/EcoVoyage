@@ -35,7 +35,6 @@ const DestinationDetails = () => {
       }
     });
   }, [destination]);
-  console.log(destination);
   return (
     <div>
       <div

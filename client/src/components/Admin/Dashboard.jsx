@@ -12,8 +12,8 @@ import HousingTable from "./Tables/HousingTable";
 
 const Dashboard = () => {
   const { page, onSelectedPage } = usePage();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
   return (
     <div className="min-h-screen">
       <div className="lg:ml-80">

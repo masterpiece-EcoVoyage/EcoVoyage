@@ -13,7 +13,7 @@ router.get('/getBookPackages', packagesController.getBookPackages);
 
 router.get('/getPackagesPaginated', packagesController.getPackagesPaginated); //
 
-router.post('/addCommentPac', upload.single('image'), verifyJWT.authorize([2]), packagesController.addCommentPac);
+router.post('/addPackages', upload.single('image'), verifyJWT.authorize([2]), packagesController.addPackages);
 
 router.put(`/updatePackages/:id`, upload.single('image'), verifyJWT.authorize([2]), packagesController.updatePackages);
 

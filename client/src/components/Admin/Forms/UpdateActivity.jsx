@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { usePage } from "../../Context/SelectedPageContext";
 import axios from "axios";
+import Swal from "sweetalert2";
 import { useAuth } from "../../Context/AuthContext";
 
 const UpdateActivity = ({ id }) => {
@@ -39,7 +40,19 @@ const UpdateActivity = ({ id }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.put(`http://localhost:3999/updateActivities/${id}`, formData, {headers:headers});
+    axios
+      .put(`http://localhost:3999/updateActivities/${id}`, formData, {
+        headers: headers,
+      })
+      .then((response) => {
+        Swal.fire({
+          title: "Success!",
+          text: "Item has been updated.",
+          icon: "success",
+        });
+        setFormData([]);
+        onSelectedPage("dashboard");
+      });
   };
   const handleClose = (e) => {
     e.preventDefault();
@@ -80,7 +93,7 @@ const UpdateActivity = ({ id }) => {
                   <input
                     type="text"
                     name="title"
-                    value={formData&&formData.title}
+                    value={formData && formData.title}
                     placeholder="Place Name"
                     onChange={(e) => handleChange(e)}
                     required
@@ -94,7 +107,7 @@ const UpdateActivity = ({ id }) => {
                   <textarea
                     name="activity_details"
                     rows="4"
-                    value={formData&&formData.activity_details}
+                    value={formData && formData.activity_details}
                     class="block p-2.5 w-full my-2 text-sm rounded-lg border border-[#0c4a6e69] outline-none"
                     placeholder="Enter a description or an overview about the place..."
                     required
@@ -109,7 +122,7 @@ const UpdateActivity = ({ id }) => {
                     type="text"
                     name="type"
                     placeholder="Place type"
-                    value={formData&&formData.type}
+                    value={formData && formData.type}
                     required
                     onChange={(e) => handleChange(e)}
                     className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
@@ -123,7 +136,7 @@ const UpdateActivity = ({ id }) => {
                     type="text"
                     name="availability"
                     placeholder="Enter the country the place in"
-                    value={formData&&formData.availability}
+                    value={formData && formData.availability}
                     required
                     onChange={(e) => handleChange(e)}
                     className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
@@ -138,7 +151,7 @@ const UpdateActivity = ({ id }) => {
                     step="0.01"
                     name="pricing"
                     placeholder="Enter the country the place in"
-                    value={formData&&formData.pricing}
+                    value={formData && formData.pricing}
                     required
                     onChange={(e) => handleChange(e)}
                     className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"

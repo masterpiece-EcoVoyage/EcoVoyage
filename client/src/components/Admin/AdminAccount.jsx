@@ -8,7 +8,6 @@ import { AllActivities } from "./Tables/AllActivities";
 import { AllPackages } from "./Tables/AllPackages";
 import { AllHousing } from "./Tables/AllHousing";
 import UpdateActivity from "./Forms/UpdateActivity";
-import AddActivity from "./Forms/AddActivity";
 import AddPackage from "./Forms/AddPackage";
 import UpdatePackage from "./Forms/UpdatePackage";
 import { useAuth } from "../Context/AuthContext";
@@ -23,6 +22,7 @@ import AddHouse from "./Forms/AddHous";
 import AddDestination from "./Forms/AddDestination";
 import UpdateDestination from "./Forms/UpdateDestination";
 import { useCookies } from "react-cookie";
+import AddActivity from "./Forms/AddActivity";
 
 const AdminAccount = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });

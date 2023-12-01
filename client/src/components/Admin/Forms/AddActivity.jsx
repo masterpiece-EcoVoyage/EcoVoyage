@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
+import Swal from "sweetalert2";
 import { useAuth } from "../../Context/AuthContext";
 
 const AddActivity = () => {
   const [formData, setFormData] = useState([]);
   const { onSelectedPage } = usePage();
-  const {headers} = useAuth();
+  const { headers } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "image") {
       setFormData({
         ...formData,
-        [name]: e.target.files[0],
+        files: e.target.files[0],
       });
+      console.log(e.target.files);
     } else {
       setFormData({
         ...formData,
@@ -25,8 +27,45 @@ const AddActivity = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post(`http://localhost:3999/addActivities`, formData, {headers:headers});
-    setFormData([]);
+    const formDataToSend = new FormData();
+    // Append each file to the FormData object
+    // if (formData.files && formData.files.length > 0) {
+    //   for (let i = 0; i < formData.files.length; i++) {
+    //     formDataToSend.append("files", formData.files[i]);
+    //   }
+    // }
+    if(formData.files){
+      formDataToSend.append("files", formData.files);
+    }
+    // Append other form data fields if needed
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("activity_details", formData.activity_details);
+    formDataToSend.append("type", formData.type);
+    formDataToSend.append("availability", formData.availability);
+    formDataToSend.append("pricing", formData.pricing);
+    axios.post(`http://localhost:3999/addActivities`, formDataToSend, {
+      headers: headers,
+    }).then((response) => {
+      Swal.fire({
+        title: "Success!",
+        text: "Item has been updated.",
+        icon: "success",
+      });
+      setFormData([]);
+      onSelectedPage("dashboard");
+      setFormData([]);
+    }).catch((err)=>{
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong.",
+        confirmButtonText: "OK",
+        customClass: {
+          confirmButton:
+            "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+        },
+      });
+    });
   };
   const handleClose = (e) => {
     e.preventDefault();

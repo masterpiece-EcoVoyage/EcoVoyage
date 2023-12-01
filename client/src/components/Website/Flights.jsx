@@ -19,7 +19,7 @@ const Flights = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     axios
-      .get(`http://localhost:3999/getFlights`)
+      .get(`http://localhost:3999/getFlightsPaginated/${currentPage}`)
       .then((response) => {
         setPagination(response.data);
         let newData = response.data.map((data) => ({
@@ -299,12 +299,27 @@ const Flights = () => {
         </div>
       </div>
       <div className="md:w-2/3 w-full">
-        <div className="flex flex-col my-16 w-full justify-center items-center md:justify-start md:items-start gap-5">
+        <div className="flex flex-col my-3 md:my-16 w-full justify-center items-center md:justify-start md:items-start gap-5 min-h-[844px]">
           {flights &&
             flights.map((flight, id) => (
               <div key={id} className=" w-11/12 mx-5">
                 <div className="flex flex-col py-3 px-5 md:mx-10 md:py-5 md:px-7 bg-gray-200 rounded-md w-full">
-                  <h1 className="text-start text-3xl">
+                  <h1 className="text-start text-3xl flex items-center gap-3 pb-4">
+                    Jordan
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="w-6 h-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+                      />
+                    </svg>
                     {destinations &&
                       destinations.map(
                         (item) =>
@@ -313,13 +328,13 @@ const Flights = () => {
                       )}
                   </h1>
                   <div className="flex flex-col md:flex-row items-center justify-between gap-1 w-full">
-                    <div className="w-full flex flex-col justify-center items-start md:w-1/3">
+                    <div className="w-full flex flex-col justify-center items-start md:w-1/3 p-4">
                       <img
                         src={flight.imagecomp}
                         alt="Airline"
                         className="h-auto w-24 md:w-2/5"
                       />
-                      <h1>{flight.operatedby}</h1>
+                      <h1><strong>Operated by:</strong> {flight.operatedby}</h1>
                     </div>
                     <div className="w-full md:w-1/3">
                       <div className="felx flex-col justify-start items-center">

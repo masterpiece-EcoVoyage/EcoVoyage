@@ -9,6 +9,11 @@ const AccommodationDetails = () => {
   const { id } = useParams();
   const [room, setRoom] = useState("Standard");
   const { bookData, onBooking } = useBooking();
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleSlideChange = (index) => {
+    setActiveIndex(index);
+  };
   const history = useNavigate();
   const [booking, setBooking] = useState({
     first_name: "",
@@ -35,10 +40,22 @@ const AccommodationDetails = () => {
   ];
   const [currentImage, setCurrentImage] = useState(0);
   const nextSlide = () => {
-    setCurrentImage((currentImage + 1) % images.length);
+    if (accommodation) {
+      if (currentImage === accommodation.imageurl.length-1) {
+      setCurrentImage(0);
+      }else {
+        setCurrentImage(currentImage + 1);
+      }
+    }
   };
   const prevSlide = () => {
-    setCurrentImage((currentImage - 1 + images.length) % images.length);
+    if (accommodation) {
+      if (currentImage === 0) {
+      setCurrentImage(accommodation.imageurl.length-1);
+      }else {
+        setCurrentImage(currentImage - 1);
+      }
+    } 
   };
   //   end carousel images
   function handleChange(e) {
@@ -64,6 +81,7 @@ const AccommodationDetails = () => {
       });
   }, []);
 
+  useEffect(()=>{console.log(currentImage);},[currentImage])
   async function handleSubmit(e) {
     let total =
       booking.adults * booking.cost + (booking.children * booking.cost) / 2;
@@ -73,7 +91,7 @@ const AccommodationDetails = () => {
       total += 20;
     }
     booking.cost = total;
-    booking.accommodation_id=id;
+    booking.accommodation_id = id;
 
     e.preventDefault();
     try {
@@ -86,30 +104,38 @@ const AccommodationDetails = () => {
   // console.log(accommodation);
   return (
     <div>
-      {/* <div className="w-full h-96 bg-cover bg-[50%] bg-[url('https://cdn.pixabay.com/photo/2017/06/04/16/32/new-york-2371488_960_720.jpg')]"></div> */}
       <div
         id="default-carousel"
-        className="relative w-auto md:mx-36"
+        className="relative w-full"
         data-carousel="slide"
       >
-        <div className="relative h-96 overflow-hidden rounded-lg">
-          <div className="duration-700 ease-in-out" data-carousel-item>
-            <img
-              src={accommodation&&accommodation.imageurl[currentImage]}
-              className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-              alt="..."
-            />
-          </div>
+        <div className="relative h-[420px] overflow-hidden rounded-lg">
+          {accommodation &&
+            accommodation.imageurl.map((image, id) => (
+              <div
+                key={id}
+                className={`duration-700 ease-in-out ${
+                  currentImage === id ? "block" : "hidden"
+                }`}
+                data-carousel-item
+              >
+                <img
+                  src={image}
+                  className="absolute block w-full object-cover -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                  alt={accommodation.title}
+                />
+              </div>
+            ))}
         </div>
         <button
-          onClick={prevSlide}
+          onClick={()=>prevSlide()}
           type="button"
-          className="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+          className="absolute top-0 left-5 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
           data-carousel-prev
         >
-          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/40 group-focus:ring-4">
             <svg
-              className="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180"
+              className="w-4 h-4 text-white rtl:rotate-180"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -127,12 +153,12 @@ const AccommodationDetails = () => {
           </span>
         </button>
         <button
-          onClick={nextSlide}
+          onClick={()=>nextSlide()}
           type="button"
-          className="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+          className="absolute top-0 right-5 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
           data-carousel-next
         >
-          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/40 group-focus:ring-4">
             <svg
               className="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180"
               aria-hidden="true"
@@ -170,7 +196,9 @@ const AccommodationDetails = () => {
                     Amenities
                   </h1>
                   <ol className="text-start text-xl list-disc list-inside">
-                    {accommodation.amenities.map((data, id)=>(<li key={id}>{data}</li>))}
+                    {accommodation.amenities.map((data, id) => (
+                      <li key={id}>{data}</li>
+                    ))}
                   </ol>
                   <h1 className="text-sky-700 text-start text-3xl font-bold">
                     Price

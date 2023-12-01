@@ -3,6 +3,7 @@ import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
 import { Dropdown } from "flowbite-react";
 import { useAuth } from "../../Context/AuthContext";
+import Swal from "sweetalert2";
 
 const UpdateDestination = ({ id }) => {
   const [formData, setFormData] = useState([]);
@@ -17,10 +18,11 @@ const UpdateDestination = ({ id }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3999/getActivitiesByID/${id}`)
+      .get(`http://localhost:3999/getDestinationsByID/${id}`)
       .then((response) => {
         // Handle the response data here
         setFormData(response.data[0]);
+        setSelected(response.data[0]&&response.data[0].destinations_type);
         // setTypes(response.data.destinations_type);
       })
       .catch((error) => {
@@ -43,17 +45,37 @@ const UpdateDestination = ({ id }) => {
       });
     }
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (selected !== "Select Type") {
+  const handleType = (type) => {
+    if (type !== "Select Type") {
       setFormData({
         ...formData,
-        type: selected,
-      });
-      axios.put(`http://localhost:3999/addAccommodation/${id}`, formData, {
-        headers: headers,
+        destinations_type: type,
       });
     }
+    setSelected(type);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formDataToSend = {
+      title: formData.title,
+      details: formData.details,
+      location: formData.location,
+      country: formData.country,
+      destinations_type: formData.destinations_type,
+    };
+    axios
+      .put(`http://localhost:3999/updateDestinations/${id}`, formDataToSend, {
+        headers: headers,
+      })
+      .then((response) => {
+        Swal.fire({
+          title: "Success!",
+          text: "Item has been updated.",
+          icon: "success",
+        });
+        setFormData([]);
+        onSelectedPage("dashboard");
+      });
   };
   const handleClose = (e) => {
     e.preventDefault();
@@ -113,12 +135,28 @@ const UpdateDestination = ({ id }) => {
                   <textarea
                     name="activity_details"
                     rows="4"
-                    value={formData && formData.accommodation_details}
+                    value={formData && formData.details}
                     class="block p-2.5 w-full my-2 text-sm rounded-lg border border-[#0c4a6e69] outline-none"
                     placeholder="Enter a description or an overview about the place..."
                     required
                     onChange={(e) => handleChange(e)}
                   ></textarea>
+                </div>
+
+                {/* city */}
+                <div className="text-start">
+                  <label className="text-sm font-medium text-sky-900">
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    name="location"
+                    placeholder="City"
+                    value={formData && formData.location}
+                    required
+                    onChange={(e) => handleChange(e)}
+                    className="block text-sm py-3 px-4 my-2 rounded-lg w-full border border-[#0c4a6e69] outline-none"
+                  />
                 </div>
 
                 {/* country */}
@@ -152,28 +190,28 @@ const UpdateDestination = ({ id }) => {
                     >
                       <Dropdown.Item
                         onClick={() => {
-                          setSelected("Beach");
+                          handleType("Beach");
                         }}
                       >
                         Beach
                       </Dropdown.Item>
                       <Dropdown.Item
                         onClick={() => {
-                          setSelected("Mountain");
+                          handleType("Mountain");
                         }}
                       >
                         Mountain
                       </Dropdown.Item>
                       <Dropdown.Item
                         onClick={() => {
-                          setSelected("Forest");
+                          handleType("Forest");
                         }}
                       >
                         Forest
                       </Dropdown.Item>
                       <Dropdown.Item
                         onClick={() => {
-                          setSelected("City");
+                          handleType("City");
                         }}
                       >
                         City

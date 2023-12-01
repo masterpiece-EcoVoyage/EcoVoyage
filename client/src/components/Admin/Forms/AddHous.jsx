@@ -3,6 +3,7 @@ import axios from "axios";
 import { usePage } from "../../Context/SelectedPageContext";
 import { Dropdown } from "flowbite-react";
 import { Checkbox, Label } from "flowbite-react";
+import Swal from "sweetalert2";
 import { useAuth } from "../../Context/AuthContext";
 
 const AddHouse = () => {
@@ -61,7 +62,27 @@ const AddHouse = () => {
         ...formData,
         rating: selected.replace(/\D/g, ''),
       })
-      axios.post(`http://localhost:3999/addAccommodation`, formData, {headers:headers});
+      axios.post(`http://localhost:3999/addAccommodation`, formData, {headers:headers}).then((response) => {
+        Swal.fire({
+          title: "Success!",
+          text: "Item has been updated.",
+          icon: "success",
+        });
+        setFormData([]);
+        onSelectedPage("dashboard");
+        setFormData([]);
+      }).catch((err)=>{
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong.",
+          confirmButtonText: "OK",
+          customClass: {
+            confirmButton:
+              "bg-sky-900 hover:bg-white text-white hover:text-sky-900 border border-sky-900 py-2 px-4 rounded",
+          },
+        });
+      });
     }
   };
   const handleClose = (e) => {
